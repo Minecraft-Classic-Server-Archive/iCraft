@@ -593,7 +593,7 @@ class MyneServerProtocol(Protocol):
             color = COLOUR_RED
         elif self.isMod():
             color = COLOUR_BLUE
-        elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh":
+        elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro":
             color = COLOUR_YELLOW
         elif self.isWorldOwner():
             color = COLOUR_DARKPURPLE
@@ -755,18 +755,27 @@ class MyneServerProtocol(Protocol):
         # Send the message in more than one bit if needed
         self._sendMessage(prefix, text, id)
 
-    def _sendMessage(self, prefix, text, id=127):
+    def _sendMessage(self, prefix, message, id=127):
         "Utility function for sending messages, which does line splitting."
-        space_for_text = 64 - len(prefix)
-        message_left = text
-        while message_left:
-            if "\n" in message_left[:space_for_text]:
-                segment, message_left = message_left.split("\n", 1)
+        linelen = 63 - len(prefix)
+        lines = []
+        thisline = ""
+        words = message.split()
+        for x in words:
+            if len(thisline + " " + x) < linelen:
+                thisline = thisline + " " + x
             else:
-                segment = message_left[:space_for_text]
-                message_left = message_left[space_for_text:]
-            if segment:
-                self.sendPacked(TYPE_MESSAGE, id, prefix + segment)
+                lines.append(thisline)
+                thisline = x
+        if thisline != "":
+            lines.append(thisline)
+        for line in lines:
+            if len(line) > 0:
+                if line[0] == " ":
+                    newline = line[1:]
+                else:
+                    newline = line
+                self.sendPacked(TYPE_MESSAGE, id, prefix + newline)
 
     def sendAction(self, id, colour, username, text):
         self.sendMessage(id, colour, username, text, action=True)

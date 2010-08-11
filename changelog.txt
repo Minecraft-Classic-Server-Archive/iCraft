@@ -1,3 +1,9 @@
+v2.5.1:
+ADDED: More yellow names
+ADDED: More people to the credits list
+FIXED: Chat should now wrap more properly
+FIXED: credits will display properly in irc
+
 v2.5.0:
 NOTICE: Removed WoM specs, we no longer grab new specs.
 ADDED: line command to make lines

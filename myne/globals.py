@@ -288,5 +288,5 @@ def Credits(self, server=None):
     Temp.append ("Thanks to the following people for making iCraft possible...")
     Temp.append ("Creators: aera (Myne), PixelEater (Mynecraft), iKJames")
     Temp.append ("Devs: Adam01, revenant, gdude2002, gothfox, AndrewPH, Varriount, erronjason, destroyerx1, ntfwc, Dwarfy, goober, willempiee")
-    Temp.append ("Others: Bidoof_King, Rils, fragmer, TkTech, the Users, the Testers, the Modders, the Community, ...")
+    Temp.append ("Others: Bidoof_King, Rils, fragmer, PyroPyro, TkTech, the Users, the Testers, the Modders, the Community, ...")
     return Temp

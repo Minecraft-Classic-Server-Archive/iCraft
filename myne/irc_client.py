@@ -223,7 +223,7 @@ class ChatBot(irc.IRCClient):
                             self.msg(self.factory.irc_channel,"Credits")
                             list = Credits(self, self.factory)
                             for each in list:
-                                self.msg(self.factory.irc_channel," ".join(each))
+                                self.msg(self.factory.irc_channel,"".join(each))
                         elif msg_command[1] == ("help"):
                             self.msg(self.factory.irc_channel, "Help Center")
                             self.msg(self.factory.irc_channel, "About: Use '$"+self.nickname+" about'")
