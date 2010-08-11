@@ -1,3 +1,10 @@
+v2.5.2:
+CHANGED: Tweets now sent out use a different format, hashtag in the end instead of parenthesis in the front
+FIXED: Creeper Mob crashing the users in certain cases
+FIXED: A bcb message mentioning blb
+FIXED: auto-cpr- now it'll restart after 3 minutes not 5, avoiding the 5 minute rule
+REMOVED: Cloud mob - was too buggy (should of been commented out)
+
 v2.5.1:
 ADDED: More yellow names
 ADDED: More people to the credits list

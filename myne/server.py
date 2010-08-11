@@ -317,7 +317,7 @@ class MyneFactory(Factory):
         else:
             self.delay_count+=1
         gc.collect()
-        if (time.time() - self.last_heartbeat) > 300:
+        if (time.time() - self.last_heartbeat) > 180:
             self.heartbeat = None
             self.heartbeat = Heartbeat(self)
         reactor.callLater(60, self.printInfo)

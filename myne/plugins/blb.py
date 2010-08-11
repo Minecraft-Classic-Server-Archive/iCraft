@@ -427,7 +427,7 @@ class BlbPlugin(ProtocolPlugin):
                 limit = 4062
             # Stop them doing silly things
             if (x2 - x) * (y2 - y) * (z2 - z) > limit:
-                self.client.sendServerMessage("Sorry, that area is too big for you to blb.")
+                self.client.sendServerMessage("Sorry, that area is too big for you to bcb.")
                 return
             
             # Draw all the blocks on, I guess

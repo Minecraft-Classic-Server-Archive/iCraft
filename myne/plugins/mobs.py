@@ -26,12 +26,15 @@
 #    To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
+
 import traceback
+import logging
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
 from twisted.internet import reactor
 from random import randint
+
 explosionblocklist = [(-4, -1, -1), (-4, -1, 0), (-4, -1, 1), (-4, 0, -1), (-4, 0, 0), (-4, 0, 1), (-4, 1, -1), (-4, 1, 0), (-4, 1, 1), (-3, -3, 0), (-3, -2, -2), (-3, -2, -1), (-3, -2, 0), (-3, -2, 1), (-3, -2, 2), (-3, -1, -2), (-3, -1, -1), (-3, -1, 0), (-3, -1, 1), (-3, -1, 2), (-3, 0, -3), (-3, 0, -2), (-3, 0, -1), (-3, 0, 0), (-3, 0, 1), (-3, 0, 2), (-3, 0, 3), (-3, 1, -2), (-3, 1, -1), (-3, 1, 0), (-3, 1, 1), (-3, 1, 2), (-3, 2, -2), (-3, 2, -1), (-3, 2, 0), (-3, 2, 1), (-3, 2, 2), (-3, 3, 0), (-2, -3, -2), (-2, -3, -1), (-2, -3, 0), (-2, -3, 1), (-2, -3, 2), (-2, -2, -3), (-2, -2, -2), (-2, -2, -1), (-2, -2, 0), (-2, -2, 1), (-2, -2, 2), (-2, -2, 3), (-2, -1, -3), (-2, -1, -2), (-2, -1, -1), (-2, -1, 0), (-2, -1, 1), (-2, -1, 2), (-2, -1, 3), (-2, 0, -3), (-2, 0, -2), (-2, 0, -1), (-2, 0, 0), (-2, 0, 1), (-2, 0, 2), (-2, 0, 3), (-2, 1, -3), (-2, 1, -2), (-2, 1, -1), (-2, 1, 0), (-2, 1, 1), (-2, 1, 2), (-2, 1, 3), (-2, 2, -3), (-2, 2, -2), (-2, 2, -1), (-2, 2, 0), (-2, 2, 1), (-2, 2, 2), (-2, 2, 3), (-2, 3, -2), (-2, 3, -1), (-2, 3, 0), (-2, 3, 1), (-2, 3, 2), (-1, -4, -1), (-1, -4, 0), (-1, -4, 1), (-1, -3, -2), (-1, -3, -1), (-1, -3, 0), (-1, -3, 1), (-1, -3, 2), (-1, -2, -3), (-1, -2, -2), (-1, -2, -1), (-1, -2, 0), (-1, -2, 1), (-1, -2, 2), (-1, -2, 3), (-1, -1, -4), (-1, -1, -3), (-1, -1, -2), (-1, -1, -1), (-1, -1, 0), (-1, -1, 1), (-1, -1, 2), (-1, -1, 3), (-1, -1, 4), (-1, 0, -4), (-1, 0, -3), (-1, 0, -2), (-1, 0, -1), (-1, 0, 0), (-1, 0, 1), (-1, 0, 2), (-1, 0, 3), (-1, 0, 4), (-1, 1, -4), (-1, 1, -3), (-1, 1, -2), (-1, 1, -1), (-1, 1, 0), (-1, 1, 1), (-1, 1, 2), (-1, 1, 3), (-1, 1, 4), (-1, 2, -3), (-1, 2, -2), (-1, 2, -1), (-1, 2, 0), (-1, 2, 1), (-1, 2, 2), (-1, 2, 3), (-1, 3, -2), (-1, 3, -1), (-1, 3, 0), (-1, 3, 1), (-1, 3, 2), (-1, 4, -1), (-1, 4, 0), (-1, 4, 1), (0, -4, -1), (0, -4, 0), (0, -4, 1), (0, -3, -3), (0, -3, -2), (0, -3, -1), (0, -3, 0), (0, -3, 1), (0, -3, 2), (0, -3, 3), (0, -2, -3), (0, -2, -2), (0, -2, -1), (0, -2, 0), (0, -2, 1), (0, -2, 2), (0, -2, 3), (0, -1, -4), (0, -1, -3), (0, -1, -2), (0, -1, -1), (0, -1, 0), (0, -1, 1), (0, -1, 2), (0, -1, 3), (0, -1, 4), (0, 0, -4), (0, 0, -3), (0, 0, -2), (0, 0, -1), (0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 0, 3), (0, 0, 4), (0, 1, -4), (0, 1, -3), (0, 1, -2), (0, 1, -1), (0, 1, 0), (0, 1, 1), (0, 1, 2), (0, 1, 3), (0, 1, 4), (0, 2, -3), (0, 2, -2), (0, 2, -1), (0, 2, 0), (0, 2, 1), (0, 2, 2), (0, 2, 3), (0, 3, -3), (0, 3, -2), (0, 3, -1), (0, 3, 0), (0, 3, 1), (0, 3, 2), (0, 3, 3), (0, 4, -1), (0, 4, 0), (0, 4, 1), (1, -4, -1), (1, -4, 0), (1, -4, 1), (1, -3, -2), (1, -3, -1), (1, -3, 0), (1, -3, 1), (1, -3, 2), (1, -2, -3), (1, -2, -2), (1, -2, -1), (1, -2, 0), (1, -2, 1), (1, -2, 2), (1, -2, 3), (1, -1, -4), (1, -1, -3), (1, -1, -2), (1, -1, -1), (1, -1, 0), (1, -1, 1), (1, -1, 2), (1, -1, 3), (1, -1, 4), (1, 0, -4), (1, 0, -3), (1, 0, -2), (1, 0, -1), (1, 0, 0), (1, 0, 1), (1, 0, 2), (1, 0, 3), (1, 0, 4), (1, 1, -4), (1, 1, -3), (1, 1, -2), (1, 1, -1), (1, 1, 0), (1, 1, 1), (1, 1, 2), (1, 1, 3), (1, 1, 4), (1, 2, -3), (1, 2, -2), (1, 2, -1), (1, 2, 0), (1, 2, 1), (1, 2, 2), (1, 2, 3), (1, 3, -2), (1, 3, -1), (1, 3, 0), (1, 3, 1), (1, 3, 2), (1, 4, -1), (1, 4, 0), (1, 4, 1), (2, -3, -2), (2, -3, -1), (2, -3, 0), (2, -3, 1), (2, -3, 2), (2, -2, -3), (2, -2, -2), (2, -2, -1), (2, -2, 0), (2, -2, 1), (2, -2, 2), (2, -2, 3), (2, -1, -3), (2, -1, -2), (2, -1, -1), (2, -1, 0), (2, -1, 1), (2, -1, 2), (2, -1, 3), (2, 0, -3), (2, 0, -2), (2, 0, -1), (2, 0, 0), (2, 0, 1), (2, 0, 2), (2, 0, 3), (2, 1, -3), (2, 1, -2), (2, 1, -1), (2, 1, 0), (2, 1, 1), (2, 1, 2), (2, 1, 3), (2, 2, -3), (2, 2, -2), (2, 2, -1), (2, 2, 0), (2, 2, 1), (2, 2, 2), (2, 2, 3), (2, 3, -2), (2, 3, -1), (2, 3, 0), (2, 3, 1), (2, 3, 2), (3, -3, 0), (3, -2, -2), (3, -2, -1), (3, -2, 0), (3, -2, 1), (3, -2, 2), (3, -1, -2), (3, -1, -1), (3, -1, 0), (3, -1, 1), (3, -1, 2), (3, 0, -3), (3, 0, -2), (3, 0, -1), (3, 0, 0), (3, 0, 1), (3, 0, 2), (3, 0, 3), (3, 1, -2), (3, 1, -1), (3, 1, 0), (3, 1, 1), (3, 1, 2), (3, 2, -2), (3, 2, -1), (3, 2, 0), (3, 2, 1), (3, 2, 2), (3, 3, 0), (4, -1, -1), (4, -1, 0), (4, -1, 1), (4, 0, -1), (4, 0, 0), (4, 0, 1), (4, 1, -1), (4, 1, 0), (4, 1, 1)]
 maxentitiystepsatonetime = 20
 
@@ -86,10 +89,10 @@ class EntityPlugin(ProtocolPlugin):
                 #if self.var_entityselected == "mob1":
                     #entitylist.append(["mob1",(x,y,z),2,2])
                     #self.client.sendServerMessage("Mob1 was created.")
-                if self.var_entityselected == "cloud":
-                    entitylist.append(["cloud",(x,y,z),2,2])
-                    self.client.sendServerMessage("cloud was created.")
-                elif self.var_entityselected == "rain":
+                #if self.var_entityselected == "cloud":
+                    #entitylist.append(["cloud",(x,y,z),2,2])
+                    #self.client.sendServerMessage("cloud was created.")
+                if self.var_entityselected == "rain":
                     entitylist.append(["rain",(x,y,z),2,2])
                     self.client.sendServerMessage("rain was created.")
                 elif self.var_entityselected == "bird":
@@ -893,72 +896,72 @@ class EntityPlugin(ProtocolPlugin):
                                     self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
                                     self.client.sendBlock(x, y, z, block)
                             
-                            elif var_type == "cloud":
-                                x,y,z = var_position
-                                i = randint(-1,1) + x
-                                j = randint(-1,1) + y
-                                k = randint(-1,1) + z
-                                var_cango = True
-                                block = chr(0)
-                                try:
+                            #elif var_type == "cloud":
+                                #x,y,z = var_position
+                                #i = randint(-1,1) + x
+                                #j = randint(-1,1) + y
+                                #k = randint(-1,1) + z
+                                #var_cango = True
+                                #block = chr(0)
+                                #try:
                                     world[x, y, z] = block
-                                except:
+                                #except:
                                     return
-                                self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
-                                self.client.sendBlock(x, y, z, block)
-                                try:
-                                    blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i, j, k)])
-                                    if blocktocheck != 0:
-                                        var_cango = False
-                                except:
-                                    var_cango = False
-                                if var_cango and randint(0,200) != 200:
-                                    var_position = (i,j,k)
-                                    x,y,z = var_position
-                                    block = chr(36) 
-                                    try:
-                                        world[x, y, z] = block
-                                    except:
-                                        return
-                                    self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
-                                    self.client.sendBlock(x, y, z, block)
-                                else:
-                                    entitylist.append(["rain",(x,y-1,z+1),4,4])
+                                #self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                #self.client.sendBlock(x, y, z, block)
+                                #try:
+                                    #blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i, j, k)])
+                                    #if blocktocheck != 0:
+                                        #var_cango = False
+                                #except:
+                                    #var_cango = False
+                                #if var_cango and randint(0,200) != 200:
+                                    #var_position = (i,j,k)
+                                    #x,y,z = var_position
+                                    #block = chr(36) 
+                                    #try:
+                                        #world[x, y, z] = block
+                                    #except:
+                                        #return
+                                    #self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                    #self.client.sendBlock(x, y, z, block)
+                                #else:
+                                    #entitylist.append(["rain",(x,y-1,z+1),4,4])
        
-                            elif var_type == "rain":
-                                x,y,z = var_position
-                                i = x
-                                j = -1 + y
-                                k = z
-                                var_cango = True
-                                block = chr(0)
-                                try:
-                                    world[x, y, z] = block
-                                except:
-                                    return
-                                self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
-                                self.client.sendBlock(x, y, z, block)
-                                try:
-                                    blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i, j, k)])
-                                    if blocktocheck != 0:
-                                        var_cango = False
-                                except:
-                                    var_cango = False
-                                if var_cango and randint(0,45) != 45:
-                                    var_position = (i,j,k)
-                                    x,y,z = var_position
-                                    block = chr(9) 
-                                    try:
-                                        world[x, y, z] = block
-                                    except:
-                                        return
-                                    self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
-                                    self.client.sendBlock(x, y, z, block)
-                                else:
-                                    blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i, j, k)])
-                                    if blocktocheck != 0:
-                                        var_cango = False
-                                        var_dellist.append(index)
+                            #elif var_type == "rain":
+                                #x,y,z = var_position
+                                #i = x
+                                #j = -1 + y
+                                #k = z
+                                #var_cango = True
+                                #block = chr(0)
+                                #try:
+                                    #world[x, y, z] = block
+                                #except:
+                                    #return
+                                #self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                #self.client.sendBlock(x, y, z, block)
+                                #try:
+                                    #blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i, j, k)])
+                                    #if blocktocheck != 0:
+                                        #var_cango = False
+                                #except:
+                                    #var_cango = False
+                                #if var_cango and randint(0,45) != 45:
+                                    #var_position = (i,j,k)
+                                    #x,y,z = var_position
+                                    #block = chr(9) 
+                                    #try:
+                                        #world[x, y, z] = block
+                                    #except:
+                                        #return
+                                    #self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                    #self.client.sendBlock(x, y, z, block)
+                                #else:
+                                    #blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i, j, k)])
+                                    #if blocktocheck != 0:
+                                        #var_cango = False
+                                        #var_dellist.append(index)
                                     
                             elif var_type == "zombie" or var_type == "fastzombie":
                                 x,y,z = var_position
@@ -1669,9 +1672,9 @@ class EntityPlugin(ProtocolPlugin):
             entity = parts[1]
             #if entity == "mob1":
                 #self.var_entityselected = "mob1"
-            if entity == "cloud":
-                self.var_entityselected = "cloud"
-            elif entity == "rain":
+            #if entity == "cloud":
+                #self.var_entityselected = "cloud"
+            if entity == "rain":
                 self.var_entityselected = "rain"
             elif entity == "bird":
                 self.var_entityselected = "bird"
@@ -1731,5 +1734,5 @@ class EntityPlugin(ProtocolPlugin):
     @op_only
     def commandEntities(self, parts, byuser, overriderank):
         "/mobs - Op\nAliases: entities\nDisplays available Mobs"
-        var_listofvalidentities = ["blob","pet","slime","creeper","zombie","fastzombie","bird","human","cloud","tnt","jumpingshroom","trippyshroom","trippyflower"]
+        var_listofvalidentities = ["blob","pet","slime","creeper","zombie","fastzombie","bird","human","tnt","jumpingshroom","trippyshroom","trippyflower"]
         self.client.sendServerList(["Available Mobs:"] + var_listofvalidentities)

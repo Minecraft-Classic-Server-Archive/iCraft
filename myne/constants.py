@@ -26,7 +26,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-VERSION = "v2.5.1"
+VERSION = "v2.5.2"
 
 FORMAT_LENGTHS = {
     "b": 1,

@@ -457,7 +457,7 @@ class MyneServerProtocol(Protocol):
                     # It's a command
                     parts = [x.strip() for x in message.split() if x.strip()]
                     command = parts[0].strip("/")
-                    if not message.startswith("/tlog"):
+                    if not message.startswith("/tlog "):
                         self.log("%s just used: %s" % (self.username," ".join(parts)), level=logging.INFO)
                         #for command logging to IRC
                         if self.factory.irc_relay:
