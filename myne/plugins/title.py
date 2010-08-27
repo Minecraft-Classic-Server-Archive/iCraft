@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -34,6 +36,7 @@ class TitlePlugin(ProtocolPlugin):
     
     commands = {
         "title":     "commandSetTitle",
+        "settitle":     "commandSetTitle",
     }
     
     #System methods, not for commands
@@ -51,7 +54,7 @@ class TitlePlugin(ProtocolPlugin):
     @player_list
     @director_only
     def commandSetTitle(self, parts, byuser, overriderank):
-        "/title username [title] - Director\nGives or removes a title to username."
+        "/title username [title] - Director\nAliases: settitle\nGives or removes a title to username."
         if len(parts)==3:
             rank = self.loadRank()
             user = parts[1]

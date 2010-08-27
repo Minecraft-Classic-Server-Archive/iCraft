@@ -1,3 +1,72 @@
+v2.6.0 (for Mac v1.0.0);
+- Initial release on Mac, introduces proper Mac support.
+
+ADDED:
+- dirtbomb, which is something we're unsure about
+- blockindex command, which gives you the number of a block
+- lsystem commands, which is very complex
+- creplace command, which replaces a checkered area
+- fill command, fills in 2d area
+- Saying './' will now escape the command to show like '/' not './' (along with '.!', '.@', and '.#')
+- undelete command to restore deleted worlds
+- zdelall command, deletes all zones if you can delete them
+- /help cc - now you can easily see the color codes.
+- zwho command, determines what zone you're in
+- deleted command, shows deleted worlds (works like /worlds in a way)
+- Many more aliases for commands
+- Start of coloring for the irc bot
+- New methods to type colors in the game
+- undo command, it undoes what you or someone else did
+- jail commands, you can jail people
+- proxmine mob
+- var mob (var for variable), the greatest mob yet!
+- Limit of mobs for each world (40)
+- worldban command, it bans a user from a world
+- worldbanned command, gives a list of whos banned from the world
+- zrename command, this allows you to rename zones
+- cloud mob, so you can have rain
+- backups command, now you can see all backups that a world has
+- Various types of cannons - try them
+- Mob Spawner to spawn mobs
+
+CHANGED:
+- worlds command, greatly improved
+- zshow, now you can do zshow all and it'll show all zones
+- World Owner to be DarkYellow for display
+- Staff display
+- Staff command will pm the user instead (due to pings)
+- msgblocks to support colors in the beginning
+- Made it where Actions show differently (like IRC)
+- Zones now add the Creator on default unless otherwise specified after the "user" param
+- Fetch now asks if they want to be fetched first
+- templates command, now it's Admin+
+- back command to show as darkpurple due to irc relay
+- Mobs, they got a bit of a overhaul (call them entities now)
+- count command to be Op+
+
+FIXED:
+- Creeper-related error
+- Some display problems for certain commands
+- server.conf not containing ALL plugins
+- Bug where /create didn't properly match the xyz like /status
+- setowner to not at like the player who typed it got it
+- Typo of 'payername' in freeze/unfreeze commands
+- Where /help ranks didn't look proper
+- A message in the protocol
+- Console coloring in-game
+- Aliases ordering
+- StaffChat IRC/Console Problems
+- Console showing as Yellow and not DarkGreen
+- Zones having a issue removing a user in certain cases
+- Many errors in the code due to various actions
+
+KNOWN ISSUES:
+- Console doesn't work properly for certain commands
+- Entities sometimes causes errors in certain cases
+- fetch command doesn't override the fetch request if Director+
+- the invite command is still under construction
+- and some other problems we may or may not be aware of
+
 v2.5.2:
 CHANGED: Tweets now sent out use a different format, hashtag in the end instead of parenthesis in the front
 FIXED: Creeper Mob crashing the users in certain cases

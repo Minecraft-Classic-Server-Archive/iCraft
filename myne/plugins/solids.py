@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -69,7 +71,7 @@ class AdminBlocksPlugin(ProtocolPlugin):
     
     def sendAdminBlockUpdate(self):
         "Sends a packet that updates the client's admin-building ability"
-        self.client.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "If you see this, it's a bug", self.canBreakAdminBlocks() and 100 or 0)
+        self.client.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "Reloading the server...", self.canBreakAdminBlocks() and 100 or 0)
     
     @world_list
     @op_only

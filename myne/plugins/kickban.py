@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -29,6 +31,7 @@
 
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
+import logging
 
 class KickBanPlugin(ProtocolPlugin):
     
@@ -45,13 +48,18 @@ class KickBanPlugin(ProtocolPlugin):
         "freeze": "commandFreeze",
         "stop": "commandFreeze",
         "unfreeze": "commandUnFreeze",
+        "defreeze": "commandUnFreeze",
         "unstop": "commandUnFreeze",
+        #"ipshun": "commandIpshun",
+        #"unipshun": "commandUnipshun",
+        #"ipspec": "commandIpshun",
+        #"unipspec": "commandUnipshun",
     }
 
     @player_list
     @admin_only
     def commandBanned(self, user, byuser, overriderank):
-        "/banned - Admin\nShows who is banned."
+        "/banned - Admin\nShows who is Banned."
         done = ""
         for element in self.client.factory.banned.keys():
             done = done + " " + element
@@ -158,10 +166,11 @@ class KickBanPlugin(ProtocolPlugin):
             self.client.sendServerMessage("%s is not Banned." % ip)
         else:
             self.client.sendServerMessage("Reason: %s" % self.client.factory.ipBanReason(ip))
-    
+
+    @player_list
     @mod_only
     def commandUnFreeze(self, parts, byuser, overriderank):
-        "/unfreeze payername - Mod\nAliases: unstop\nUnfreezes the player, allowing them to move again."
+        "/unfreeze playername - Mod\nAliases: defreeze, unstop\nUnfreezes the player, allowing them to move again."
         try:
             username = parts[1]
         except:
@@ -175,9 +184,10 @@ class KickBanPlugin(ProtocolPlugin):
         user.frozen = False
         user.sendNormalMessage("&4You have been unfrozen by %s!" % self.client.username)
 
+    @player_list
     @mod_only
     def commandFreeze(self, parts, byuser, overriderank):
-        "/freeze payername - Mod\nAliases: stop\nFreezes the player, preventing them from moving."
+        "/freeze playername - Mod\nAliases: stop\nFreezes the player, preventing them from moving."
         try:
             username = parts[1]
         except:
@@ -190,3 +200,30 @@ class KickBanPlugin(ProtocolPlugin):
             return
         user.frozen = True
         user.sendNormalMessage("&4You have been frozen by %s!" % self.client.username)
+
+    #@player_list
+    #@mod_only
+    #@only_username_command
+    #def commandIpshun(self, username, byuser, overriderank):
+    #    "/ipspec playername - Mod\nAliases: ipshun\nIPSpec a Player's IP in this server."
+    #    ip = self.client.factory.usernames[username].transport.getPeer().host
+    #    if self.client.factory.isIpShunned(ip):
+    #        self.client.sendServerMessage("%s is already IPSpecced." % ip)
+    #    else:
+    #        self.client.factory.addIpShun(ip)
+    #        if username in self.client.factory.usernames:
+    #            self.client.factory.usernames[username].sendServerMessage("You got IPSpecced!")
+    #        self.client.sendServerMessage("%s has been IPSpecced." % ip)
+    #        logging.log(logging.INFO,self.client.username + ' IPSpecced ' + username + ip)
+
+    #@player_list
+    #@mod_only
+    #@only_string_command("IP")
+    #def commandUnipshun(self, ip, byuser, overriderank):
+    #    "/unipspec ip - Mod\nAliases: unipshun\nRemoves the IPSpec on the IP."
+    #    if not self.client.factory.isIpShunned(ip):
+    #        self.client.sendServerMessage("%s is not IPSpecced." % ip)
+    #    else:
+    #        self.client.factory.removeIpShun(ip)
+    #        self.client.sendServerMessage("%s UnIPSpecced." % ip)
+    #        logging.log(logging.INFO,self.client.username + ' UnIPSpecced ' + ip)

@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -291,7 +293,7 @@ class Physics(Thread):
                     block = self.blockstore.raw_blocks[new_offset]
                     if block is CHR_WATER or block is CHR_LAVA:
                         self.fluid_queue.add(new_offset)
-        if block is CHR_AIR:
+        elif block is CHR_AIR:
             if offset in self.sponge_locations:
                 self.sponge_locations.remove(offset)
                 # See if there's some water or lava that needs reanimating

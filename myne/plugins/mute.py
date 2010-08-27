@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -39,6 +41,7 @@ class MutePlugin(ProtocolPlugin):
         "muted": "commandMuted",
         "silence": "commandSilence",
         "desilence": "commandDesilence",
+        "unsilence": "commandDesilence",
     }
     
     hooks = {
@@ -93,6 +96,9 @@ class MutePlugin(ProtocolPlugin):
     @mod_only
     @only_username_command
     def commandDesilence(self, username, byuser, overriderank):
-        "/desilence username - Mod\nAllows the Player to talk."
-        self.client.factory.silenced.remove(username)
-        self.client.sendServerMessage("%s is no longer Silenced." % username.lower())
+        "/desilence username - Mod\nAliases: unsilence\nAllows the Player to talk."
+        if self.client.factory.isSilenced(username):
+            self.client.factory.silenced.remove(username)
+            self.client.sendServerMessage("%s is no longer Silenced." % username.lower())
+        else:
+            self.client.sendServerMessage("They aren't silenced.")

@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -27,14 +29,17 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
+from twisted.internet import reactor
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
+from myne.constants import *
 
 class OverloadPlugin(ProtocolPlugin):
     
     commands = {
         "overload": "commandOverload",
-        "send": "commandSend"
+        #"send": "commandSend",
+        "blazer": "commandBlazer",
     }
     
     @player_list
@@ -45,14 +50,27 @@ class OverloadPlugin(ProtocolPlugin):
         client.sendOverload()
         self.client.sendServerMessage("Overload sent to %s" % client.username)
 
-    @player_list
+    #@player_list
+    #@mod_only
+    #@username_command
+    #def commandSend(self, client, byuser, overriderank):
+        #"/send username [world] - Mod\nSends the players client another world."
+        #if user.isMod():
+            #self.client.sendServerMessage("You cannot send Staff!")
+        #if len(parts) == 2:
+            #self.client.sendServerMessage("Please specify a world ID.")
+        #else:
+            #world_id = parts[2]
+            #user.changeToWorld("%s" % world_id)
+            #else:
+                #user.sendServerMessage("You were sent to '%s'." % self.client.world.id)
+                #user.changeToWorld("default")
+                #self.client.sendServerMessage("Player %s was sent." % user.username)
+        #else:
+            #self.client.sendServerMessage("Your Player is in another world!")
+
     @mod_only
-    @username_command
-    def commandSend(self, client, byuser, overriderank):
-        "/send username [world] - Mod\nSends the players client another world."
-        if params:
-            user.changeToWorld("%s" % " ".join(params))
-            self.client.sendServerMessage("Map send to %s" % client.username)
-        else:
-            user.changeToWorld("default")
-            self.client.sendServerMessage("Map send to %s" % client.username)
+    def commandBlazer(self, parts, byuser, overriderank):
+        "/blazer - Mod\nBlazer!"
+        for i in range(10):
+            self.client.sendServerMessage("SPAM!")

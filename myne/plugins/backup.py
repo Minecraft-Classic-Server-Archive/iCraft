@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -29,6 +31,7 @@
 
 import os
 import shutil
+from twisted.internet import reactor
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
@@ -37,6 +40,7 @@ class BackupPlugin(ProtocolPlugin):
 
     commands = {
     "backup": "commandBackup",
+    "backups": "commandBackups",
     "restore": "commandRestore",
     }
 
@@ -73,7 +77,6 @@ class BackupPlugin(ProtocolPlugin):
     @op_only
     def commandRestore(self, parts, byuser, overriderank):
         "/restore worldname number - Op\nRestore map to indicated number."
-        
         if len(parts) < 2:
             self.client.sendServerMessage("Please specify at least a world ID!")
         else:
@@ -90,7 +93,7 @@ class BackupPlugin(ProtocolPlugin):
             else:
                 old_clients = self.client.factory.worlds[world_id].clients                    
                 if not os.path.exists(world_dir+"blocks.gz.new"):
-                    shutil.copy( world_dir+"backup/%s/blocks.gz" %backup_number,world_dir)
+                    shutil.copy(world_dir+"backup/%s/blocks.gz" %backup_number,world_dir)
                 else:
                     reactor.callLater(1, self.commandRestore(self, parts, byuser, overriderank))
                 self.client.factory.loadWorld("worlds/%s" % world_id, world_id)
@@ -98,3 +101,25 @@ class BackupPlugin(ProtocolPlugin):
                 self.client.factory.worlds[world_id].clients = old_clients
                 for client in self.client.factory.worlds[world_id].clients:
                     client.changeToWorld(world_id)
+
+    @world_list
+    @op_only
+    def commandBackups(self, parts, byuser, overriderank):
+        "/backups - Op\nLists all backups this map has."
+        try:
+            world_dir = ("worlds/%s/" % self.client.world.id)
+            folders = os.listdir(world_dir+"backup/")
+            Num_backups = list([])
+            Name_backups = list([])
+            for x in folders:
+                if x.isdigit():
+                    Num_backups.append(x)
+                else:
+                    Name_backups.append(x)
+            Num_backups.sort(lambda x, y: int(x) - int(y))
+            if Num_backups > 2:
+                self.client.sendServerList(["Backups for %s:" % self.client.world.id] + [Num_backups[0] + "-" + Num_backups[-1]] + Name_backups)
+            else:
+                self.client.sendServerList(["Backups for %s:" % self.client.world.id] + Num_backups + Name_backups)
+        except:
+            self.client.sendServerMessage("Sorry, but there are no backups for %s." % self.client.world.id)

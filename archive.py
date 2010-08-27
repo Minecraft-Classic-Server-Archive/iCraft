@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -45,7 +47,7 @@ class RipClient(MyneServerProtocol):
 	"""Once connected, send a message, then print the result."""
 
 	def connectionMade(self):
-		print "Identifying to server..."
+		print ("Identifying to server...")
 		self.buffer = ""
 		self.name = None
 		self.gzipped = ""
@@ -74,22 +76,22 @@ class RipClient(MyneServerProtocol):
 			self.buffer = self.buffer[len(format)+1:]
 			if type == TYPE_INITIAL:
 				protocol, name, desc, naff = parts
-				print "Server identifies as '%s'" % name
+				print ("Server identifies as '%s'" % name)
 				self.lolname = name.replace("/", "")
 				self.name = self.lolname.replace(" ", "_")
 		
 			if type == TYPE_PRECHUNK:
-				print "Receiving level data..."
+				print ("Receiving level data...")
 			elif type == TYPE_CHUNK:
 				# Grab the chunked data
 				length, chunk, progress = parts
-				print "...%i%%" % progress
+				print ("...%i%%" % progress)
 				self.gzipped += chunk[:length]
 			elif type == TYPE_LEVELSIZE:
 				# Store level size
 				self.sx, self.sy, self.sz = parts
-				print "Done. Got %i bytes of level." % len(self.gzipped)
-				print "Level size (%s, %s, %s)" % (self.sx, self.sy, self.sz)
+				print ("Done. Got %i bytes of level." % len(self.gzipped))
+				print ("Level size (%s, %s, %s)" % (self.sx, self.sy, self.sz))
 			elif type == TYPE_SPAWNPOINT and self.name:
 				naff, nick, x, y, z, h, nafftoo = parts
 
@@ -124,12 +126,12 @@ class RipClient(MyneServerProtocol):
 				config.write(fp)
 				fp.close()
 
-				print "Spawn point is at (%s, %s, %s, %s)" % (x, y, z, h)
-				print "Saved as %s." % fh.name
+				print ("Spawn point is at (%s, %s, %s, %s)" % (x, y, z, h))
+				print ("Saved as %s." % fh.name)
 				self.name = None
 				self.transport.loseConnection()
 			elif type == TYPE_ERROR:
-				print "Error! %s" % parts[0]
+				print ("Error! %s" % parts[0])
 				self.transport.loseConnection()
 
 
@@ -141,11 +143,11 @@ class RipFactory(protocol.ClientFactory):
 		self.mppass = mppass
 
 	def clientConnectionFailed(self, connector, reason):
-		print "Connection failed."
+		print ("Connection failed.")
 		reactor.stop()
 
 	def clientConnectionLost(self, connector, reason):
-		print "Connection terminated."
+		print ("Connection terminated.")
 		reactor.stop()
 
 
@@ -157,21 +159,24 @@ def rip(key, username, password):
 	cj = cookielib.CookieJar()
 	opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 	login_data = urllib.urlencode({'username': username, 'password': password})
-	print "Logging in..."
+	print ("Logging in...")
 	opener.open(login_url, login_data)
-	print "Fetching server info..."
+	print ("Fetching server info...")
 	html = opener.open(play_url % key).read()
 	ip = re.search(r'param name\="server" value="([0-9.]+)"', html).groups()[0]
 	port = int(re.search(r'param name\="port" value="([0-9]+)"', html).groups()[0])
 	mppass = re.search(r'param name\="mppass" value="([0-9a-zA-Z]+)"', html).groups()[0]
-	print "Got details. Connecting..."
+	print ("Got details. Connecting...")
 	f = RipFactory(username, mppass)
 	reactor.connectTCP(ip, port, f)
 	reactor.run()
 
 def main():
 	config = ConfigParser()
-	config.read(os.path.join(os.path.dirname(__file__), "client.conf"))
+       try:
+	    config.read(os.path.join(os.path.dirname(__file__), "client.conf"))
+       except:
+           print ("You need to rename client.example.conf to client.conf")
 	rip(sys.argv[1], config.get("client", "username"), config.get("client", "password"))
 
 # this only runs if the module was *not* imported

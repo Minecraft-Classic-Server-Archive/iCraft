@@ -9,12 +9,15 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
+#                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -26,7 +29,15 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-VERSION = "v2.5.2"
+import os
+
+try:
+    if (os.uname()[0] == "Darwin"):
+        VERSION = "for Mac v1.0.0"
+    else:
+        VERSION = "v2.6.0"
+except:
+    VERSION = "v2.6.0"
 
 FORMAT_LENGTHS = {
     "b": 1,

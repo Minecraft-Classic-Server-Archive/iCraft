@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -248,10 +250,10 @@ class MyneServerProtocol(Protocol):
         return self.factory.isSpectator(self.username.lower())
     
     def canEnter(self, world):
-        if not world.private:
+        if not world.private and (self.username.lower() not in world.worldbans):
             return True
         else:
-            return (self.username.lower() in world.writers) or (self.username.lower() in world.ops) or self.isMember() or self.isMod() or self.isAdmin() or self.isDirector()
+            return (self.username.lower() in world.writers) or (self.username.lower() in world.ops) or self.isWorldOwner() or self.isMember() or self.isMod() or self.isAdmin() or self.isDirector()
 
     def dataReceived(self, data):
         # First, add the data we got onto our internal buffer
@@ -314,7 +316,7 @@ class MyneServerProtocol(Protocol):
                 for client in self.factory.usernames.values():
                     client.sendServerMessage("%s has come online." %self.username)
                 if self.factory.irc_relay:
-                    self.factory.irc_relay.sendServerMessage("%s has come online." %self.username)
+                    self.factory.irc_relay.sendServerMessage("07%s has come online." %self.username)
                 reactor.callLater(0.1, self.sendLevel)
                 reactor.callLater(1, self.sendKeepAlive)
             elif type == TYPE_BLOCKCHANGE:
@@ -441,6 +443,36 @@ class MyneServerProtocol(Protocol):
                 message = message.replace("%d", "&d")
                 message = message.replace("%e", "&e")
                 message = message.replace("%f", "&f")
+                message = message.replace("1", "&0")
+                message = message.replace("2", "&1")
+                message = message.replace("3", "&2")
+                message = message.replace("10", "&3")
+                message = message.replace("5", "&4")
+                message = message.replace("4", "&5")
+                message = message.replace("7", "&6")
+                message = message.replace("15", "&7")
+                message = message.replace("14", "&8")
+                message = message.replace("12", "&9")
+                message = message.replace("9", "&a")
+                message = message.replace("11", "&b")
+                message = message.replace("4", "&c")
+                message = message.replace("13", "&d")
+                message = message.replace("8", "&e")
+                message = message.replace("0", "&f")
+                message = message.replace("01", "&0")
+                message = message.replace("02", "&1")
+                message = message.replace("03", "&2")
+                message = message.replace("05", "&4")
+                message = message.replace("04", "&5")
+                message = message.replace("07", "&6")
+                message = message.replace("09", "&a")
+                message = message.replace("04", "&c")
+                message = message.replace("08", "&e")
+                message = message.replace("00", "&f")
+                message = message.replace("./", " /")
+                message = message.replace(".!", " !")
+                message = message.replace(".@", " @")
+                message = message.replace(".#", " #")
                 message = message.replace("%$rnd", "&$rnd")
                 if message[len(message)-2] == "&":
                     self.sendServerMessage("You can not use a color at the end of a message")
@@ -462,7 +494,7 @@ class MyneServerProtocol(Protocol):
                         #for command logging to IRC
                         if self.factory.irc_relay:
                             if self.factory.irc_cmdlogs:
-                                self.factory.irc_relay.sendServerMessage("%s just used: %s" % (self.username," ".join(parts)))
+                                self.factory.irc_relay.sendServerMessage("07%s just used: %s" % (self.username," ".join(parts)))
                     # See if we can handle it internally
                     try:
                         func = getattr(self, "command%s" % command.title())
@@ -519,10 +551,10 @@ class MyneServerProtocol(Protocol):
                             self.factory.usernames[username].sendWhisper(self.username, text)
                             self.sendWhisper(self.username, text)
                             self.log("@"+self.username+" (from "+self.username+"): "+text)
-                            self.whisperlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" - "+self.username+" (from "+self.usertitlename+"): "+text+"\n")
+                            self.whisperlog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+"] @"+self.username+" (from "+self.usertitlename+"): "+text+"\n")
                             self.whisperlog.flush()
                         else:
-                            self.sendServerMessage("%s is currently offline." % self.username)
+                            self.sendServerMessage("%s is currently offline." % username)
                 elif message.startswith("!"):
                     #It's a world message.
                     if len(message) == 1:
@@ -539,15 +571,17 @@ class MyneServerProtocol(Protocol):
                                 else:
                                     self.sendWorldMessage ("!"+COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+text)
                                 self.log("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
-                                self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" - "+self.usertitlename+" in "+str(self.world.id)+": "+text+"\n")
+                                self.wclog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+"] !"+self.usertitlename+" in "+str(self.world.id)+": "+text+"\n")
                                 self.wclog.flush()
+                                if self.factory.irc_relay:
+                                    self.factory.irc_relay.sendServerMessage("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
                             else:
                                 if self.world.highlight_ops:
-                                    self.sendWorldMessage (" "+self.userColour()+self.usertitlename+":"+COLOUR_WHITE+" "+text)
+                                    self.sendWorldMessage (self.userColour()+self.usertitlename+":"+COLOUR_WHITE+" "+text)
                                 else:
-                                    self.sendWorldMessage (" "+COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+text)
-                            if self.factory.irc_relay:
-                                self.factory.irc_relay.sendServerMessage("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
+                                    self.sendWorldMessage (COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+text)
+                                if self.factory.irc_relay:
+                                    self.factory.irc_relay.sendServerMessage(self.usertitlename+": "+text)
                 elif message.startswith("#"):
                     #It's an staff-only message.
                     if len(message) == 1:
@@ -561,7 +595,7 @@ class MyneServerProtocol(Protocol):
                             else:
                                 self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.username, message)))
                         if self.isMod():
-                            self.factory.queue.put((self, TASK_STAFFMESSAGE, (0, self.userColour(), self.username, text)))
+                            self.factory.queue.put((self, TASK_STAFFMESSAGE, (0, self.userColour(), self.username, text,False)))
                         else:
                             self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
                 else:
@@ -575,8 +609,10 @@ class MyneServerProtocol(Protocol):
                                 else:
                                     self.sendWorldMessage ("!"+COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+message)
                                 self.log("!"+self.usertitlename+" in "+str(self.world.id)+": "+message)
-                                self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" - "+self.usertitlename+" in "+str(self.world.id)+": "+message+"\n")
+                                self.wclog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+"] !"+self.usertitlename+" in "+str(self.world.id)+": "+message+"\n")
                                 self.wclog.flush()
+                                if self.factory.irc_relay:
+                                    self.factory.irc_relay.sendServerMessage("!"+self.usertitlename+" in "+str(self.world.id)+": "+message)
                             else:
                                 self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
             else:
@@ -593,10 +629,10 @@ class MyneServerProtocol(Protocol):
             color = COLOUR_RED
         elif self.isMod():
             color = COLOUR_BLUE
-        elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro":
+        elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro" or self.username.lower() == "tehcid" or self.username.lower() == "099" or self.username.lower() == "setveen" or self.username.lower() == "aquaskys" or self.username.lower() == "kelraider" or self.username.lower() == "uninspired" or self.username.lower() == "saanix" or self.username.lower() == "roujo" or self.username.lower() == "maup" or self.username.lower() == "mystx":
             color = COLOUR_YELLOW
         elif self.isWorldOwner():
-            color = COLOUR_DARKPURPLE
+            color = COLOUR_DARKYELLOW
         elif self.isOp():
             color = COLOUR_DARKCYAN
         elif self.isMember():
@@ -635,8 +671,7 @@ class MyneServerProtocol(Protocol):
         self.last_block_changes = []
         self.initial_position = position
         if self.world.is_archive:
-            self.sendServerMessage("This world is an Archive, and will cease to exist")
-            self.sendServerMessage("once the last person leaves.")
+            self.sendSplitServerMessage("This world is an Archive, and will cease to exist once the last person leaves.")
             self.sendServerMessage(COLOUR_RED+"Admins: Please do not reboot this world.")
         breakable_admins = self.runHook("canbreakadmin")
         self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world '%s'" % world_id, 100 if breakable_admins else 0)
@@ -744,12 +779,12 @@ class MyneServerProtocol(Protocol):
         # See if we should highlight the names
         if self.world.highlight_ops:
             if action:
-                prefix = "%s*%s%s%s " % (COLOUR_YELLOW, colour, username, COLOUR_WHITE)
+                prefix = "%s* %s%s%s " % (COLOUR_YELLOW, colour, username, COLOUR_WHITE)
             else:
                 prefix = "%s%s:%s " % (colour, username, COLOUR_WHITE)
         else:
             if action:
-                prefix = "%s*%s%s%s " % (COLOUR_YELLOW, COLOUR_WHITE, username, COLOUR_WHITE)
+                prefix = "%s* %s%s%s " % (COLOUR_YELLOW, COLOUR_WHITE, username, COLOUR_WHITE)
             else:
                 prefix = "%s: " % username
         # Send the message in more than one bit if needed
@@ -1050,7 +1085,10 @@ class MyneServerProtocol(Protocol):
             return True
         if self.world.all_write:
             return True
-        self.sendServerMessage("This map is locked. You must be Builder+ to build here.")
+        #if self.world.id == self.factory.default_name:
+        self.sendServerMessage("This map is locked. You must be Builder/Op or Mod+ to build here.")
+        #else:
+            #self.sendServerMessage("This map is locked. You must be Builder+ to build here.")
         return False
 
     def GetBlockValue(self, value):

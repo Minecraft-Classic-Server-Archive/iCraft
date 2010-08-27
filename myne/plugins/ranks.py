@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -27,10 +29,14 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
+#import random
+#import os
+#import shutil
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
 from myne.globals import *
+from myne.world import World
 
 class ModsPlugin(ProtocolPlugin):
     
@@ -60,7 +66,7 @@ class ModsPlugin(ProtocolPlugin):
     @player_list
     @mod_only
     def commandSpecced(self, user, byuser, overriderank):
-        "/specced - Mod\nShows who is specced."
+        "/specced - Mod\nShows who is Specced."
         if len(self.client.factory.spectators):
             self.client.sendServerList(["Specced:"] + list(self.client.factory.spectators))
         else:

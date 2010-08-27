@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -52,7 +54,7 @@ class BlbPlugin(ProtocolPlugin):
     @build_list
     @writer_only
     def commandBlb(self, parts, byuser, overriderank):
-        "/blb blockname [x y z x2 y2 z2] - Builder\nAliases: cub, cuboid, draw, box\nSets all blocks in this area to block."
+        "/blb blockname [x y z x2 y2 z2] - Builder\nAliases: box, cub, cuboid, draw\nSets all blocks in this area to block."
         
         if len(parts) < 8 and len(parts) != 2:
             self.client.sendServerMessage("Please enter a type (and possibly two coord triples)")
@@ -116,7 +118,7 @@ class BlbPlugin(ProtocolPlugin):
                                 return
                             try:
                                 world[i, j, k] = block
-                                self.client.runHook("blockchange", x, y, z, block, block, byuser)
+                                self.client.runHook("blockchange", x, y, z, ord(block), ord(block), byuser)
                             except AssertionError:
                                 self.client.sendServerMessage("Out of bounds blb error.")
                                 return
@@ -209,7 +211,7 @@ class BlbPlugin(ProtocolPlugin):
                             if i==x or i==x2 or j==y or j==y2 or k==z or k==z2:
                                 try:
                                    world[i, j, k] = block
-                                   self.client.runHook("blockchange", x, y, z, block, block, byuser)
+                                   self.client.runHook("blockchange", x, y, z, ord(block), ord(block), byuser)
                                 except AssertionError:
                                     self.client.sendServerMessage("Out of bounds bhb error.")
                                     return
@@ -300,7 +302,7 @@ class BlbPlugin(ProtocolPlugin):
                             if i==x or i==x2 or k==z or k==z2:
                                 try:
                                    world[i, j, k] = block
-                                   self.client.runHook("blockchange", x, y, z, block, block, byuser)
+                                   self.client.runHook("blockchange", x, y, z, ord(block), ord(block), byuser)
                                 except AssertionError:
                                     self.client.sendServerMessage("Out of bounds bwb error.")
                                     return

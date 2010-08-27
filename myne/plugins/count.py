@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -36,14 +38,15 @@ class CountPlugin(ProtocolPlugin):
     
     commands = {
         "count": "commandCount",
+        "countdown": "commandCount",
     }
 
     def gotClient(self):
         self.num = int(0)
 
-    @writer_only
+    @op_only
     def commandCount(self, parts, byuser, overriderank):
-        "/count [number] - Builder\nCounts down from 3 or from number given."
+        "/count [number] - Op\nAliases: countdown\nCounts down from 3 or from number given."
         if self.num != 0:
             self.client.sendServerMessage("You can only have one count at a time!")
             return

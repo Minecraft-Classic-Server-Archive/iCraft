@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -80,7 +82,8 @@ class MsgblockPlugin(ProtocolPlugin):
         # Or a message?
         try:
             if self.client.world.has_message(rx, ry, rz) and (rx, ry, rz) != self.last_block_position:
-                self.client._sendMessage(COLOUR_GREEN, self.client.world.get_message(rx, ry, rz))
+                for message in self.client.world.get_message(rx, ry, rz).split('\n'):
+                    self.client._sendMessage(COLOUR_GREEN, message)
         except AssertionError:
             pass
         self.last_block_position = (rx, ry, rz)
@@ -115,11 +118,11 @@ class MsgblockPlugin(ProtocolPlugin):
     
     @member_only
     def commandShowmsgblocks(self, parts, byuser, overriderank):
-        "/mbshow - Member\nShows all message blocks as purple, only to you."
+        "/mbshow - Member\nShows all message blocks as green, only to you."
         for offset in self.client.world.messages.keys():
             x, y, z = self.client.world.get_coords(offset)
-            self.client.sendPacked(TYPE_BLOCKSET, x, y, z, BLOCK_PURPLE)
-        self.client.sendServerMessage("All messages appearing purple temporarily.")
+            self.client.sendPacked(TYPE_BLOCKSET, x, y, z, BLOCK_GREEN)
+        self.client.sendServerMessage("All messages appearing green temporarily.")
     
     @member_only
     def commandMsgblockdel(self, parts, byuser, overriderank):

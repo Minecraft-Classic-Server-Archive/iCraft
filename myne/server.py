@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -113,9 +115,16 @@ class MyneFactory(Factory):
         self.wordfilter = ConfigParser()
         self.save_count = 1
         self.delay_count = 1
-        self.config.read("server.conf")
+        try:
+            self.config.read("server.conf")
+        except:
+            print ("You need to rename server.example.conf to server.conf")
         self.saving = False
-        self.max_clients = self.config.getint("main", "max_clients")
+        try:
+            self.max_clients = self.config.getint("main", "max_clients")
+        except:
+            print ("You're using a outdated server.conf file")
+            print ("You need to rename server.example.conf to server.conf")
         self.server_name = self.config.get("main", "name")
         self.server_message = self.config.get("main", "description")
         self.initial_greeting = self.config.get("main", "greeting").replace("\\n", "\n")
@@ -149,7 +158,10 @@ class MyneFactory(Factory):
             self.irc_relay = None
         self.default_loaded = False
         #WORD FILTER LOL
-        self.wordfilter.read("wordfilter.conf")
+        try:
+            self.wordfilter.read("wordfilter.conf")
+        except:
+            print ("You need to rename wordfilter.example.conf to wordfilter.conf")
         self.filter = []
         number = int(self.wordfilter.get("filter","count"))
         for x in range(number):
@@ -538,7 +550,7 @@ class MyneFactory(Factory):
                                 client.sendMessage(*data)
                         id, colour, username, text = data
                         logging.log(logging.INFO, "%s: %s" % (username, text))
-                        self.chatlog.write("%s - %s: %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
+                        self.chatlog.write("[%s] %s: %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
                         self.chatlog.flush()
                         if self.irc_relay and world:
                             self.irc_relay.sendMessage(username, text)
@@ -561,8 +573,8 @@ class MyneFactory(Factory):
                         for client in self.clients.values():
                             client.sendAction(*data)
                         id, colour, username, text = data
-                        logging.log(logging.INFO, "ACTION - *%s %s" % (username, text))
-                        self.chatlog.write("%s *%s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
+                        logging.log(logging.INFO, "* %s %s" % (username, text))
+                        self.chatlog.write("[%s] * %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
                         self.chatlog.flush()
                         if self.irc_relay and world:
                             self.irc_relay.sendAction(username, text)
@@ -572,7 +584,7 @@ class MyneFactory(Factory):
                             self.usernames[client].sendNewPlayer(*data)
                             self.usernames[client].sendServerMessage("%s has come online." % source_client.username)
                         if self.irc_relay and world:
-                            self.irc_relay.sendServerMessage("%s has come online." % source_client.username)
+                            self.irc_relay.sendServerMessage("07%s has come online." % source_client.username)
                     # Someone joined a world!
                     elif task is TASK_NEWPLAYER:
                         for client in world.clients:
@@ -585,12 +597,14 @@ class MyneFactory(Factory):
                         for client in self.clients.values():
                             client.sendPlayerLeave(*data)
                             if not source_client.username is None:
+                                #if not self.isBanned or self.isIpBanned:
+                                #if not (username.lower() in self.banned) or (ip in self.ipbanned):
                                 client.sendServerMessage("%s has gone offline." % source_client.username)
                             else:
                                 source_client.log("Pinged the server.")
                         if not source_client.username is None:
                             if self.irc_relay and world:
-                                self.irc_relay.sendServerMessage("%s has gone offline." % source_client.username)
+                                self.irc_relay.sendServerMessage("07%s has gone offline." % source_client.username)
                     # Someone changed worlds!
                     elif task is TASK_WORLDCHANGE:
                         # Only run it for clients who weren't the source.
@@ -598,20 +612,20 @@ class MyneFactory(Factory):
                             client.sendPlayerLeave(data[0])
                             client.sendServerMessage("%s joined '%s'" % (source_client.username, world.id))
                         if self.irc_relay and world:
-                            self.irc_relay.sendServerMessage("%s joined '%s'" % (source_client.username, world.id))
+                            self.irc_relay.sendServerMessage("07%s joined '%s'" % (source_client.username, world.id))
                         logging.log(logging.INFO, "%s has now joined '%s'" % (source_client.username, world.id))
                     elif task == TASK_STAFFMESSAGE:
                         # Give all staff the message :D
-                        id, colour, username, text = data
+                        id, colour, username, text, IRC = data
                         message = self.messagestrip(text);
                         for user, client in self.usernames.items():
                             if self.isMod(user):
                                 client.sendMessage(100, COLOUR_YELLOW+"#"+colour, username, message, False, False)
                         if self.irc_relay and len(data)>3:
-                            self.irc_relay.sendServerMessage("#"+username+": "+text,True,username)
+                            self.irc_relay.sendServerMessage("#"+username+": "+text,True,username,IRC)
                         logging.log(logging.INFO,"#"+username+": "+text)
                         self.adlog = open("logs/server.log", "a")
-                        self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" - "+username+": "+text+"\n")
+                        self.adlog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+"] #"+username+": "+text+"\n")
                         self.adlog.flush()
                     elif task == TASK_GLOBALMESSAGE:
                         # Give all world people the message
@@ -659,13 +673,13 @@ class MyneFactory(Factory):
                     elif task == TASK_AWAYMESSAGE:
                         # Give all world people the message
                         message = data
-                        for client in world.clients:
+                        for client in self.clients.values():
                             client.sendNormalMessage(COLOUR_DARKPURPLE + message)
-                        logging.log(logging.INFO, "AWAY - %s %s" % (username, text))
-                        self.chatlog.write("%s %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
+                        logging.log(logging.INFO, "AWAY - %s" %message)
+                        self.chatlog.write("[%s] %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), "", message))
                         self.chatlog.flush()
                         if self.irc_relay and world:
-                            self.irc_relay.sendAction(username, text)
+                            self.irc_relay.sendAction("", message)
                 except Exception, e:
                     logging.log(logging.ERROR, traceback.format_exc())
         except Empty:
@@ -682,7 +696,10 @@ class MyneFactory(Factory):
         os.mkdir("worlds/%s" % new_name)
         # Find the template files, copy them to the new location
         for filename in ["blocks.gz", "world.meta"]:
-            shutil.copyfile("templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
+            try:
+                shutil.copyfile("templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
+            except:
+                client.sendServerMessage("That template doesn't exist.")
 
     def renameWorld(self, old_worldid, new_worldid):
         "Renames a world."

@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -98,6 +100,8 @@ class InfoPlugin(ProtocolPlugin):
         "pget": "commandInfo",
         "binfoend": "commandInfoEnd",
         "infoend": "commandInfoEnd",
+        "blockindex": "commandBlockindex",
+        "bindex": "commandBlockindex",
     }
     
     def gotClient(self):
@@ -117,3 +121,16 @@ class InfoPlugin(ProtocolPlugin):
     def commandInfoEnd(self,parts,byuser,overriderank):
             self.binfo = 0
             self.client.sendServerMessage("You are no longer getting info about blocks.")
+
+    @build_list
+    def commandBlockindex(self, parts, byuser, overriderank):
+        "/blockindex blockname - Guest\nAliases: bindex\nGives you the index of the block."
+        if len(parts) != 2:
+            self.client.sendServerMessage("Please enter a block to check the index of.")
+        else:
+            try:
+                block = globals()['BLOCK_%s' % parts[1].upper()]
+            except KeyError:
+                self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
+                return
+            self.client.sendServerMessage("%s is represented by %s" % (parts[1],block))

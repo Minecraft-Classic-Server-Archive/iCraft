@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -27,8 +29,10 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
+import os
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
+from myne.constants import *
 
 class CorePlugin(ProtocolPlugin):
     
@@ -41,10 +45,11 @@ class CorePlugin(ProtocolPlugin):
     @admin_only
     @only_string_command("plugin name")
     def commandPluginreload(self, plugin_name, byuser, overriderank):
+        "No need to reload the server."
         try:
             self.client.factory.unloadPlugin(plugin_name)
             self.client.factory.loadPlugin(plugin_name)
-        except IOError:
+        except:
             self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
         else:
             self.client.sendServerMessage("Plugin '%s' reloaded." % plugin_name)
@@ -52,9 +57,10 @@ class CorePlugin(ProtocolPlugin):
     @director_only
     @only_string_command("plugin name")
     def commandPluginload(self, plugin_name, byuser, overriderank):
+        "This doesn't boot the server."
         try:
             self.client.factory.loadPlugin(plugin_name)
-        except IOError:
+        except:
             self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
         else:
             self.client.sendServerMessage("Plugin '%s' loaded." % plugin_name)
@@ -62,9 +68,10 @@ class CorePlugin(ProtocolPlugin):
     @director_only
     @only_string_command("plugin name")
     def commandPluginunload(self, plugin_name, byuser, overriderank):
+        "This won't shutdown the server."
         try:
             self.client.factory.unloadPlugin(plugin_name)
-        except IOError:
+        except:
             self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
         else:
             self.client.sendServerMessage("Plugin '%s' unloaded." % plugin_name)

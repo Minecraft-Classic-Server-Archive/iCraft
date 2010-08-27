@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -36,6 +38,7 @@ class HidePlugin(ProtocolPlugin):
     
     commands = {
         "hide": "commandHide",
+        "cloak": "commandHide",
     }
     
     hooks = {
@@ -53,7 +56,7 @@ class HidePlugin(ProtocolPlugin):
     @player_list
     @op_only
     def commandHide(self, params, byuser, overriderank):
-        "/hide - Op\nHides you so no other players can see you. Toggle."
+        "/hide - Op\nAliases: cloak\nHides you so no other players can see you. Toggle."
         if not self.hidden:
             self.client.sendServerMessage("You have vanished.")
             self.hidden = True

@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -27,21 +29,40 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
+import os
 import sys
-if not sys.version_info[:2] == (2, 6):
-    print "Sorry, but you need Python 2.6.x to run iCraft 2"
-    exit(1)
 
-import os.path
-import time
+if not sys.version_info[:2] == (2, 6):
+    try:
+        if (os.uname()[0] == "Darwin"):
+            print ("Sorry, but your Mac OS X version is outdated.")
+            print ("We recommend running iCraft for Mac on 10.6+")
+            print ("or you need to install Python 2.6.x on 10.5")
+        else:
+            print ("Sorry, but you need Python 2.6.x to run iCraft")
+            print ("http://www.python.org/download/releases/2.6.5/")
+            print ("You'll also need Zope, Twisted and SimpleJSON.")
+    except:
+        print ("Sorry, but you need Python 2.6.x to run iCraft")
+        print ("http://www.python.org/download/releases/2.6.5/")
+        print ("You'll also need Zope, Twisted and SimpleJSON.")
 
 #!/usr/bin/python
 
+import time
 import logging
 import os,shutil
 from myne.constants import *
 from logging.handlers import SMTPHandler
-from twisted.internet import reactor
+
+try:
+    from twisted.internet import reactor
+except ImportError:
+    print ("Sorry, but you need Twisted + Zope to run iCraft")
+    print ("http://twistedmatrix.com/trac/wiki/Downloads")
+    print ("You can also try using this, readme included:")
+    print ("http://www.mediafire.com/?i2wmtfnzmay")
+
 from myne.server import MyneFactory
 from myne.controller import ControllerFactory
 def LogTimestamp():

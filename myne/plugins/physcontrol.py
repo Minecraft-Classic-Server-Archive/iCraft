@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -37,6 +39,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
         "physics": "commandPhysics",
         #"physflush": "commandPhysflush",
         "unflood": "commandUnflood",
+        "deflood": "commandUnflood",
         "fwater": "commandFwater",
         "asd":"commandASD",
     }
@@ -44,7 +47,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
     @world_list
     @op_only
     def commandUnflood(self, parts, byuser, overriderank):
-        "/unflood worldname - Op\nSlowly removes all water and lava from the map."
+        "/unflood worldname - Op\nAliases: deflood\nSlowly removes all water and lava from the map."
         self.client.world.start_unflooding()
         self.client.sendWorldMessage("Unflooding has been initiated.")
     

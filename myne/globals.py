@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -269,8 +271,6 @@ def Staff(self, server=None):
         factory = server
     else:
         factory = self.client.factory
-    if len(factory.owner):
-        Temp.append (["Owner: "+factory.owner])
     if len(factory.directors):
         Temp.append (["Directors:"] + list(factory.directors))
     if len(factory.admins):
@@ -287,6 +287,10 @@ def Credits(self, server=None):
         factory = self.client.factory
     Temp.append ("Thanks to the following people for making iCraft possible...")
     Temp.append ("Creators: aera (Myne), PixelEater (Mynecraft), iKJames")
-    Temp.append ("Devs: Adam01, revenant, gdude2002, gothfox, AndrewPH, Varriount, erronjason, destroyerx1, ntfwc, Dwarfy, goober, willempiee")
-    Temp.append ("Others: Bidoof_King, Rils, fragmer, PyroPyro, TkTech, the Users, the Testers, the Modders, the Community, ...")
+    Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason,")
+    Temp.append ("gdude2002, goober, gothfox, ntfwc, revenant, Saanix, tehcid,")
+    Temp.append ("Varriount, willempiee")
+    Temp.append ("Others: 099, Aquaskys, Bidoof_King, fragmer, Kelraider, MAup,")
+    Temp.append ("MystX, NotMeh, PyroPyro, Rils, Roujo, setveen, TkTech,")
+    Temp.append ("Uninspired, ...")
     return Temp

@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -54,8 +56,8 @@ class GreiferDetectorPlugin(ProtocolPlugin):
                 username = self.client.username
                 def griefcheck():
                     if self.var_blockchcount >= 35:
-                        self.client.factory.queue.put((self.client, TASK_STAFFMESSAGE, ("#%s%s: %s%s" % (COLOUR_DARKGREEN, 'SERVER', COLOUR_DARKGREEN, "ALERT! Possible Griefer behavior detected in"))))
-                        self.client.factory.queue.put((self.client, TASK_STAFFMESSAGE, ("#%s%s: %s%s" % (COLOUR_DARKGREEN, 'SERVER', COLOUR_DARKGREEN, "'" + worldname + "'! Username: " + username))))
+                        self.client.factory.queue.put((self.client, TASK_STAFFMESSAGE, ("#%s%s: %s%s" % (COLOUR_DARKGREEN, 'SERVER', COLOUR_DARKGREEN, "ALERT! Possible Griefer behavior detected in",False))))
+                        self.client.factory.queue.put((self.client, TASK_STAFFMESSAGE, ("#%s%s: %s%s" % (COLOUR_DARKGREEN, 'SERVER', COLOUR_DARKGREEN, "'" + worldname + "'! Username: " + username,False))))
                         self.client.log(username + " was detected as a possible griefer in '" + worldname + "'")
                         self.client.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | STAFF | "+username + " was detected as a possible griefer in '" + worldname + "'" + "\n")
                         self.client.adlog.flush()

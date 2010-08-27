@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -38,6 +40,7 @@ class PlayersPlugin(ProtocolPlugin):
     
     commands = {
         "who": "commandWho",
+        "whois": "commandWho",
         "players": "commandWho",
         "pinfo": "commandWho",
         "locate": "commandLocate",
@@ -65,7 +68,7 @@ class PlayersPlugin(ProtocolPlugin):
 
     @player_list
     def commandWho(self, parts, byuser, overriderank):
-        "/who [username] - Guest\nAliases: players, pinfo\nOnline players, or player lookup."
+        "/who [username] - Guest\nAliases: pinfo, players, whois\nOnline players, or player lookup."
         if len(parts) < 2:
             self.client.sendServerMessage("Do '/who username' for more info.")
             self.client.sendServerList(["Players:"] + list(self.client.factory.usernames))
@@ -89,7 +92,7 @@ class PlayersPlugin(ProtocolPlugin):
                 elif username.isMod():
                     self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLUE+"Mod")
                 elif username.isWorldOwner():
-                    self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKPURPLE+"World Owner")
+                    self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKYELLOW+"World Owner")
                 elif username.isOp():
                     self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKCYAN+"Operator")
                 elif username.isMember():
@@ -127,7 +130,7 @@ class PlayersPlugin(ProtocolPlugin):
                 elif username in self.client.factory.mods:
                     self.client.sendServerMessage(parts[1]+" - "+COLOUR_BLUE+"Mod")
                 elif username in self.client.world.owner:
-                    self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKPURPLE+"World Owner")
+                    self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKYELLOW+"World Owner")
                 elif username in self.client.world.ops:
                     self.client.sendServerMessage(parts[1]+" - "+COLOUR_DARKCYAN+"Operator")
                 elif username in self.client.factory.members:

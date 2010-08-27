@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -45,6 +47,7 @@ class helpPlugin(ProtocolPlugin):
 
     @info_list
     def commandHelp(self, parts, byuser, overriderank):
+        "Help me! I need help."
         if len(parts) > 1:
             try:
                 func = self.client.commands[parts[1].lower()]
@@ -58,12 +61,12 @@ class helpPlugin(ProtocolPlugin):
                 elif parts[1].lower() == "chat":
                     self.client.sendServerMessage("The Chats")
                     if self.client.isMod():
-                        self.client.sendServerMessage("@Whispers")    
-                        self.client.sendServerMessage("!World")
-                        self.client.sendServerMessage("#Staff")
+                        self.client.sendServerMessage("Whispers: @username Whispers")    
+                        self.client.sendServerMessage("WorldChat: !message")
+                        self.client.sendServerMessage("StaffChat: #message")
                     else:
-                        self.client.sendServerMessage("@Whispers")    
-                        self.client.sendServerMessage("!World")
+                        self.client.sendServerMessage("Whispers: @username Whispers")    
+                        self.client.sendServerMessage("WorldChat: !message")
                 elif parts[1].lower() == "physic":
                     self.client.sendServerMessage("The Physic Engine")
                     self.client.sendServerMessage("Turn physics on to use Physics (max of 5 worlds)")
@@ -93,8 +96,12 @@ class helpPlugin(ProtocolPlugin):
                         self.client.sendServerMessage("The Server Ranks - Spec")
                     else:
                         self.client.sendServerMessage("The Server Ranks - Guest")
-                    self.client.sendServerMessage("* "+COLOUR_DARKGREEN+"Owner "+COLOUR_GREEN+"Director "+COLOUR_RED+"Admin "+COLOUR_BLUE+"Mod "+COLOUR_PURPLE+"IRC")
-                    self.client.sendServerMessage("* "+COLOUR_DARKPURPLE+"World Owner "+COLOUR_DARKCYAN+"Op "+COLOUR_GREY+"Member "+COLOUR_CYAN+"Builder "+COLOUR_WHITE+"Guest "+COLOUR_BLACK+"Spec")
+                    self.client.sendNormalMessage(COLOUR_DARKGREEN+"Owner/Console "+COLOUR_GREEN+"Director "+COLOUR_RED+"Admin "+COLOUR_BLUE+"Mod "+COLOUR_PURPLE+"IRC")
+                    self.client.sendNormalMessage(COLOUR_DARKYELLOW+"World Owner "+COLOUR_DARKCYAN+"Op "+COLOUR_GREY+"Member "+COLOUR_CYAN+"Builder "+COLOUR_WHITE+"Guest "+COLOUR_BLACK+"Spec")
+                elif parts[1].lower() == "cc":
+                    self.client.sendServerMessage("The Color Codes")
+                    self.client.sendNormalMessage("&a%a &b%b &c%c &d%d &e%e &f%f")
+                    self.client.sendNormalMessage("&0%0 &1%1 &2%2 &3%3 &4%4 &5%5 &6%6 &7%7 &8%8 &9%9")
                 else:
                     self.client.sendServerMessage("Unknown command '%s'" % parts[1])
             else:
@@ -105,13 +112,14 @@ class helpPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("There's no help for that command.")
         else:
             self.client.sendServerMessage("Help Center")
-            self.client.sendServerMessage("Documents: /help [basics|chat|ranks|physic]")
+            self.client.sendServerMessage("Documents: /help [basics|chat|ranks|physic|cc]")
             self.client.sendServerMessage("Commands: /cmdlist - Lookup: /help command")
             self.client.sendServerMessage("About: /about")
             self.client.sendServerMessage("Credits: /credits")
 
     @info_list
     def commandCmdlist(self, parts, byuser, overriderank):
+        "I'm your tools."
         if len(parts) > 1:
             if parts[1].lower() == "all":
                 self.ListCommands("all")
@@ -193,6 +201,7 @@ class helpPlugin(ProtocolPlugin):
 
     @info_list
     def commandAbout(self, parts, byuser, overriderank):
+        "Learn all about me."
         self.client.sendServerMessage("About The Server - iCraft %s http://hlmc.net/" % VERSION)
         self.client.sendServerMessage("Name: "+self.client.factory.server_name)
         self.client.sendServerMessage("URL: "+self.client.factory.info_url)
@@ -202,6 +211,7 @@ class helpPlugin(ProtocolPlugin):
 
     @info_list
     def commandCredits(self, parts, byuser, overriderank):
+        "Give me credit."
         self.client.sendServerMessage("Credits")
         list = Credits(self)
         for each in list:

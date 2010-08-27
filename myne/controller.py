@@ -9,6 +9,7 @@
 #    And,
 #
 #    The iCraft team:
+#                   <Andrew Caluzzi> tehcid@gmail.com AKA "tehcid"
 #                   <Andrew Dolgov> fox@bah.org.ru AKA "gothfox"
 #                   <Andrew Horn> Andrew@GJOCommunity.com AKA "AndrewPH"
 #                   <Brad Reardon> brad@bradness.co.cc AKA "PixelEater"
@@ -16,6 +17,7 @@
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
@@ -29,7 +31,26 @@
 
 import logging
 import traceback
-import simplejson
+import os
+
+try:
+    import simplejson
+except ImportError:
+    try:
+        if (os.uname()[0] == "Darwin"):
+            print ("Sorry, but you need SimpleJSON on Mac.")
+            print ("It's as easy as: easy_install simplejson")
+        else:
+            print ("Sorry, but you need SimpleJSON to run iCraft")
+            print ("http://pypi.python.org/pypi/simplejson/")
+            print ("You can also try using this, readme included:")
+            print ("http://www.mediafire.com/?i2wmtfnzmay")
+    except:
+        print ("Sorry, but you need SimpleJSON to run iCraft")
+        print ("http://pypi.python.org/pypi/simplejson/")
+        print ("You can also try using this, readme included:")
+        print ("http://www.mediafire.com/?i2wmtfnzmay")
+
 from twisted.protocols.basic import LineReceiver
 from twisted.internet.protocol import Factory
 
