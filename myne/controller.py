@@ -50,6 +50,7 @@ except ImportError:
         print ("http://pypi.python.org/pypi/simplejson/")
         print ("You can also try using this, readme included:")
         print ("http://www.mediafire.com/?i2wmtfnzmay")
+    exit(1);
 
 from twisted.protocols.basic import LineReceiver
 from twisted.internet.protocol import Factory

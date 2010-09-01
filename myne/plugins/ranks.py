@@ -29,9 +29,6 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-#import random
-#import os
-#import shutil
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *

@@ -771,9 +771,9 @@ class CommandPlugin(ProtocolPlugin):
 
                     self.client.sendWhisper(self.client.username, text)
 
-                    self.client.log("WHISPER - "+self.client.username+" to "+username+": "+text)
+                    self.client.log("@"+self.client.username+" to "+username+": "+text)
 
-                    self.client.whisperlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | WHISPER | "+self.client.username+" to "+username+": "+text+"\n")
+                    self.client.whisperlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | @"+self.client.username+" to "+username+": "+text+"\n")
 
                     self.client.whisperlog.flush()
 

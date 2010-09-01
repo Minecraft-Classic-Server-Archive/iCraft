@@ -78,6 +78,9 @@ class EntityPlugin(ProtocolPlugin):
         self.var_entityselected = "None"
 
     def blockChanged(self, x, y, z, block, selected_block, byuser):
+        if not byuser:
+            #People shouldnt be blbing mobs :P
+            return
         "Hook trigger for block changes."
         world = self.client.world
         px,py,pz,ph,pp = self.client.x>>5,self.client.y>>5,self.client.z>>5,self.client.h,self.client.p
@@ -201,12 +204,7 @@ class EntityPlugin(ProtocolPlugin):
         clients = world.clients
         worldusernamelist = []
         for client in clients:
-            try:
-                worldusernamelist.append(client.username.lower())
-            except:
-                print traceback.format_exc()
-                print client.username.lower()
-                return
+            worldusernamelist.append(client.username)
         if not keyuser in worldusernamelist:
             world.var_entities_keyuser = username
             keyuser = username

@@ -48,11 +48,12 @@ def Rank(self, parts, byuser, overriderank,server=None):
                 return "You must provide a world"
         #Make builder
         if not server:
-            if not (self.client.username in world.ops or self.client.isMod()) and overriderank:
+            if not (self.client.username in world.ops or self.client.isMod()) and not overriderank:
                 return ("You are not high enough rank!")
         else:
-            if not ((parts[len(parts)-1]) in world.ops) or factory.isMod(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not ((parts[-1]) in world.ops) or factory.isMod(parts[-1]):
+                    return ("You are not high enough rank!")
         world.writers.add(username)
         if username in factory.usernames:
             user = factory.usernames[username]
@@ -71,11 +72,12 @@ def Rank(self, parts, byuser, overriderank,server=None):
             else:
                 return "You must provide a world"
         if not server:
-            if self.client.isWorldOwner()==False and overriderank==False:
+            if self.client.isWorldOwner()==False and not overriderank:
                 return ("You are not high enough rank!")
         else:
-            if not factory.isWorldOwner(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not factory.isWorldOwner(parts[-1]):
+                    return ("You are not high enough rank!")
         world.ops.add(username)
         return ("Opped %s" % username)
         #make op
@@ -85,8 +87,9 @@ def Rank(self, parts, byuser, overriderank,server=None):
             if not self.client.isMod():
                 return ("You are not high enough rank!")
         else:
-            if not factory.isMod(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not factory.isMod(parts[-1]):
+                    return ("You are not high enough rank!")
         factory.members.add(username)
         if username in factory.usernames:
             factory.usernames[username].sendMemberUpdate()
@@ -97,8 +100,9 @@ def Rank(self, parts, byuser, overriderank,server=None):
             if not self.client.isDirector():
                 return ("You are not high enough rank!")
         else:
-            if not factory.isDirector(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not factory.isDirector(parts[-1]):
+                    return ("You are not high enough rank!")
         factory.mods.add(username)
         if username in factory.usernames:
             factory.usernames[username].sendModUpdate()
@@ -109,8 +113,9 @@ def Rank(self, parts, byuser, overriderank,server=None):
             if not self.client.isDirector():
                 return ("You are not high enough rank!")
         else:
-            if not factory.isDirector(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not factory.isDirector(parts[-1]):
+                    return ("You are not high enough rank!")
         factory.admins.add(username)
         if username in factory.usernames:
             factory.usernames[username].sendAdminUpdate()
@@ -121,8 +126,9 @@ def Rank(self, parts, byuser, overriderank,server=None):
             if not self.client.isOwner():
                 return ("You are not high enough rank!")
         else:
-            if not factory.isOwner(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not factory.isOwner(parts[-1]):
+                    return ("You are not high enough rank!")
         factory.directors.add(username)
         if username in factory.usernames:
             factory.usernames[username].sendDirectorUpdate()
@@ -152,8 +158,9 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             if not ((self.client.username in world.ops) or self.client.isMod()) and overriderank:
                 return ("You are not high enough rank!")
         else:
-            if not ((parts[len(parts)-1]) in world.ops) or factory.isMod(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not ((parts[-1]) in world.ops) or factory.isMod(parts[-1]):
+                    return ("You are not high enough rank!")
         try:
             world.writers.remove(username)
         except KeyError:
@@ -178,8 +185,9 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             if not self.client.isWorldOwner() and world != self.client.world:
                 return ("You are not an World Owner!")
         else:
-            if not factory.isWorldOwner(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not factory.isWorldOwner(parts[-1]):
+                    return ("You are not high enough rank!")
         try:
             world.ops.remove(username)
         except KeyError:
@@ -196,8 +204,9 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             if not self.client.isMod():
                 return ("You are not high enough rank!")
         else:
-            if not factory.isMod(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not factory.isMod(parts[-1]):
+                    return ("You are not high enough rank!")
         if username in factory.members:
             factory.members.remove(username)
         else:
@@ -211,8 +220,9 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             if not self.client.isDirector():
                 return ("You are not high enough rank!")
         else:
-            if not factory.isDirector(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not factory.isDirector(parts[-1]):
+                    return ("You are not high enough rank!")
         if username in factory.mods:
             factory.mods.remove(username)
         else:
@@ -226,8 +236,9 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             if not self.client.isDirector():
                 return ("You are not high enough rank!")
         else:
-            if not factory.isDirector(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not factory.isDirector(parts[-1]):
+                    return ("You are not high enough rank!")
         if username in factory.admins:
             factory.admins.remove(username)
             if username in factory.usernames:
@@ -241,8 +252,9 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             if not self.client.isOwner():
                 return ("You are not high enough rank!")
         else:
-            if not factory.isOwner(parts[len(parts)-1]):
-                return ("You are not high enough rank!")
+            if not parts[-1] == "console":
+                if not factory.isOwner(parts[-1]):
+                    return ("You are not high enough rank!")
         if username in factory.directors:
             factory.directors.remove(username)
             if username in factory.usernames:
@@ -290,7 +302,7 @@ def Credits(self, server=None):
     Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason,")
     Temp.append ("gdude2002, goober, gothfox, ntfwc, revenant, Saanix, tehcid,")
     Temp.append ("Varriount, willempiee")
-    Temp.append ("Others: 099, Aquaskys, Bidoof_King, fragmer, Kelraider, MAup,")
-    Temp.append ("MystX, NotMeh, PyroPyro, Rils, Roujo, setveen, TkTech,")
-    Temp.append ("Uninspired, ...")
+    Temp.append ("Others: 099, Akai, Aquaskys, Bidoof_King, fragmer, Kelraider,")
+    Temp.append ("MAup, MystX, NotMeh, PyroPyro, Rils, Roadcrosser, Roujo,")
+    Temp.append ("setveen, TkTech, Uninspired, ...")
     return Temp

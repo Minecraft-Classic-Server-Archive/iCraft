@@ -51,7 +51,7 @@ class TwitterPlugin(ProtocolPlugin):
     @info_list
     def commandTlogin(self, parts, byuser, overriderank):
         "/tlog username password - Guest\nReplace username and password to login to Twitter."
-        if not overriderank:
+        if not byuser:
             try:
                 if len(parts[1]) < 1:
                     self.client.sendServerMessage("Please input a username and password.")
@@ -73,7 +73,7 @@ class TwitterPlugin(ProtocolPlugin):
     @info_list
     def commandTweet(self, parts, byuser, overriderank):
         "/tweet tweet - Guest\nSend a tweet to Twitter after using /tlog."
-        if not overriderank:
+        if not byuser:
             if len(self.tuser) < 1:
                 self.client.sendServerMessage("Please do /tlog first.")
             else:
@@ -89,7 +89,7 @@ class TwitterPlugin(ProtocolPlugin):
     @info_list
     def commandDetails(self, parts, byuser, overriderank):
         "/tdetails - Guest\nGives you your Twitter login details, from /tlog."
-        if not overriderank:
+        if not byuser:
             if len(self.tuser) < 1:
                 self.client.sendServerMessage("Username: "+COLOUR_RED+"Not entered!")
             else:

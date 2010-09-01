@@ -1,3 +1,28 @@
+v2.6.1 (for Mac v1.0.1):
+
+ADDED:
+- Folder containing Artwork (logos and such)
+- The Topographer, which makes a top-down view of maps
+
+CHANGED:
+- The folder 'mapconverter' to 'converter'
+- The folder 'status' to 'website'
+- Lava to only kill if moving kind (can edit to change for old way)
+- grieferdetector's coloring (darkgreen then darkred)
+
+FIXED:
+- If bots.esper.net is the network it'll display irc.esper.net in /about
+- The problem caused by Mobs disconnecting people.
+- Problem with lava while loading a unloaded world
+- Errors still showing when we didn't want them to
+- Out of bounds errors
+- A irc color code showing in the console, when it never should of
+- More logging related stuff
+- Made it so that only default boots up each time (prevents threading issues with a huge amount of worlds, makes it easier to recover from)
+- Fixed errors caused in the console
+- Pontential bug allowing people to tweet from cmdblocks (possible security concern)
+- Improved Garbage Collection (pontential memory leaks and new information display)
+
 v2.6.0 (for Mac v1.0.0);
 - Initial release on Mac, introduces proper Mac support.
 

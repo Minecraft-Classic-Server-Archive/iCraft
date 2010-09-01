@@ -40,6 +40,7 @@ except ImportError:
     print ("http://twistedmatrix.com/trac/wiki/Downloads")
     print ("You can also try using this, readme included:")
     print ("http://www.mediafire.com/?i2wmtfnzmay")
+    exit(1);
 
 from twisted.internet import protocol
 import logging
@@ -99,7 +100,6 @@ class ChatBot(irc.IRCClient):
                         self.ops.append(name[1:])
         except:
             logging.log(logging.ERROR,traceback.format_exc())
-            #self.msg(user,"ERROR " + traceback.format_exc())
 
     def AdminCommand(self, command):
         try:
@@ -192,7 +192,7 @@ class ChatBot(irc.IRCClient):
                 else:
                     self.msg(user, "07You must be an op to use %s." %command[1])
             if not command[1].startswith("#"):
-                logging.log(logging.INFO,"07%s just used: %s" %(user," ".join(command[1:])))
+                logging.log(logging.INFO,"%s just used: %s" %(user," ".join(command[1:])))
         except:
             logging.log(logging.ERROR,traceback.format_exc())
             self.msg(user,"ERROR " + traceback.format_exc())
@@ -364,75 +364,75 @@ class ChatBot(irc.IRCClient):
             self.msg(self.factory.irc_channel,"ERROR " + traceback.format_exc())
 
     def action(self, user, channel, msg):
-        msg = message.replace("./", " /")
-        msg = message.replace(".!", " !")
+        msg = msg.replace("./", " /")
+        msg = msg.replace(".!", " !")
         """This will get called when the bot sees someone do an action."""
         user = user.split('!', 1)[0]
         msg = "".join([char for char in msg if ord(char) < 128 and char != "" or "0"])
         self.factory.queue.put((self, TASK_ACTION, (127, COLOUR_PURPLE, user, msg)))
 
     def sendMessage(self, username, message):
-        msg = message.replace("&0", "01")
-        msg = message.replace("&1", "02")
-        msg = message.replace("&2", "03")
-        msg = message.replace("&3", "10")
-        msg = message.replace("&4", "05")
-        msg = message.replace("&5", "04")
-        msg = message.replace("&6", "07")
-        msg = message.replace("&7", "15")
-        msg = message.replace("&8", "14")
-        msg = message.replace("&9", "12")
-        msg = message.replace("&a", "09")
-        msg = message.replace("&b", "11")
-        msg = message.replace("&c", "04")
-        msg = message.replace("&d", "13")
-        msg = message.replace("&e", "08")
-        msg = message.replace("&f", "00")
+        message = message.replace("&0", "01")
+        message = message.replace("&1", "02")
+        message = message.replace("&2", "03")
+        message = message.replace("&3", "10")
+        message = message.replace("&4", "05")
+        message = message.replace("&5", "04")
+        message = message.replace("&6", "07")
+        message = message.replace("&7", "15")
+        message = message.replace("&8", "14")
+        message = message.replace("&9", "12")
+        message = message.replace("&a", "09")
+        message = message.replace("&b", "11")
+        message = message.replace("&c", "04")
+        message = message.replace("&d", "13")
+        message = message.replace("&e", "08")
+        message = message.replace("&f", "00")
         self.msg(self.factory.irc_channel, "%s: %s" % (username, message))
 
     def sendServerMessage(self, message,admin=False,user="",IRC=False):
-        msg = message.replace("./", " /")
-        msg = message.replace(".!", " !")
+        message = message.replace("./", " /")
+        message = message.replace(".!", " !")
+        message = message.replace("&0", "01")
+        message = message.replace("&1", "02")
+        message = message.replace("&2", "03")
+        message = message.replace("&3", "10")
+        message = message.replace("&4", "05")
+        message = message.replace("&5", "04")
+        message = message.replace("&6", "07")
+        message = message.replace("&7", "15")
+        message = message.replace("&8", "14")
+        message = message.replace("&9", "12")
+        message = message.replace("&a", "09")
+        message = message.replace("&b", "11")
+        message = message.replace("&c", "04")
+        message = message.replace("&d", "13")
+        message = message.replace("&e", "08")
+        message = message.replace("&f", "00")
         if admin:
             for op in self.ops:
-                if not IRC:
+                if not op == user or not IRC:
                     self.msg(op, "%s" % (message))
         else:
-            msg = message.replace("&0", "01")
-            msg = message.replace("&1", "02")
-            msg = message.replace("&2", "03")
-            msg = message.replace("&3", "10")
-            msg = message.replace("&4", "05")
-            msg = message.replace("&5", "04")
-            msg = message.replace("&6", "07")
-            msg = message.replace("&7", "15")
-            msg = message.replace("&8", "14")
-            msg = message.replace("&9", "12")
-            msg = message.replace("&a", "09")
-            msg = message.replace("&b", "11")
-            msg = message.replace("&c", "04")
-            msg = message.replace("&d", "13")
-            msg = message.replace("&e", "08")
-            msg = message.replace("&f", "00")
             self.msg(self.factory.irc_channel, "%s" % (message, ))
 
     def sendAction(self, username, message):
-        msg = message.replace("&0", "01")
-        msg = message.replace("&1", "02")
-        msg = message.replace("&2", "03")
-        msg = message.replace("&3", "10")
-        msg = message.replace("&4", "05")
-        msg = message.replace("&5", "04")
-        msg = message.replace("&6", "07")
-        msg = message.replace("&7", "15")
-        msg = message.replace("&8", "14")
-        msg = message.replace("&9", "12")
-        msg = message.replace("&a", "09")
-        msg = message.replace("&b", "11")
-        msg = message.replace("&c", "04")
-        msg = message.replace("&d", "13")
-        msg = message.replace("&e", "08")
-        msg = message.replace("&f", "00")
+        message = message.replace("&0", "01")
+        message = message.replace("&1", "02")
+        message = message.replace("&2", "03")
+        message = message.replace("&3", "10")
+        message = message.replace("&4", "05")
+        message = message.replace("&5", "04")
+        message = message.replace("&6", "07")
+        message = message.replace("&7", "15")
+        message = message.replace("&8", "14")
+        message = message.replace("&9", "12")
+        message = message.replace("&a", "09")
+        message = message.replace("&b", "11")
+        message = message.replace("&c", "04")
+        message = message.replace("&d", "13")
+        message = message.replace("&e", "08")
+        message = message.replace("&f", "00")
         self.msg(self.factory.irc_channel, "* %s %s" % (username, message))
 
     # irc callbacks
@@ -451,6 +451,7 @@ class ChatBot(irc.IRCClient):
         """Called when I observe someone else being kicked from a channel.
         """
         if kickee in self.ops:
+
             self.ops.remove(kickee)
         pass
 

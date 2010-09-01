@@ -105,50 +105,55 @@ class StdinPlugin(threading.Thread):
                             message[0] = message[0][1:]
                             message[len(message)-1] = message[len(message)-1][:len(message[len(message)-1])-1]
                             # It's a command
-                            #kick*, ban*, boot*, shutdown*, new*, about*, plr, plu, pll, u, say*, me*, srb*,
                             if message[0] == "kick":
-                                for client in self.server.clients.values():
-                                    if client.username==message[1]:
-                                        client.sendError("You were kicked!")
-                                        print (message[1]+" has been kicked from the server.")
-                                    else:
-                                        print ("User "+str(message[1])+" is not online.")
-                            elif message[0] == "ban":
-                                username = message[1]
-                                if self.server.isBanned(username):
-                                    print ("%s is already Banned." % username)
+                                if len(message) == 1:
+                                    print ("Please specify a username.")
                                 else:
-                                    if not len(message)>2:
-                                        print ("Please give a reason.")
+                                    for client in self.server.clients.values():
+                                        if client.username==message[1]:
+                                            client.sendError("You were kicked!")
+                                            print (message[1]+" has been kicked from the server.")
+                                        else:
+                                            print ("User "+str(message[1])+" is not online.")
+                            elif message[0] == "ban":
+                                if len(message) == 1:
+                                    print ("Please specify a username.")
+                                else:
+                                    username = message[1]
+                                    if self.server.isBanned(username):
+                                        print ("%s is already Banned." % username)
                                     else:
-                                        self.server.addBan(username, " ".join(message[2:]))
-                                        if username in self.server.usernames:
-                                            ip = self.server.usernames[username].transport.getPeer().host
-                                            self.server.usernames[username].sendError("You got Banned!")
-                                            self.server.addIpBan(ip, " ".join(message[2:]))
+                                        if not len(message)>2:
+                                            print ("Please give a reason.")
+                                        else:
+                                            self.server.addBan(username, " ".join(message[2:]))
                                             if username in self.server.usernames:
+                                                ip = self.server.usernames[username].transport.getPeer().host
                                                 self.server.usernames[username].sendError("You got Banned!")
-                                            print ("%s has been IPBanned." % ip)
-                                        print ("%s has been Banned." % username)
+                                                self.server.addIpBan(ip, " ".join(message[2:]))
+                                                if username in self.server.usernames:
+                                                    self.server.usernames[username].sendError("You got Banned!")
+                                                print ("%s has been IPBanned." % ip)
+                                            print ("%s has been Banned." % username)
                             elif message[0] == "rank":
-                                if not message > 1:
-                                    print ("You must provide a username.")
+                                if len(message) == 1:
+                                    print ("Please specify a username.")
                                 else:
                                     try:
-                                        print Rank(self, message, False, True, self.server)
+                                        print Rank(self, message + ["console"], False, True, self.server)
                                     except:
                                         print ("You must specify a rank and username.")
                             elif message[0] == "derank":
-                                if not message > 1:
-                                    print ("You must provide a username.")
+                                if len(message) == 1:
+                                    print ("Please specify a username.")
                                 else:
                                     try:
-                                        print DeRank(self, message, False, True, self.server)
+                                        print DeRank(self, message + ["console"], False, True, self.server)
                                     except:
                                         print ("You must specify a rank and username.")
                             elif message[0] == "spec":
-                                if not message > 1:
-                                    print ("You must provide a username.")
+                                if len(message) == 1:
+                                    print ("Please specify a username.")
                                 else:
                                     try:
                                         print Spec(self, message[1], False, True, self.server)
@@ -159,6 +164,7 @@ class StdinPlugin(threading.Thread):
                                     world = str(message[1]).lower()
                                 except:
                                     print ("Please specify a worldname.")
+                                    continue
                                 self.server.loadWorld("worlds/"+world, world)
                                 print ("World '"+world+"' booted.")
                             elif message[0] == ("shutdown"):
@@ -166,6 +172,7 @@ class StdinPlugin(threading.Thread):
                                     world = str(message[1]).lower()
                                 except:
                                     print ("Please specify a worldname.")
+                                    continue
                                 self.server.unloadWorld(world)
                                 print ("World '"+world+"' shutdown.")
                             elif message[0] == ("new"):
@@ -211,8 +218,6 @@ class StdinPlugin(threading.Thread):
                                     print ("Please type a message.")
                                 else:
                                     self.server.queue.put((self, TASK_SERVERMESSAGE, ("[MSG] "+(" ".join(message[1:])))))
-                            elif message[0] == ("srb"):
-                                self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[URGENT] Server Reboot - Back in a Flash")))
                             elif message[0] == ("u"):
                                 if len(message) == 1:
                                     print ("Please type a message.")
@@ -290,7 +295,7 @@ class StdinPlugin(threading.Thread):
                                         print ("That world does not exist. Try !world message")
                         elif message.startswith("#"):
                             #It's an staff-only message.
-                            if len(message) == 1:
+                            if len(message) <= 2:
                                 print ("Please include a message to send.")
                             else:
                                 try:

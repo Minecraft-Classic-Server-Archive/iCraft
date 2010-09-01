@@ -9,7 +9,7 @@ PROVIDED, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM ITS USE.
 
 The terms of attribution follow. According to the way you use/distribute this software, you must follow such instructions. Any terms of higher severity (i.e. Relicensing above Modification) carry on terms from lower severity attribution.
 
-These terms are subject to change at any time without warning or consent.
+This license is subject to change without warning or consent. In the event that it does, the old version becomes void in favour of the new one, and any and all releases must follow this license. This means that everyone must abide by the new license, even if the copy they downloaded was under an older version of it.
 
 1. Execution
 No terms apply to this section of attribution, however if any sort of source code is modified, the next section of attribution must be followed as well.
@@ -18,8 +18,9 @@ No terms apply to this section of attribution, however if any sort of source cod
 If one uses the source code of iCraft in modification, specific terms must comply. These include, and are not limited to:
 
 a. The original content must stay in the "/credits" command, and only addition to the context and source of this command is allowed to preserve credits where they apply.
-b. The command "/about" must stay mentioned in the "/help" command, as well as "/credits" being mentioned in "/help" too.
+b. The command "/about" must stay mentioned in the "/help" command, as well as "/credits" being mentioned in "/help" and "/about" too.
 c. All persons of the VIP in-gaming rank (yellow name) must stay intact. Although users may be added to this list, the users that were originally on it may not.
+d. All major modifications to this software must be released. A "major modification" includes but is not limited to: A modification of the core, the addition of a new game-mode, or a complete overhaul of the code. See the next section of attribution.
 
 3. Redistribution
 "Redistribution" applys to software forking, release of modified source code, and any other related actions. Terms from before apply here as well, along with the fact that it must be stated in "/about" that the iCraft software was used as a base for the released source code.

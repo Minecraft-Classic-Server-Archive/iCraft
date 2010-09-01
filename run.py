@@ -46,6 +46,7 @@ if not sys.version_info[:2] == (2, 6):
         print ("Sorry, but you need Python 2.6.x to run iCraft")
         print ("http://www.python.org/download/releases/2.6.5/")
         print ("You'll also need Zope, Twisted and SimpleJSON.")
+    exit(1);
 
 #!/usr/bin/python
 

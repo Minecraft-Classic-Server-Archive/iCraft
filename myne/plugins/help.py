@@ -207,12 +207,15 @@ class helpPlugin(ProtocolPlugin):
         self.client.sendServerMessage("URL: "+self.client.factory.info_url)
         self.client.sendServerMessage("Owner: "+self.client.factory.owner)
         if self.client.factory.config.getboolean("irc", "use_irc"):
-            self.client.sendServerMessage("IRC: "+self.client.factory.config.get("irc", "server")+" "+self.client.factory.irc_channel)
+            if self.client.factory.config.get("irc", "server") == "bots.esper.net":
+                self.client.sendServerMessage("IRC: irc.esper.net "+self.client.factory.irc_channel)
+            else:
+                self.client.sendServerMessage("IRC: "+self.client.factory.config.get("irc", "server")+" "+self.client.factory.irc_channel)
 
     @info_list
     def commandCredits(self, parts, byuser, overriderank):
         "Give me credit."
-        self.client.sendServerMessage("Credits")
+        self.client.sendServerMessage("The Credits")
         list = Credits(self)
         for each in list:
             self.client.sendSplitServerMessage(each)

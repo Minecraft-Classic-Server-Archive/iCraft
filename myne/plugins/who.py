@@ -149,7 +149,6 @@ class PlayersPlugin(ProtocolPlugin):
                     mins = (t % 3600) // 60
                     desc = "%id, %ih, %im" % (days, hours, mins)
                     self.client.sendServerMessage("Last Seen: %s ago." % (desc))
-                    #self.commandLastseen(parts, byuser, overriderank)
                 if user in bank:
                     self.client.sendServerMessage("Balance: C%d." %(bank[user]))
                 else:

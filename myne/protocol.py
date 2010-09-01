@@ -629,7 +629,7 @@ class MyneServerProtocol(Protocol):
             color = COLOUR_RED
         elif self.isMod():
             color = COLOUR_BLUE
-        elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro" or self.username.lower() == "tehcid" or self.username.lower() == "099" or self.username.lower() == "setveen" or self.username.lower() == "aquaskys" or self.username.lower() == "kelraider" or self.username.lower() == "uninspired" or self.username.lower() == "saanix" or self.username.lower() == "roujo" or self.username.lower() == "maup" or self.username.lower() == "mystx":
+        elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro" or self.username.lower() == "tehcid" or self.username.lower() == "099" or self.username.lower() == "setveen" or self.username.lower() == "aquaskys" or self.username.lower() == "kelraider" or self.username.lower() == "uninspired" or self.username.lower() == "saanix" or self.username.lower() == "roujo" or self.username.lower() == "maup" or self.username.lower() == "mystx" or self.username.lower() == "akai" or self.username.lower() == "roadcrosser":
             color = COLOUR_YELLOW
         elif self.isWorldOwner():
             color = COLOUR_DARKYELLOW
@@ -968,8 +968,12 @@ class MyneServerProtocol(Protocol):
     def AllowedToBuild(self,x,y,z):
         build = False
         assigned = []
-        check_offset = self.world.blockstore.get_offset(x, y, z)
-        block = ord(self.world.blockstore.raw_blocks[check_offset])
+        try:
+            check_offset = self.world.blockstore.get_offset(x, y, z)
+            block = ord(self.world.blockstore.raw_blocks[check_offset])
+        except:
+            self.sendServerMessage("Out of bounds.")
+            return False
         if block == BLOCK_SOLID and not self.isOp():
             return False
         for id,zone in self.world.userzones.items():
@@ -1085,10 +1089,7 @@ class MyneServerProtocol(Protocol):
             return True
         if self.world.all_write:
             return True
-        #if self.world.id == self.factory.default_name:
         self.sendServerMessage("This map is locked. You must be Builder/Op or Mod+ to build here.")
-        #else:
-            #self.sendServerMessage("This map is locked. You must be Builder+ to build here.")
         return False
 
     def GetBlockValue(self, value):

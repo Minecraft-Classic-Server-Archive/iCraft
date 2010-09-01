@@ -29,41 +29,53 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import random
-from myne.plugins import ProtocolPlugin
-from myne.decorators import *
-from myne.constants import *
-
-class HidePlugin(ProtocolPlugin):
-    
-    commands = {
-        "hide": "commandHide",
-        "cloak": "commandHide",
-    }
-    
-    hooks = {
-        "playerpos": "playerMoved",
-    }
-    
-    def gotClient(self):
-        self.hidden = False
-    
-    def playerMoved(self, x, y, z, h, p):
-        "Stops transmission of player positions if hide is on."
-        if self.hidden:
-            return False
-    
-    @player_list
-    @op_only
-    def commandHide(self, params, byuser, overriderank):
-        "/hide - Op\nAliases: cloak\nHides you so no other players can see you. Toggle."
-        if not self.hidden:
-            self.client.sendServerMessage("You have vanished.")
-            self.hidden = True
-            # Send the "player has disconnected" command to people
-            self.client.queueTask(TASK_PLAYERLEAVE, [self.client.id])
-        else:
-            self.client.sendServerMessage("That was Magic!")
-            self.hidden = False
-            #Imagine that! They've mysteriously appeared.
-            self.client.queueTask(TASK_NEWPLAYER, [self.client.id, self.client.username, self.client.x, self.client.y, self.client.z, self.client.h, self.client.p])
+BLOCK_AIR = 0
+BLOCK_ROCK = 1
+BLOCK_GRASS = 2
+BLOCK_DIRT = 3
+BLOCK_STONE = 4
+BLOCK_WOOD = 5
+BLOCK_PLANT = 6
+BLOCK_GROUND_ROCK = 7
+BLOCK_WATER = 8
+BLOCK_STILL_WATER = 9
+BLOCK_LAVA = 10
+BLOCK_STILL_LAVA = 11
+BLOCK_SAND = 12
+BLOCK_GRAVEL = 13
+BLOCK_GOLD_ORE = 14
+BLOCK_COPPER_ORE = 15
+BLOCK_COAL_ORE = 16
+BLOCK_LOG = 17
+BLOCK_LEAVES = 18
+BLOCK_SPONGE = 19
+BLOCK_GLASS = 20
+BLOCK_RED_CLOTH = 21
+BLOCK_ORANGE_CLOTH = 22
+BLOCK_YELLOW_CLOTH = 23
+BLOCK_LIME_CLOTH = 24
+BLOCK_GREEN_CLOTH = 25
+BLOCK_TURQUOISE_CLOTH = 26
+BLOCK_CYAN_CLOTH = 27
+BLOCK_BLUE_CLOTH = 28
+BLOCK_INDIGO_CLOTH = 29
+BLOCK_VIOLET_CLOTH = 30
+BLOCK_PURPLE_CLOTH = 31
+BLOCK_MAGENTA_CLOTH = 32
+BLOCK_PINK_CLOTH = 33
+BLOCK_DARKGREY_CLOTH = 34
+BLOCK_GREY_CLOTH = 35
+BLOCK_WHITE_CLOTH = 36
+BLOCK_YELLOW_FLOWER = 37
+BLOCK_RED_FLOWER = 38
+BLOCK_BROWN_MUSHROOM = 39
+BLOCK_RED_MUSHROOM = 40
+BLOCK_GOLD = 41
+BLOCK_IRON = 42
+BLOCK_DOUBLESTEP = 43
+BLOCK_STEP = 44
+BLOCK_BRICK = 45
+BLOCK_TNT = 46
+BLOCK_BOOKCASE = 47
+BLOCK_MOSSY_STONE = 48
+BLOCK_OBSIDIAN = 49

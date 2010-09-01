@@ -37,7 +37,6 @@ class FetchPlugin(ProtocolPlugin):
     commands = {
         "fetch": "commandFetch",
         "bring": "commandFetch",
-        "invite": "commandInvite",
     }
 
     hooks = {
@@ -78,9 +77,3 @@ class FetchPlugin(ProtocolPlugin):
         user.var_fetchrequest = True
         user.var_fetchdata = (self.client,self.client.world,rx,ry,rz)
         self.client.sendServerMessage("The fetch request has been sent.")
-
-    @player_list
-    @op_only
-    def commandInvite(self, user, byuser, overriderank):
-        "/invite username - Op\nInvites a player to come to you."
-        self.client.sendServerMessage("Sorry, this command is under construction.")

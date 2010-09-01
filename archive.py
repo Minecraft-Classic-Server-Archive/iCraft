@@ -39,7 +39,6 @@ import urllib2
 import cookielib
 import re
 from twisted.internet import reactor, protocol
-
 from myne.protocol import MyneServerProtocol, TYPE_FORMATS
 from myne.constants import *
 
@@ -177,6 +176,7 @@ def main():
 	    config.read(os.path.join(os.path.dirname(__file__), "client.conf"))
        except:
            print ("You need to rename client.example.conf to client.conf")
+           exit(1);
 	rip(sys.argv[1], config.get("client", "username"), config.get("client", "password"))
 
 # this only runs if the module was *not* imported

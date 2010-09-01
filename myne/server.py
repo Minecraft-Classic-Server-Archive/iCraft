@@ -115,16 +115,14 @@ class MyneFactory(Factory):
         self.wordfilter = ConfigParser()
         self.save_count = 1
         self.delay_count = 1
-        try:
-            self.config.read("server.conf")
-        except:
-            print ("You need to rename server.example.conf to server.conf")
+        self.config.read("server.conf")
         self.saving = False
         try:
             self.max_clients = self.config.getint("main", "max_clients")
         except:
-            print ("You're using a outdated server.conf file")
+            print ("You might be using a outdated server.conf file")
             print ("You need to rename server.example.conf to server.conf")
+            exit(1);
         self.server_name = self.config.get("main", "name")
         self.server_message = self.config.get("main", "description")
         self.initial_greeting = self.config.get("main", "greeting").replace("\\n", "\n")
@@ -158,12 +156,13 @@ class MyneFactory(Factory):
             self.irc_relay = None
         self.default_loaded = False
         #WORD FILTER LOL
+        self.wordfilter.read("wordfilter.conf")
+        self.filter = []
         try:
-            self.wordfilter.read("wordfilter.conf")
+            number = int(self.wordfilter.get("filter","count"))
         except:
             print ("You need to rename wordfilter.example.conf to wordfilter.conf")
-        self.filter = []
-        number = int(self.wordfilter.get("filter","count"))
+            exit(1);
         for x in range(number):
             self.filter = self.filter + [[self.wordfilter.get("filter","s"+str(x)),self.wordfilter.get("filter","r"+str(x))]]
         # Salt, for the heartbeat server/verify-names
@@ -219,6 +218,13 @@ class MyneFactory(Factory):
         if self.enable_archives:
             self.loadPlugin('archives')
             reactor.callLater(1, self.loadArchives)
+        gc.disable()
+        self.cleanGarbage()
+
+    def cleanGarbage(self):
+        count = gc.collect()
+        logging.log(logging.INFO, "%i garbage objects collected, %i were uncollected." % ( count, len(gc.garbage)))
+        reactor.callLater(60*15, self.cleanGarbage)
 
     def loadMeta(self):
         "Loads the 'meta' - variables that change with the server (worlds, admins, etc.)"
@@ -231,12 +237,9 @@ class MyneFactory(Factory):
         # Read in the worlds
         if config.has_section("worlds"):
             for name in config.options("worlds"):
-                self.worlds[name] = None
                 if name is self.default_name:
                     self.default_loaded = True
         else:
-            self.worlds[self.default_name] = None
-        if not self.default_loaded:
             self.worlds[self.default_name] = None
         # Read in the admins
         if config.has_section("admins"):
@@ -279,7 +282,6 @@ class MyneFactory(Factory):
         specs = ConfigParser()
         lastseen = ConfigParser()
         # Make the sections
-        config.add_section("worlds")
         config.add_section("directors")
         config.add_section("admins")
         config.add_section("mods")
@@ -290,8 +292,6 @@ class MyneFactory(Factory):
         specs.add_section("spectators")
         lastseen.add_section("lastseen")
         # Write out things
-        for world in self.worlds:
-            config.set("worlds", world, "true")
         for director in self.directors:
             config.set("directors", director, "true")
         for admin in self.admins:
@@ -328,7 +328,6 @@ class MyneFactory(Factory):
             self.delay_count=1
         else:
             self.delay_count+=1
-        gc.collect()
         if (time.time() - self.last_heartbeat) > 180:
             self.heartbeat = None
             self.heartbeat = Heartbeat(self)
@@ -825,4 +824,4 @@ class MyneFactory(Factory):
                             self.archives[name] = {}
                         self.archives[name][when] = "%s/%s" % (name, subfilename)
         logging.log(logging.INFO, "Loaded %s discrete archives." % len(self.archives))
-        reactor.callLater(300, self.loadArchives)        
+        reactor.callLater(300, self.loadArchives)

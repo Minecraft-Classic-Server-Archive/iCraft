@@ -1,0 +1,14 @@
+syntax: glob
+*.pyc
+*.log
+*.wpr
+*.dat
+*.meta
+server.conf
+client.conf
+wordfilter.conf
+worlds/*
+archives/*
+logs/*
+converter/*blocks*
+converter/*.jar
