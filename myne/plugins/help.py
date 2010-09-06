@@ -39,6 +39,7 @@ class helpPlugin(ProtocolPlugin):
 
     commands = {
         "help": "commandHelp",
+        "?": "commandHelp",
         "cmdlist": "commandCmdlist",
         "commands": "commandCmdlist",
         "about": "commandAbout",
@@ -47,7 +48,7 @@ class helpPlugin(ProtocolPlugin):
 
     @info_list
     def commandHelp(self, parts, byuser, overriderank):
-        "Help me! I need help."
+        "/help [document/command] - Guest\nHelp for this server and commands."
         if len(parts) > 1:
             try:
                 func = self.client.commands[parts[1].lower()]
@@ -76,28 +77,7 @@ class helpPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("Sand will fall, grass will grow, sponges will absorb.")
                     self.client.sendServerMessage("Use unflood to move all water, lava, and spouts from the map.")
                 elif parts[1].lower() == "ranks":
-                    if self.client.isOwner():
-                        self.client.sendServerMessage("The Server Ranks - Owner")
-                    elif self.client.isDirector():
-                        self.client.sendServerMessage("The Server Ranks - Director")
-                    elif self.client.isAdmin():
-                        self.client.sendServerMessage("The Server Ranks - Admin")
-                    elif self.client.isMod():
-                        self.client.sendServerMessage("The Server Ranks - Mod")
-                    elif self.client.isWorldOwner():
-                        self.client.sendServerMessage("The Server Ranks - World Owner")
-                    elif self.client.isOp():
-                        self.client.sendServerMessage("The Server Ranks - Operator")
-                    elif self.client.isMember():
-                        self.client.sendServerMessage("The Server Ranks - Member")
-                    elif self.client.isWriter():
-                        self.client.sendServerMessage("The Server Ranks - Builder")
-                    elif self.client.isSpectator():
-                        self.client.sendServerMessage("The Server Ranks - Spec")
-                    else:
-                        self.client.sendServerMessage("The Server Ranks - Guest")
-                    self.client.sendNormalMessage(COLOUR_DARKGREEN+"Owner/Console "+COLOUR_GREEN+"Director "+COLOUR_RED+"Admin "+COLOUR_BLUE+"Mod "+COLOUR_PURPLE+"IRC")
-                    self.client.sendNormalMessage(COLOUR_DARKYELLOW+"World Owner "+COLOUR_DARKCYAN+"Op "+COLOUR_GREY+"Member "+COLOUR_CYAN+"Builder "+COLOUR_WHITE+"Guest "+COLOUR_BLACK+"Spec")
+                    self.client.sendNormalMessage(COLOUR_YELLOW+"The Server Ranks - "+COLOUR_DARKGREEN+"Owner/Console (9) "+COLOUR_GREEN+"Director (8) "+COLOUR_RED+"Admin (7) "+COLOUR_BLUE+"Mod (6) "+COLOUR_PURPLE+"IRC "+COLOUR_DARKYELLOW+"World Owner (5) "+COLOUR_DARKCYAN+"Op (4) "+COLOUR_GREY+"Member (3) "+COLOUR_CYAN+"Builder (2) "+COLOUR_WHITE+"Guest (1) "+COLOUR_BLACK+"Spec (0)")
                 elif parts[1].lower() == "cc":
                     self.client.sendServerMessage("The Color Codes")
                     self.client.sendNormalMessage("&a%a &b%b &c%c &d%d &e%e &f%f")
@@ -114,12 +94,11 @@ class helpPlugin(ProtocolPlugin):
             self.client.sendServerMessage("Help Center")
             self.client.sendServerMessage("Documents: /help [basics|chat|ranks|physic|cc]")
             self.client.sendServerMessage("Commands: /cmdlist - Lookup: /help command")
-            self.client.sendServerMessage("About: /about")
-            self.client.sendServerMessage("Credits: /credits")
+            self.client.sendServerMessage("About: /about | Credits: /credits")
 
     @info_list
     def commandCmdlist(self, parts, byuser, overriderank):
-        "I'm your tools."
+        "/cmdlist category - Guest\nThe command list of your rank, categories."
         if len(parts) > 1:
             if parts[1].lower() == "all":
                 self.ListCommands("all")
@@ -136,13 +115,8 @@ class helpPlugin(ProtocolPlugin):
             else:
                 self.client.sendServerMessage("Unknown cmdlist '%s'" % parts[1])
         else:
-            self.client.sendServerMessage("The Command List")
-            self.client.sendServerMessage("All: /cmdlist all")
-            self.client.sendServerMessage("Build: /cmdlist build")
-            self.client.sendServerMessage("World: /cmdlist world")
-            self.client.sendServerMessage("Player: /cmdlist player")
-            self.client.sendServerMessage("Info: /cmdlist info")
-            self.client.sendServerMessage("Other: /cmdlist other")
+            self.client.sendServerMessage("The Command List - Use: /cmdlist category")
+            self.client.sendServerMessage("Categories: all build world player info other")
 
     def ListCommands(self,list):
         self.client.sendServerMessage("%s Commands:"%list.title())
@@ -201,11 +175,11 @@ class helpPlugin(ProtocolPlugin):
 
     @info_list
     def commandAbout(self, parts, byuser, overriderank):
-        "Learn all about me."
-        self.client.sendServerMessage("About The Server - iCraft %s http://hlmc.net/" % VERSION)
-        self.client.sendServerMessage("Name: "+self.client.factory.server_name)
+        "/about - Guest\nAbout the server and software."
+        self.client.sendSplitServerMessage("About The Server, powered by iCraft %s" % VERSION)
+        self.client.sendSplitServerMessage("http://hlmc.net/ - Credits: /credits")
+        self.client.sendSplitServerMessage("Name: "+self.client.factory.server_name+"; owned by "+self.client.factory.owner)
         self.client.sendServerMessage("URL: "+self.client.factory.info_url)
-        self.client.sendServerMessage("Owner: "+self.client.factory.owner)
         if self.client.factory.config.getboolean("irc", "use_irc"):
             if self.client.factory.config.get("irc", "server") == "bots.esper.net":
                 self.client.sendServerMessage("IRC: irc.esper.net "+self.client.factory.irc_channel)
@@ -214,7 +188,7 @@ class helpPlugin(ProtocolPlugin):
 
     @info_list
     def commandCredits(self, parts, byuser, overriderank):
-        "Give me credit."
+        "/credits - Guest\nCredits for the creators, devs and testers."
         self.client.sendServerMessage("The Credits")
         list = Credits(self)
         for each in list:

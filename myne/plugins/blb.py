@@ -472,7 +472,8 @@ class BlbPlugin(ProtocolPlugin):
                         block_iter.next()
                     reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
                 except StopIteration:
-                    self.client.sendServerMessage("Your bcb just completed.")
+                    if byuser:
+                        self.client.sendServerMessage("Your bcb just completed.")
                     pass
             do_step()
 
@@ -602,7 +603,8 @@ class BlbPlugin(ProtocolPlugin):
                         block_iter.next()
                     reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
                 except StopIteration:
-                    self.client.sendServerMessage("Your bhcb just completed.")
+                    if byuser:
+                        self.client.sendServerMessage("Your bhcb just completed.")
                     pass
             do_step()
 
@@ -708,6 +710,7 @@ class BlbPlugin(ProtocolPlugin):
                         block_iter.next()
                     reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
                 except StopIteration:
-                    self.client.sendServerMessage("Your bfb just completed.")
+                    if byuser:
+                        self.client.sendServerMessage("Your bfb just completed.")
                     pass
             do_step()

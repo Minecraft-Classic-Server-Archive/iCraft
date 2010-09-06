@@ -38,12 +38,41 @@ import sys, traceback
 from time import time
 import math
 
+"""
+Here is a rundown of how the mobs file works. Mobs are dynamic lists of data that are themselves stored in another list.
+The various mob data is looped and rerun,though the mobs themselves have a built in delay which prevents them from running too fast
+Mobs are typically bits of code which place blocks inaccordance to their code. This means you
+will have to use other means to delay any mobs. There are three main parts of code a mob must have before it will run, as
+stated below
+
+--- Blockchange code ---
+This code is run each time a player places a mob. It adds the mob to an internal list. Any variables
+or statements included in each mobs elif statement are run as well.it adds a mob to the plugins mob list, and sets any other
+variables that are included.
+
+---Poschanged code ---
+This code is essentially the movement or reaction code that runs the mob. Without this code the mob
+will not do anything. Any variables defined in the poschanged code are unassigned each time a mob moves,so if you want any
+constant data to carry over between loops, store it in the poschanged code or in the mob's list.
+
+--- Command entity code ---
+This code determines what can be selected by the /mob or /entity commands in-game. You will also
+have to add the mob's string name to a single line, which is run when a player uses /mobs or /entities, and tells the player
+what mobs are available
+
+--- Other notes /quirks ---
+Note that all blockcheck code must be run within a try/except statement.  Note that because all
+mobs are run in each loop, any delays, such as sleep(), reactor.callater, or any loops will stop the enitre mob code until
+done. Note, Entityblocklist and other similar lists are needed for the mobclear code. They place air at the mobs locations.
+Each mobs list in this code represents the blocks, and the numbers are the offsets of its x, y and z
+"""
+
 explosionblocklist = [[-3, -1, 0], [-3, 0, -1], [-3, 0, 0], [-3, 0, 1], [-3, 1, 0], [-2, -2, -1], [-2, -2, 0], [-2, -2, 1], [-2, -1, -2], [-2, -1, -1], [-2, -1, 0], [-2, -1, 1], [-2, -1, 2], [-2, 0, -2], [-2, 0, -1], [-2, 0, 0], [-2, 0, 1], [-2, 0, 2], [-2, 1, -2], [-2, 1, -1], [-2, 1, 0], [-2, 1, 1], [-2, 1, 2], [-2, 2, -1], [-2, 2, 0], [-2, 2, 1], [-1, -3, 0], [-1, -2, -2], [-1, -2, -1], [-1, -2, 0], [-1, -2, 1], [-1, -2, 2], [-1, -1, -2], [-1, -1, -1], [-1, -1, 0], [-1, -1, 1], [-1, -1, 2], [-1, 0, -3], [-1, 0, -2], [-1, 0, -1], [-1, 0, 0], [-1, 0, 1], [-1, 0, 2], [-1, 0, 3], [-1, 1, -2], [-1, 1, -1], [-1, 1, 0], [-1, 1, 1], [-1, 1, 2], [-1, 2, -2], [-1, 2, -1], [-1, 2, 0], [-1, 2, 1], [-1, 2, 2], [-1, 3, 0], [0, -3, -1], [0, -3, 0], [0, -3, 1], [0, -2, -2], [0, -2, -1], [0, -2, 0], [0, -2, 1], [0, -2, 2], [0, -1, -3], [0, -1, -2], [0, -1, -1], [0, -1, 0], [0, -1, 1], [0, -1, 2], [0, -1, 3], [0, 0, -3], [0, 0, -2], [0, 0, -1], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 1, -3], [0, 1, -2], [0, 1, -1], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 1, 3], [0, 2, -2], [0, 2, -1], [0, 2, 0], [0, 2, 1], [0, 2, 2], [0, 3, -1], [0, 3, 0], [0, 3, 1], [1, -3, 0], [1, -2, -2], [1, -2, -1], [1, -2, 0], [1, -2, 1], [1, -2, 2], [1, -1, -2], [1, -1, -1], [1, -1, 0], [1, -1, 1], [1, -1, 2], [1, 0, -3], [1, 0, -2], [1, 0, -1], [1, 0, 0], [1, 0, 1], [1, 0, 2], [1, 0, 3], [1, 1, -2], [1, 1, -1], [1, 1, 0], [1, 1, 1], [1, 1, 2], [1, 2, -2], [1, 2, -1], [1, 2, 0], [1, 2, 1], [1, 2, 2], [1, 3, 0], [2, -2, -1], [2, -2, 0], [2, -2, 1], [2, -1, -2], [2, -1, -1], [2, -1, 0], [2, -1, 1], [2, -1, 2], [2, 0, -2], [2, 0, -1], [2, 0, 0], [2, 0, 1], [2, 0, 2], [2, 1, -2], [2, 1, -1], [2, 1, 0], [2, 1, 1], [2, 1, 2], [2, 2, -1], [2, 2, 0], [2, 2, 1], [3, -1, 0], [3, 0, -1], [3, 0, 0], [3, 0, 1], [3, 1, 0]]
 maxentitiystepsatonetime = 20
-twoblockhighentities = ["creeper","zombie","noob","person"]
+twoblockhighentities = ["creeper","zombie","noob","person","aquabie"]
 twoblockhighshootingentities = ["bckchngdetector","testbow","paintballgun"]
 maxentitiespermap = 40
-entityblocklist = {"entity1":[(0,0,0)], "blob":[(0,0,0)],"passiveblob":[(0,0,0)],"petblob":[(0,0,0)],"jumpingshroom":[(0,0,0)],"trippyshroom":[(0,0,0)],"smoke":[(0,0,0)],"zombie":[(0,0,0),(0,1,0)],"creeper":[(0,0,0),(0,1,0)],"tnt":[(0,0,0)],"person":[(0,0,0),(0,1,0)],"noob":[(0,0,0),(0,1,0)],"proxmine":[(0,0,0)],"var":[(0,0,0)],"spawner":[(0,0,0)],"bckchngdetector":[(0,0,0),(0,1,0)],"testbow":[(0,0,0),(0,1,0)],"testarrow":[(0,0,0)],"paintballgun":[(0,0,0),(0,1,0)],"paintball":[(0,0,0)]}
+entityblocklist = {"entity1":[(0,0,0)], "blob":[(0,0,0)],"passiveblob":[(0,0,0)],"petblob":[(0,0,0)],"jumpingshroom":[(0,0,0)],"trippyshroom":[(0,0,0)],"smoke":[(0,0,0)],"zombie":[(0,0,0),(0,1,0)],"creeper":[(0,0,0),(0,1,0)],"tnt":[(0,0,0)],"person":[(0,0,0),(0,1,0)],"noob":[(0,0,0),(0,1,0)],"proxmine":[(0,0,0)],"var":[(0,0,0)],"spawner":[(0,0,0)],"bckchngdetector":[(0,0,0),(0,1,0)],"testbow":[(0,0,0),(0,1,0)],"testarrow":[(0,0,0)],"paintballgun":[(0,0,0),(0,1,0)],"paintball":[(0,0,0)],"cloud":[(0,0,0),(1,0,0),(-1,0,0),(0,0,1),(0,0,-1)],"fish":[(0,0,0)],"rainbowfish":[(0,0,0)]}
 colorblocks = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
 var_unpainablelist = [7,20,42,41,49,40,44,43,39,38,6,37,38]
 var_unbreakables = ['\x07', '*', ')', '.', '1']
@@ -145,6 +174,12 @@ class EntityPlugin(ProtocolPlugin):
                 elif self.var_entityselected == "zombie":
                     entitylist.append(["zombie",(x,y,z),8,8])
                     self.client.sendServerMessage("Zombie was created.")
+                elif self.var_entityselected == "aquabie":
+                    entitylist.append(["aquabie",(x,y,z),8,8,True])
+                    self.client.sendServerMessage("Aqua Zombie was created.")
+##                elif self.var_entityselected == "piranna":
+##                    entitylist.append(["piranna",(x,y,z),4,4,True])
+##                    self.client.sendServerMessage("Piranna was created.")
                 elif self.var_entityselected == "creeper":
                     entitylist.append(["creeper",(x,y,z),8,8])
                     self.client.sendServerMessage("Creeper was created.")
@@ -157,12 +192,20 @@ class EntityPlugin(ProtocolPlugin):
                 elif self.var_entityselected == "fastzombie":
                     entitylist.append(["zombie",(x,y,z),6,6])
                     self.client.sendServerMessage("Fast Zombie was created.")
+                elif self.var_entityselected == "fish":
+                    (i,j,k) = (x,y,z)
+                    entitylist.append(["fish",(x,y,z),7,7,(i,j,k),3])
+                    self.client.sendServerMessage("A fish was created.")
+                elif self.var_entityselected == "rainbowfish":
+                    (i,j,k) = (x,y,z)
+                    entitylist.append(["rainbowfish",(x,y,z),7,7,(i,j,k),3])
+                    self.client.sendServerMessage("A rainbow fish was created.")
                 elif self.var_entityselected == "person":
                     entitylist.append(["person",(x,y,z),8,8])
                     self.client.sendServerMessage("A person was created.")
-                #elif self.var_entityselected == "noob":
-                #    entitylist.append(["noob",(x,y,z),8,8])
-                #    self.client.sendServerMessage("A noob was created.")
+                elif self.var_entityselected == "noob":
+                    entitylist.append(["noob",(x,y,z),8,8])
+                    self.client.sendServerMessage("A noob was created.")
                 elif self.var_entityselected == "proxmine":
                     entitylist.append(["proxmine",(x,y,z),8,8,24])
                     self.client.sendServerMessage("Proxmine was created.")
@@ -398,7 +441,7 @@ class EntityPlugin(ProtocolPlugin):
                                     if closestdistance < 2:
                                         sx,sy,sz,sh = world.spawn
                                         closestclient.teleportTo(sx,sy,sz,sh)
-                                        self.client.sendPlainWorldMessage("%s%s has died." % (COLOUR_DARKRED, closestclient.username))
+                                        self.client.sendPlainWorldMessage("%s%s has died from a blob." % (COLOUR_DARKRED, closestclient.username))
                                     if closestdistance != 0:
                                         i,k = closestposition
                                         target = [int((i-x)/(closestdistance/1.75)) + x,y,int((k-z)/(closestdistance/1.75)) + z]
@@ -523,6 +566,62 @@ class EntityPlugin(ProtocolPlugin):
                             #                    world[x, y, z] = block
                             #                    self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
                             #                    self.client.sendBlock(x, y, z, block)
+                            elif var_type == "fish":
+                                var_cango = True
+                                
+                                if entity[5] >= 3:
+                                    i = randint(-1,1)
+                                    k = randint(-1,1)
+                                    j = randint(-1,1)
+                                    entity[4] = (i,j,k)
+                                    entity[5] = 0
+                                entity[5] = randint(1,5)
+                                l, m, n = entity[4]
+                                try:
+                                    blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(x+l,y+m,z+n)])
+                                    if blocktocheck != 8:
+                                        var_cango = False
+                                except:
+                                    return
+                                if var_cango:
+                                    block = '\x08'
+                                    self.client.queueTask(TASK_BLOCKSET, (x,y,z, block), world=world)
+                                    self.client.sendBlock(x,y,z, block)
+                                    block = '\x20'
+                                    self.client.queueTask(TASK_BLOCKSET, (x+l,y+m,z+n, block), world=world)
+                                    self.client.sendBlock(x+l,y+m,z+n, block)
+                                    var_position = (x+l,y+m,z+n)
+                                    x,y,z = var_position
+
+                            elif var_type == "rainbowfish":
+                                var_cango = True
+                                
+                                if entity[5] >= 3:
+                                    i = randint(-1,1)
+                                    k = randint(-1,1)
+                                    j = randint(-1,1)
+                                    entity[4] = (i,j,k)
+                                    entity[5] = 0
+                                entity[5] = randint(1,5)
+                                l, m, n = entity[4]
+                                try:
+                                    blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(x+l,y+m,z+n)])
+                                    if blocktocheck != 8:
+                                        var_cango = False
+                                except:
+                                    return
+                                if var_cango:
+                                    block = '\x08'
+                                    self.client.queueTask(TASK_BLOCKSET, (x,y,z, block), world=world)
+                                    self.client.sendBlock(x,y,z, block)
+                                    w = randint(21,36)
+                                    block = chr(w)
+                                    self.client.queueTask(TASK_BLOCKSET, (x+l,y+m,z+n, block), world=world)
+                                    self.client.sendBlock(x+l,y+m,z+n, block)
+                                    var_position = (x+l,y+m,z+n)
+                                    x,y,z = var_position
+
+
                             elif var_type == "slime":
                                 x,y,z = var_position
                                 var_cango = True
@@ -816,6 +915,40 @@ class EntityPlugin(ProtocolPlugin):
                                         self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
                                         self.client.sendBlock(x, y, z, block)
 
+                            elif var_type == "confetti":
+                                x,y,z = var_position
+                                i = randint(-1,1) + x
+                                j = 1 - y
+                                k = randint(-1,1) + z
+                                var_cango = True
+                                if entity[4]:
+                                    entity[4] = False
+                                    if world.blockstore.raw_blocks[world.blockstore.get_offset(x,y,z)] not in var_unbreakables:
+                                        block = '\x00'
+                                        world[x, y, z] = block
+                                        self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                        self.client.sendBlock(x, y, z, block)
+                                else:
+                                    block = '\x00'
+                                    world[x, y, z] = block
+                                    self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                    self.client.sendBlock(x, y, z, block)
+                                try:
+                                    blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i, j, k)])
+                                    if blocktocheck != 0:
+                                        var_cango = False
+                                except:
+                                    var_cango = False
+                                if var_cango and randint(0,15) != 10:
+                                    var_position = (i,j,k)
+                                    x,y,z = var_position
+                                    block = chr(36) 
+                                    world[x, y, z] = block
+                                    self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                    self.client.sendBlock(x, y, z, block)
+                                else:
+                                    var_dellist.append(index)
+
                             elif var_type == "smoke":
                                 x,y,z = var_position
                                 i = randint(-1,1) + x
@@ -1045,7 +1178,7 @@ class EntityPlugin(ProtocolPlugin):
                                     if closestdistance < 2:
                                         sx,sy,sz,sh = world.spawn
                                         closestclient.teleportTo(sx,sy,sz,sh)
-                                        self.client.sendPlainWorldMessage("%s%s has died." % (COLOUR_DARKRED, closestclient.username))
+                                        self.client.sendPlainWorldMessage("%s%s has died from a Zombie." % (COLOUR_DARKRED, closestclient.username))
                                     i,k = closestposition
                                     distance = ((i-x)**2+(k-z)**2)**0.5
                                     if distance != 0:
@@ -1110,6 +1243,191 @@ class EntityPlugin(ProtocolPlugin):
                                                 world[x, y+1, z] = block
                                                 self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
                                                 self.client.sendBlock(x, y+1, z, block)
+                            elif var_type == "aquabie":
+                                x,y,z = var_position
+                                var_cango = True
+                                try:
+                                    blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(x,y-1,z)])
+                                    if blocktocheck != 8:
+                                        var_cango = False
+                                except:
+                                    var_cango = False
+                                if var_cango:
+                                    block = '\x08'
+                                    world[x, y, z] = block
+                                    self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                    self.client.sendBlock(x, y, z, block)
+                                    world[x, y+1, z] = block
+                                    self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                                    self.client.sendBlock(x, y+1, z, block)
+                                    var_position = (x,y-1,z)
+                                    x,y,z = var_position
+                                    block = chr(35)
+                                    world[x, y, z] = block
+                                    self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                    self.client.sendBlock(x, y, z, block)
+                                    block = chr(25)
+                                    world[x, y+1, z] = block
+                                    self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                                    self.client.sendBlock(x, y+1, z, block)
+                                else:
+                                    userpositionlist = []
+                                    for user in clients:
+                                        userpositionlist.append((user,(user.x >> 5,user.y >> 5,user.z >> 5)))
+                                    closestposition = (0,0)
+                                    closestclient = None
+                                    closestdistance = None
+                                    for entry in userpositionlist:
+                                        client = entry[0]
+                                        var_pos = entry[1]
+                                        i,j,k = var_pos
+                                        distance = ((i-x)**2+(j-y)**2+(k-z)**2)**0.5
+                                        if closestdistance == None:
+                                            closestdistance = distance
+                                            closestclient = client
+                                            closestposition = (var_pos[0],var_pos[2])
+                                        else:
+                                            if distance < closestdistance:
+                                                closestdistance = distance
+                                                closestclient = client
+                                                closestposition = (var_pos[0],var_pos[2])
+                                    
+
+                                    if closestdistance < 2:
+                                        sx,sy,sz,sh = world.spawn
+                                        closestclient.teleportTo(sx,sy,sz,sh)
+                                        self.client.sendPlainWorldMessage("%s%s has died from a Aqua Zombie." % (COLOUR_DARKRED, closestclient.username))
+                                    i,k = closestposition
+                                    distance = ((i-x)**2+(k-z)**2)**0.5
+                                    if distance != 8:
+                                        target = [int((i-x)/(distance/1.75)) + x,y,int((k-z)/(distance/1.75)) + z]
+                                        i,j,k = target
+                                        var_cango = True
+                                        try:
+                                            blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j,k)])
+                                            if blocktocheck != 8:
+                                                var_cango = False
+                                            blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j+1,k)])
+                                            if blocktocheck != 8:
+                                                var_cango = False
+                                        except:
+                                            var_cango = False
+                                        if var_cango:
+                                            block = '\x08'
+                                            world[x, y, z] = block
+                                            self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                            self.client.sendBlock(x, y, z, block)
+                                            world[x, y+1, z] = block
+                                            self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                                            self.client.sendBlock(x, y+1, z, block)
+                                            var_position = target
+                                            x,y,z = var_position
+                                            block = chr(35)
+                                            world[x, y, z] = block
+                                            self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                            self.client.sendBlock(x, y, z, block)
+                                            block = chr(25)
+                                            world[x, y+1, z] = block
+                                            self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                                            self.client.sendBlock(x, y+1, z, block)
+                                        else:
+                                            var_cango = True
+                                            target[1] = target[1] + 1
+                                            j = target[1]
+                                            try:
+                                                blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j,k)])
+                                                if blocktocheck != 8:
+                                                    var_cango = False
+                                                blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j+1,k)])
+                                                if blocktocheck != 8:
+                                                    var_cango = False
+                                            except:
+                                                var_cango = False
+                                            if var_cango:
+                                                block = '\x08'
+                                                world[x, y, z] = block
+                                                self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                                self.client.sendBlock(x, y, z, block)
+                                                world[x, y+1, z] = block
+                                                self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                                                self.client.sendBlock(x, y+1, z, block)
+                                                var_position = target
+                                                x,y,z = var_position
+                                                block = chr(35)
+                                                world[x, y, z] = block
+                                                self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                                self.client.sendBlock(x, y, z, block)
+                                                block = chr(25)
+                                                world[x, y+1, z] = block
+                                                self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                                                self.client.sendBlock(x, y+1, z, block)
+##                            if var_type == "piranna":
+##                                x,y,z = var_position
+##                                userpositionlist = []
+##                                for user in clients:
+##                                    userpositionlist.append((user.x >> 5,user.y >> 5,user.z >> 5))
+##                                closestposition = (0,0)
+##
+##                                closestclient = None
+##                                closestdistance = None
+##                                for var_pos in userpositionlist:
+##                                    i,j,k = var_pos
+##                                    distance = ((i-x)**2+(j-y)**2+(k-z)**2)**0.5
+##                                    if closestdistance == None:
+##                                        closestdistance = distance
+##                                        closestposition = (var_pos[0],var_pos[2])
+##                                    else:
+##                                        if distance < closestdistance:
+##                                            closestdistance = distance
+##                                            closestclient = client
+##                                            closestposition = (var_pos[0],var_pos[2])
+##                                    if closestdistance < 2:
+##                                        sx,sy,sz,sh = world.spawn
+##                                        closestclient.teleportTo(sx,sy,sz,sh)
+##                                        self.client.sendPlainWorldMessage("%s%s has died from a Piranna." % (COLOUR_DARKRED, closestclient.username))
+##                                    if closestdistance != 0:
+##                                        i,k = closestposition
+##                                        target = [int((i-x)/(closestdistance/1.75)) + x,y,int((k-z)/(closestdistance/1.75)) + z]
+##                                        i,j,k = target
+##                                        var_cango = True
+##                                        try:
+##                                            blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j,k)])
+##                                            if blocktocheck != 5:
+##                                                var_cango = False
+##                                        except:
+##                                            var_cango = False
+##                                        if var_cango:
+##                                            block = '\x00'
+##                                            world[x, y, z] = block
+##                                            self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+##                                            self.client.sendBlock(x, y, z, block)
+##                                            var_position = target
+##                                            x,y,z = var_position
+##                                            block = chr(23)
+##                                            world[x, y, z] = block
+##                                            self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+##                                            self.client.sendBlock(x, y, z, block)
+##                                        else:
+##                                            var_cango = True
+##                                            target[1] = target[1] + 1
+##                                            j = target[1]
+##                                            try:
+##                                                blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j,k)])
+##                                                if blocktocheck != 0:
+##                                                    var_cango = False
+##                                            except:
+##                                                var_cango = False
+##                                            if var_cango:
+##                                                block = '\x00'
+##                                                world[x, y, z] = block
+##                                                self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+##                                                self.client.sendBlock(x, y, z, block)
+##                                                var_position = target
+##                                                x,y,z = var_position
+##                                                block = chr(23)
+##                                                world[x, y, z] = block
+##                                                self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+##                                                self.client.sendBlock(x, y, z, block)
                             elif var_type == "creeper":
                                 x,y,z = var_position
                                 var_cango = True
@@ -1263,7 +1581,7 @@ class EntityPlugin(ProtocolPlugin):
                                         for user in var_userkillist2:
                                             sx,sy,sz,sh = world.spawn
                                             user.teleportTo(sx,sy,sz,sh)
-                                            self.client.sendPlainWorldMessage("%s%s has died." % (COLOUR_DARKRED, user.username))
+                                            self.client.sendPlainWorldMessage("%s%s has died from TNT." % (COLOUR_DARKRED, user.username))
                                     if bombfinaldelay <=0:
                                         var_dellist.append(index)
                                         block = '\x00'
@@ -1382,120 +1700,120 @@ class EntityPlugin(ProtocolPlugin):
                                                 world[x, y+1, z] = block
                                                 self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
                                                 self.client.sendBlock(x, y+1, z, block)
-                            #elif var_type == "noob":
-                            #    x,y,z = var_position
-                            #    var_cango = True
-                            #    try:
-                            #        blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(x,y-1,z)])
-                            #        if blocktocheck != 0:
-                            #            var_cango = False
-                            #    except:
-                            #        var_cango = False
-                            #    if var_cango:
-                            #        block = '\x00'
-                            #        world[x, y, z] = block
-                            #        self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
-                            #        self.client.sendBlock(x, y, z, block)
-                            #        world[x, y+1, z] = block
-                            #        self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
-                            #        self.client.sendBlock(x, y+1, z, block)
-                            #        var_position = (x,y-1,z)
-                            #        x,y,z = var_position
-                            #        block = chr(29)
-                            #        world[x, y, z] = block
-                            #        self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
-                            #        self.client.sendBlock(x, y, z, block)
-                            #        block = chr(12)
-                            #        world[x, y+1, z] = block
-                            #        self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
-                            #        self.client.sendBlock(x, y+1, z, block)
-                            #    else:
-                            #        userpositionlist = []
-                            #        for user in clients:
-                            #            userpositionlist.append((user,(user.x >> 5,user.y >> 5,user.z >> 5)))
-                            #        closestposition = (0,0)
-                            #        closestclient = None
-                            #        closestdistance = None
-                            #        for entry in userpositionlist:
-                            #            client = entry[0]
-                            #            var_pos = entry[1]
-                            #            i,j,k = var_pos
-                            #            distance = ((i-x)**2+(j-y)**2+(k-z)**2)**0.5
-                            #            if closestdistance == None:
-                            #                closestdistance = distance
-                            #                closestclient = client
-                            #                closestposition = (var_pos[0],var_pos[2])
-                            #            else:
-                            #                if distance < closestdistance:
-                            #                    closestdistance = distance
-                            #                    closestclient = client
-                            #                    closestposition = (var_pos[0],var_pos[2])
-                            #        if closestdistance < 3:
-                            #            closestclient.sendServerMessage("CAN I HAS OP PLOX?")
-                            #            
-                            #        i,k = closestposition
-                            #        distance = ((i-x)**2+(k-z)**2)**0.5
-                            #        if distance != 0 and distance > 2:
-                            #            target = [int((i-x)/(distance/1.75)) + x,y,int((k-z)/(distance/1.75)) + z]
-                            #            i,j,k = target
-                            #            var_cango = True
-                            #            try:
-                            #                blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j,k)])
-                            #                if blocktocheck != 0:
-                            #                    var_cango = False
-                            #                blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j+1,k)])
-                            #                if blocktocheck != 0:
-                            #                    var_cango = False
-                            #            except:
-                            #                var_cango = False
-                            #            if var_cango:
-                            #                block = '\x00'
-                            #                world[x, y, z] = block
-                            #                self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
-                            #                self.client.sendBlock(x, y, z, block)
-                            #                world[x, y+1, z] = block
-                            #                self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
-                            #                self.client.sendBlock(x, y+1, z, block)
-                            #                var_position = target
-                            #                x,y,z = var_position
-                            #                block = chr(29)
-                            #                world[x, y, z] = block
-                            #                self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
-                            #                self.client.sendBlock(x, y, z, block)
-                            #                block = chr(12)
-                            #                world[x, y+1, z] = block
-                            #                self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
-                            #                self.client.sendBlock(x, y+1, z, block)
-                            #            else:
-                            #                var_cango = True
-                            #                target[1] = target[1] + 1
-                            #                j = target[1]
-                            #                try:
-                            #                    blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j,k)])
-                            #                    if blocktocheck != 0:
-                            #                        var_cango = False
-                            #                    blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j+1,k)])
-                            #                    if blocktocheck != 0:
-                            #                        var_cango = False
-                            #                except:
-                            #                    var_cango = False
-                            #                if var_cango:
-                            #                    block = '\x00'
-                            #                    world[x, y, z] = block
-                            #                    self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
-                            #                    self.client.sendBlock(x, y, z, block)
-                            #                    world[x, y+1, z] = block
-                            #                    self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
-                            #                    self.client.sendBlock(x, y+1, z, block)
-                            #                    var_position = target
-                            #                    x,y,z = var_position
-                            #                    block = chr(29)
-                            #                    world[x, y, z] = block
-                            #                    self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
-                            #                    self.client.sendBlock(x, y, z, block)
-                            #                    block = chr(12)
-                            #                    world[x, y+1, z] = block
-                            #                    self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                            elif var_type == "noob":
+                                x,y,z = var_position
+                                var_cango = True
+                                try:
+                                    blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(x,y-1,z)])
+                                    if blocktocheck != 0:
+                                        var_cango = False
+                                except:
+                                    var_cango = False
+                                if var_cango:
+                                    block = '\x00'
+                                    world[x, y, z] = block
+                                    self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                    self.client.sendBlock(x, y, z, block)
+                                    world[x, y+1, z] = block
+                                    self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                                    self.client.sendBlock(x, y+1, z, block)
+                                    var_position = (x,y-1,z)
+                                    x,y,z = var_position
+                                    block = chr(29)
+                                    world[x, y, z] = block
+                                    self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                    self.client.sendBlock(x, y, z, block)
+                                    block = chr(12)
+                                    world[x, y+1, z] = block
+                                    self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                                    self.client.sendBlock(x, y+1, z, block)
+                                else:
+                                    userpositionlist = []
+                                    for user in clients:
+                                        userpositionlist.append((user,(user.x >> 5,user.y >> 5,user.z >> 5)))
+                                    closestposition = (0,0)
+                                    closestclient = None
+                                    closestdistance = None
+                                    for entry in userpositionlist:
+                                        client = entry[0]
+                                        var_pos = entry[1]
+                                        i,j,k = var_pos
+                                        distance = ((i-x)**2+(j-y)**2+(k-z)**2)**0.5
+                                        if closestdistance == None:
+                                            closestdistance = distance
+                                            closestclient = client
+                                            closestposition = (var_pos[0],var_pos[2])
+                                        else:
+                                            if distance < closestdistance:
+                                                closestdistance = distance
+                                                closestclient = client
+                                                closestposition = (var_pos[0],var_pos[2])
+                                    if closestdistance < 3:
+                                        closestclient.sendServerMessage("CAN I HAS OP PLOX?")
+                                        
+                                    i,k = closestposition
+                                    distance = ((i-x)**2+(k-z)**2)**0.5
+                                    if distance != 0 and distance > 2:
+                                        target = [int((i-x)/(distance/1.75)) + x,y,int((k-z)/(distance/1.75)) + z]
+                                        i,j,k = target
+                                        var_cango = True
+                                        try:
+                                            blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j,k)])
+                                            if blocktocheck != 0:
+                                                var_cango = False
+                                            blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j+1,k)])
+                                            if blocktocheck != 0:
+                                                var_cango = False
+                                        except:
+                                            var_cango = False
+                                        if var_cango:
+                                            block = '\x00'
+                                            world[x, y, z] = block
+                                            self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                            self.client.sendBlock(x, y, z, block)
+                                            world[x, y+1, z] = block
+                                            self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                                            self.client.sendBlock(x, y+1, z, block)
+                                            var_position = target
+                                            x,y,z = var_position
+                                            block = chr(29)
+                                            world[x, y, z] = block
+                                            self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                            self.client.sendBlock(x, y, z, block)
+                                            block = chr(12)
+                                            world[x, y+1, z] = block
+                                            self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                                            self.client.sendBlock(x, y+1, z, block)
+                                        else:
+                                            var_cango = True
+                                            target[1] = target[1] + 1
+                                            j = target[1]
+                                            try:
+                                                blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j,k)])
+                                                if blocktocheck != 0:
+                                                    var_cango = False
+                                                blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(i,j+1,k)])
+                                                if blocktocheck != 0:
+                                                    var_cango = False
+                                            except:
+                                                var_cango = False
+                                            if var_cango:
+                                                block = '\x00'
+                                                world[x, y, z] = block
+                                                self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                                self.client.sendBlock(x, y, z, block)
+                                                world[x, y+1, z] = block
+                                                self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
+                                                self.client.sendBlock(x, y+1, z, block)
+                                                var_position = target
+                                                x,y,z = var_position
+                                                block = chr(29)
+                                                world[x, y, z] = block
+                                                self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
+                                                self.client.sendBlock(x, y, z, block)
+                                                block = chr(12)
+                                                world[x, y+1, z] = block
+                                                self.client.queueTask(TASK_BLOCKSET, (x, y+1, z, block), world=world)
                             #                    self.client.sendBlock(x, y+1, z, block)
                             elif var_type == "proxmine":
                                 x,y,z = var_position
@@ -1530,7 +1848,7 @@ class EntityPlugin(ProtocolPlugin):
                                         if closestdistance < 2:
                                             sx,sy,sz,sh = world.spawn
                                             closestclient.teleportTo(sx,sy,sz,sh)
-                                            self.client.sendPlainWorldMessage("%s%s has died." % (COLOUR_DARKRED, closestclient.username))
+                                            self.client.sendPlainWorldMessage("%s%s has died from a Mob." % (COLOUR_DARKRED, closestclient.username))
                                     elif nearbehavior == "explode":
                                         if closestdistance < 3:
                                             entitylist.append(["tnt",(x,y,z),1,1,True,0,5])
@@ -2199,16 +2517,24 @@ class EntityPlugin(ProtocolPlugin):
                 self.var_entityselected = "smoke"
             elif entity == "zombie":
                 self.var_entityselected = "zombie"
+            elif entity == "aquabie":
+                self.var_entityselected = "aquabie"
+##            elif entity == "piranna":
+##                self.var_entityselected = "piranna"
             elif entity == "creeper":
                 self.var_entityselected = "creeper"
+            elif entity == "fish":
+                self.var_entityselected = "fish"
+            elif entity == "rainbowfish":
+                self.var_entityselected = "rainbowfish"
             elif entity == "tnt":
                 self.var_entityselected = "tnt"
             elif entity == "fastzombie":
                 self.var_entityselected = "fastzombie"
             elif entity == "person":
                 self.var_entityselected = "person"
-            #elif entity == "noob":
-            #    self.var_entityselected = "noob"
+            elif entity == "noob":
+                self.var_entityselected = "noob"
             elif entity == "proxmine":
                 self.var_entityselected = "proxmine"
             elif entity == "var":
@@ -2316,5 +2642,5 @@ class EntityPlugin(ProtocolPlugin):
     @op_only
     def commandEntities(self, parts, byuser, overriderank):
         "/entities - Op\nAliases: mobs\nDisplays available entities"
-        var_listofvalidentities = ["blob","jumpingshroom","trippyshroom","zombie","fastzombie","creeper","tnt","person","proxmine","var","spawner","paintballgun","cannon","cloud","bird","slime","trippyflower"]
+        var_listofvalidentities = ["blob","jumpingshroom","trippyshroom","zombie","aquabie","fastzombie","creeper","tnt","person","proxmine","var","spawner","paintballgun","cannon","cloud","bird","slime","trippyflower","fish","rainbowfish","noob"]
         self.client.sendServerList(["Available entities:"] + var_listofvalidentities)

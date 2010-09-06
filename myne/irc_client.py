@@ -240,24 +240,23 @@ class ChatBot(irc.IRCClient):
                                 self.msg(user,"".join(each))
                         elif msg_command[1] == ("help"):
                             self.msg(self.factory.irc_channel, "07Help Center")
-                            self.msg(self.factory.irc_channel, "07About: Use '$"+self.nickname+" about'")
-                            self.msg(self.factory.irc_channel, "07Credits: Use '$"+self.nickname+" credits'")
                             self.msg(self.factory.irc_channel, "07Commands: Use '$"+self.nickname+" cmdlist'")
                             self.msg(self.factory.irc_channel, "07WorldChat: Use '!world message'")
+                            self.msg(self.factory.irc_channel, "07About: Use '$"+self.nickname+" about'")
+                            self.msg(self.factory.irc_channel, "07Credits: Use '$"+self.nickname+" credits'")
                         elif msg_command[1] == ("cmdlist"):
                             self.msg(self.factory.irc_channel, "07Command List")
                             self.msg(self.factory.irc_channel, "07about cmdlist credits help staff who worlds")
                             self.msg(self.factory.irc_channel, "07Use '$"+self.nickname+" command arguments' to do it.")
                             self.msg(self.factory.irc_channel, "07NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
                         elif msg_command[1] == ("about"):
-                            self.msg(self.factory.irc_channel, "07About the Server - iCraft %s - http://hlmc.net/" % VERSION)
-                            self.msg(self.factory.irc_channel, "07Name: "+self.factory.server_name)
+                            self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft %s http://hlmc.net/ - Credits: Use '$%s credits'" % (VERSION, self.nickname))
+                            self.msg(self.factory.irc_channel, "07Name: "+self.factory.server_name+" owned by "+self.factory.owner)
                             try:
                                 self.msg(self.factory.irc_channel, "07URL: "+self.factory.heartbeat.url)
                             except:
                                 self.msg(self.factory.irc_channel, "07URL: N/A")
                             self.msg(self.factory.irc_channel, "07Site: "+self.factory.info_url)
-                            self.msg(self.factory.irc_channel, "07Owner: "+self.factory.owner)
                         else:
                             self.msg(self.factory.irc_channel, "07Sorry, "+msg_command[1]+" is not a command!")
                         logging.log(logging.INFO,"%s just used: %s" %(user," ".join(msg_command[1:])))

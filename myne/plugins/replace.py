@@ -258,7 +258,8 @@ class BrepPlugin(ProtocolPlugin):
                         block_iter.next()
                     reactor.callLater(0.01, do_step)
                 except StopIteration:
-                    self.client.sendServerMessage("Your creplace just completed.")
+                    if byuser:
+                        self.client.sendServerMessage("Your creplace just completed.")
                     pass
             do_step()
 
@@ -395,6 +396,7 @@ class BrepPlugin(ProtocolPlugin):
                         block_iter.next()
                     reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
                 except StopIteration:
-                    self.client.sendServerMessage("Your fill just completed.")
+                    if byuser:
+                        self.client.sendServerMessage("Your fill just completed.")
                     pass
             do_step()

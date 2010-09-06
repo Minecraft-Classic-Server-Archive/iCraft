@@ -191,7 +191,7 @@ class World(object):
         if config.has_section("autoshutdown"):
             self.autoshutdown = config.get("autoshutdown", "autoshutdown")
         if config.has_section("owner"):
-            self.owner = config.get("owner", "owner")
+            self.owner = config.get("owner", "owner").lower()
         if config.has_section("ops"):
             self.ops = set(x.lower() for x in config.options("ops"))
         else:

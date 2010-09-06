@@ -98,7 +98,7 @@ The Salt is also used to help verify users' identities.
         except:
             logging.log(logging.ERROR, traceback.format_exc())
         finally:
-            reactor.callLater(60, self.turl)
+            reactor.callLater(60, self.get_url)
 
 class MyneFactory(Factory):
     """
@@ -240,6 +240,8 @@ class MyneFactory(Factory):
                 if name is self.default_name:
                     self.default_loaded = True
         else:
+            self.worlds[self.default_name] = None
+        if not self.default_loaded:
             self.worlds[self.default_name] = None
         # Read in the admins
         if config.has_section("admins"):

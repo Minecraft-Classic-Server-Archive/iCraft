@@ -223,7 +223,7 @@ class MyneServerProtocol(Protocol):
         return (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
     def isWorldOwner(self):
-        return (self.username.lower() in self.world.owner) or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
+        return (self.username.lower() in self.world.owner.lower()) or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
     def isOwner(self):
         return self.username.lower()==self.factory.owner
@@ -577,9 +577,9 @@ class MyneServerProtocol(Protocol):
                                     self.factory.irc_relay.sendServerMessage("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
                             else:
                                 if self.world.highlight_ops:
-                                    self.sendWorldMessage (self.userColour()+self.usertitlename+":"+COLOUR_WHITE+" "+text)
+                                    self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
                                 else:
-                                    self.sendWorldMessage (COLOUR_WHITE+self.usertitlename+":"+COLOUR_WHITE+" "+text)
+                                    self.factory.queue.put((self, TASK_MESSAGE, (self.id, COLOUR_WHITE, self.usertitlename, message)))
                                 if self.factory.irc_relay:
                                     self.factory.irc_relay.sendServerMessage(self.usertitlename+": "+text)
                 elif message.startswith("#"):
@@ -629,7 +629,7 @@ class MyneServerProtocol(Protocol):
             color = COLOUR_RED
         elif self.isMod():
             color = COLOUR_BLUE
-        elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro" or self.username.lower() == "tehcid" or self.username.lower() == "099" or self.username.lower() == "setveen" or self.username.lower() == "aquaskys" or self.username.lower() == "kelraider" or self.username.lower() == "uninspired" or self.username.lower() == "saanix" or self.username.lower() == "roujo" or self.username.lower() == "maup" or self.username.lower() == "mystx" or self.username.lower() == "akai" or self.username.lower() == "roadcrosser":
+        elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro" or self.username.lower() == "tehcid" or self.username.lower() == "099" or self.username.lower() == "setveen" or self.username.lower() == "aquaskys" or self.username.lower() == "kelraider" or self.username.lower() == "uninspired" or self.username.lower() == "saanix" or self.username.lower() == "roujo" or self.username.lower() == "maup" or self.username.lower() == "mystx" or self.username.lower() == "akai" or self.username.lower() == "roadcrosser" or self.username.lower() == "antoligy":
             color = COLOUR_YELLOW
         elif self.isWorldOwner():
             color = COLOUR_DARKYELLOW

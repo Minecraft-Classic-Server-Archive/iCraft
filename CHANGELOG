@@ -1,3 +1,32 @@
+v2.6.2 (for Mac v1.1.0):
+
+ADDED:
+- Can now make backups with a name
+- More help for commands that didn't have a entry before
+- A cmdhelp command, explains what cmdblocks can do and use
+- redo command, now you can redo what you undo
+- Added rank numbers to /help ranks
+
+CHANGED:
+- Death messages to tell the cause of death
+- Formatting of the count command
+- Overhauled the help, about and cmdlist commands
+- Old helps to be more helpful
+
+FIXED:
+- Fixing bug with rotate if you didn't copy first
+- Where you needed a recthird for the third point for polytri and curve
+- Prevented entities from being used in blb and related commands
+- cmdblocks not being able to make builders in the map
+- Some cmdblocks that could be used for cmdblocks
+- StaffChat was broke in IRC
+- More problems with gchat
+- Problem with using rank op from irc
+- World Owner username lowercasing
+- info command messing with the map
+- Problem with certian ranks being able to build solid, water and lava in other worlds if they couldn't
+- Error when they did a invalid block while using bind
+
 v2.6.1 (for Mac v1.0.1):
 
 ADDED:

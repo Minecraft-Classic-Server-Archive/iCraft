@@ -98,4 +98,3 @@ class AdminBlocksPlugin(ProtocolPlugin):
         else:
             self.client.sendServerMessage("You are now placing admin rock.")
         self.building_solid = not self.building_solid
-    

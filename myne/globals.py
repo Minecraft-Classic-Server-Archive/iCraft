@@ -76,8 +76,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
                 return ("You are not high enough rank!")
         else:
             if not parts[-1] == "console":
-                if not factory.isWorldOwner(parts[-1]):
-                    return ("You are not high enough rank!")
+                return ("You are not high enough rank!")
         world.ops.add(username)
         return ("Opped %s" % username)
         #make op
@@ -302,7 +301,7 @@ def Credits(self, server=None):
     Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason,")
     Temp.append ("gdude2002, goober, gothfox, ntfwc, revenant, Saanix, tehcid,")
     Temp.append ("Varriount, willempiee")
-    Temp.append ("Others: 099, Akai, Aquaskys, Bidoof_King, fragmer, Kelraider,")
-    Temp.append ("MAup, MystX, NotMeh, PyroPyro, Rils, Roadcrosser, Roujo,")
-    Temp.append ("setveen, TkTech, Uninspired, ...")
+    Temp.append ("Others: 099, Akai, Antoligy, Aquaskys, Bidoof_King, fragmer,")
+    Temp.append ("Kelraider, MAup, MystX, NotMeh, PyroPyro, Rils, Roadcrosser,")
+    Temp.append ("Roujo, setveen, TkTech, Uninspired, ...")
     return Temp

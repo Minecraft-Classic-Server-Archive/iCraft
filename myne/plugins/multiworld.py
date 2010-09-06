@@ -207,6 +207,7 @@ class MultiWorldPlugin(ProtocolPlugin):
         self.client.sendServerList(["Templates:"] + os.listdir("templates/"))
 
     def commandHome(self, parts, byuser, overriderank):
+        "Takes you home, where else?"
         self.client.changeToWorld("default")
 
     @world_list

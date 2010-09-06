@@ -45,7 +45,7 @@ class CorePlugin(ProtocolPlugin):
     @admin_only
     @only_string_command("plugin name")
     def commandPluginreload(self, plugin_name, byuser, overriderank):
-        "No need to reload the server."
+        "/plr plugin - Admin\nReloads the plugin."
         try:
             self.client.factory.unloadPlugin(plugin_name)
             self.client.factory.loadPlugin(plugin_name)
@@ -57,7 +57,7 @@ class CorePlugin(ProtocolPlugin):
     @director_only
     @only_string_command("plugin name")
     def commandPluginload(self, plugin_name, byuser, overriderank):
-        "This doesn't boot the server."
+        "/pll plugin - Director\nLoads the plugin."
         try:
             self.client.factory.loadPlugin(plugin_name)
         except:
@@ -68,7 +68,7 @@ class CorePlugin(ProtocolPlugin):
     @director_only
     @only_string_command("plugin name")
     def commandPluginunload(self, plugin_name, byuser, overriderank):
-        "This won't shutdown the server."
+        "/plu plugin - Director\nUnloads the plugin."
         try:
             self.client.factory.unloadPlugin(plugin_name)
         except:

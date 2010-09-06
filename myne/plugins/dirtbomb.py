@@ -82,6 +82,7 @@ class tntPlugin(ProtocolPlugin):
     @op_only
     @on_off_command
     def commanddirtbomb(self, onoff, byuser, overriderank):
+        "/dirtbomb on|off - Builder\nThis is some kind of bomb involving dirt."
         if onoff == "on":
             self.build_tnt = True
             self.client.sendServerMessage("You are now making dirtbombs in place of dirt.")

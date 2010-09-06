@@ -71,7 +71,7 @@ class BanishPlugin(ProtocolPlugin):
     @op_only
     @only_username_command
     def commandWorldBan(self, username, byuser, overriderank):
-        "/worldban username - Ops\nWorldBan a Player from this Map."
+        "/worldban username - Op\nWorldBan a Player from this Map."
         if self.client.world.isworldbanned(username):
             self.client.sendServerMessage("%s is already WorldBanned." % username)
         else:
@@ -86,7 +86,7 @@ class BanishPlugin(ProtocolPlugin):
     @op_only
     @only_username_command
     def commandUnWorldban(self, username, byuser, overriderank):
-        "/unworldban username - Ops\nAliases: deworldban\nRemoves the WorldBan on the Player."
+        "/unworldban username - Op\nAliases: deworldban\nRemoves the WorldBan on the Player."
         if not self.client.world.isworldbanned(username):
             self.client.sendServerMessage("%s is not WorldBanned." % username)
         else:

@@ -66,7 +66,7 @@ class LavaPlugin(ProtocolPlugin):
                     if self.died is False:
                         self.died = True
                         self.client.teleportTo(self.client.world.spawn[0], self.client.world.spawn[1], self.client.world.spawn[2], self.client.world.spawn[3])
-                        self.client.factory.queue.put ((self.client.world,TASK_WORLDMESSAGE, (255, self.client.world, COLOUR_DARKRED+self.client.username+" has died.")))
+                        self.client.factory.queue.put ((self.client.world,TASK_WORLDMESSAGE, (255, self.client.world, COLOUR_DARKRED+self.client.username+" has died from lava.")))
                         reactor.callLater(1, self.unDie)
                         
     def unDie(self):

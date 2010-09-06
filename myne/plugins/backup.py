@@ -58,20 +58,29 @@ class BackupPlugin(ProtocolPlugin):
             if not os.path.exists(world_dir+"backup/"):
                 os.mkdir(world_dir+"backup/")
             folders = os.listdir(world_dir+"backup/")
-            backups = list([])
-            for x in folders:
-                if x.isdigit():
-                    backups.append(x)
-            backups.sort(lambda x, y: int(x) - int(y))
-            path = os.path.join(world_dir+"backup/", "0")
-            if backups:
-                path = os.path.join(world_dir+"backup/", str(int(backups[-1])+1))
+            if len(parts) > 2:
+                path = os.path.join(world_dir+"backup/", parts[2])
+                if os.path.exists(path):
+                    self.client.sendServerMessage("Backup %s already exists. Pick a different name." % parts[2])
+                    return
+            else:
+                backups = list([])
+                for x in folders:
+                    if x.isdigit():
+                        backups.append(x)
+                backups.sort(lambda x, y: int(x) - int(y))
+                path = os.path.join(world_dir+"backup/", "0")
+                if backups:
+                    path = os.path.join(world_dir+"backup/", str(int(backups[-1])+1))
             os.mkdir(path)
             shutil.copy(world_dir + "blocks.gz", path)
-            try:
-                self.client.sendServerMessage("Backup %s saved." % str(int(backups[-1])+1))
-            except:
-                self.client.sendServerMessage("Backup 0 saved.")
+            if len(parts) > 2:
+                self.client.sendServerMessage("Backup %s saved." % parts[2])
+            else:
+                try:
+                    self.client.sendServerMessage("Backup %s saved." % str(int(backups[-1])+1))
+                except:
+                    self.client.sendServerMessage("Backup 0 saved.")
 
     @world_list
     @op_only

@@ -89,7 +89,7 @@ class InfoPlugin(ProtocolPlugin):
     BlockList[49]="obsidian"
 
     hooks = {
-        "blockchange": "blockChanged",
+        "preblockchange": "blockChanged",
     }
 
     commands = {
@@ -109,13 +109,20 @@ class InfoPlugin(ProtocolPlugin):
     
     def blockChanged(self, x, y, z, block, selected_block, byuser):
         if self.binfo == 1:
-            self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block], block))
-            self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
-
+            check_offset = self.client.world.blockstore.get_offset(x, y, z)
+            block2 = ord(self.client.world.blockstore.raw_blocks[check_offset])
+            if block2 == 0:
+                self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block], block))
+                self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
+            else:
+                self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block2], block2))
+                self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
+                return False
     @build_list
     def commandInfo(self,parts,byuser,overriderank):
             self.binfo = 1
             self.client.sendServerMessage("You are now getting info about blocks.")
+            self.client.sendServerMessage("Use '/infoend' to stop.")
 
     @build_list
     def commandInfoEnd(self,parts,byuser,overriderank):
