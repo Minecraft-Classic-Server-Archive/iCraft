@@ -37,7 +37,7 @@ try:
     else:
         VERSION = "v2.6.2"
 except:
-    VERSION = "v2.6.2 Alpha 2"
+    VERSION = "v2.6.2"
 
 FORMAT_LENGTHS = {
     "b": 1,
