@@ -73,7 +73,10 @@ class BackupPlugin(ProtocolPlugin):
                 if backups:
                     path = os.path.join(world_dir+"backup/", str(int(backups[-1])+1))
             os.mkdir(path)
-            shutil.copy(world_dir + "blocks.gz", path)
+            try:
+                shutil.copy(world_dir + "blocks.gz", path)
+            except:
+                self.client.sendServerMessage("Your backup attempt has went wrong, please try again.")
             if len(parts) > 2:
                 self.client.sendServerMessage("Backup %s saved." % parts[2])
             else:
@@ -92,7 +95,11 @@ class BackupPlugin(ProtocolPlugin):
             world_id = parts[1].lower()
             world_dir = ("worlds/%s/" % world_id)
             if len(parts) < 3:
-                backups = os.listdir(world_dir+"backup/")
+                try:
+                    backups = os.listdir(world_dir+"backup/")
+                except:
+                    self.client.sendServerMessage("Syntax: /restore worldname number")
+                    return
                 backups.sort(lambda x, y: int(x) - int(y))
                 backup_number = str(int(backups[-1]))
             else:

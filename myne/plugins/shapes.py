@@ -30,7 +30,6 @@
 #    Suite 300, San Francisco, California, 94105, USA.
 
 from twisted.internet import reactor
-
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
@@ -131,7 +130,7 @@ class ShapesPlugin(ProtocolPlugin):
 
     @build_list
     @writer_only
-    def commandHSphere(self, parts, byuser, permissionoverride):
+    def commandHSphere(self, parts, byuser, overriderank):
         "/hsphere blocktype [x y z] radius - Builder\nPlace/delete a block, makes a hollow /sphere"
         if len(parts) < 6 and len(parts) != 3:
             self.client.sendServerMessage("Please enter a type (and possibly two coord triples)")

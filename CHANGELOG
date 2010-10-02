@@ -1,3 +1,35 @@
+v2.6.3 (for Mac v1.1.1):
+URGENT: FIXED A SECURITY EXPLOIT
+
+CHANGED:
+- Made it you need to type in a template when using /new
+- Display of Internal Server Error for when they happen
+- Reformatted urgent (Urgent not URGENT)
+- IRC, it works and feels a lot better now
+- about to include the server description (greeting in motd)
+- Titles, now warn you if too long - longer titles, more control!
+
+FIXED:
+- Bug with giving builder rank for players ranked lower then mod
+- Error in the irc bot with banreason
+- Code cleanup for the help on chats
+- Deprecation of the cmdlist all command
+- Tweaking the coloring in the irc bot
+- Typo in the /free command
+- Pontential map save bug
+- Console responding oddly with kicks
+- Formatting for help and credits commands
+- The coloring for /away if reason is shown
+- Made fetch work a lot better, no more loosing long messages
+- srb is now a lot better, people now can't duplicate via urgent
+- Typo in /help directors
+- Error dealing with ASD (no more YOU HAS ERROR's!)
+- Problem with shutting down default
+- Error with making a backup
+- Errors with too many arguments in commands
+- Problems if minecraft.net is offline
+- Error stuff deaing with Alpha clients
+
 v2.6.2 (for Mac v1.1.0):
 
 ADDED:

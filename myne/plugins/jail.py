@@ -278,7 +278,7 @@ class JailPlugin(ProtocolPlugin):
 
     @op_only
     def commandFree(self, parts, byuser, overriderank):
-        "/free username Op\nLets a user out of jail"
+        "/free username - Op\nLets a user out of jail"
 
         self.prepJail()
         jail = self.loadJail()

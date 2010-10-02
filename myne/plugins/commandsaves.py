@@ -104,5 +104,5 @@ class DynamitePlugin(ProtocolPlugin):
         try:
             func(parts, True, False) #byuser is true, overriderank is false
         except Exception, e:
-            self.client.sendServerMessage("Internal server error.")
+            self.client.sendServerMessage("Internal Server Error")
             self.client.log(traceback.format_exc(), level=logging.ERROR)

@@ -181,7 +181,7 @@ class CommandPlugin(ProtocolPlugin):
                     if runcmd:
                         func(parts, False, guest)
                 except UnboundLocalError:
-                    self.client.sendServerMessage("Internal server error.")
+                    self.client.sendServerMessage("Internal Server Error")
             elif message.lower() == "n" or message.lower() == "no":
                 self.listeningforpay = False
                 self.runningcmdlist = list({})
@@ -1052,11 +1052,11 @@ class CommandPlugin(ProtocolPlugin):
                     if runcmd:
                         func(parts, False, guest)
                 except UnboundLocalError:
-                    self.client.sendServerMessage("Internal server error.")
+                    self.client.sendServerMessage("Internal Server Error")
                     self.client.log(traceback.format_exc(), level=logging.ERROR)
             except Exception, e:
 
-                self.client.sendServerMessage("Internal server error.")
+                self.client.sendServerMessage("Internal Server Error")
 
                 self.client.log(traceback.format_exc(), level=logging.ERROR)
         self.runningcmdlist.remove(self.runningcmdlist[0])

@@ -24,7 +24,7 @@
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
 #
 #    iCraft is licensed under the Creative Commons
-#    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
+#    Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 #    To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
@@ -36,10 +36,8 @@ try:
     from twisted.words.protocols import irc
     from twisted.words.protocols.irc import IRC
 except ImportError:
-    print ("Sorry, but you need Twisted + Zope to run iCraft")
-    print ("http://twistedmatrix.com/trac/wiki/Downloads")
-    print ("You can also try using this, readme included:")
-    print ("http://www.mediafire.com/?i2wmtfnzmay")
+    print ("NOTICE: Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads")
+    print ("You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
     exit(1);
 
 from twisted.internet import protocol
@@ -51,7 +49,7 @@ from myne.decorators import *
 
 class ChatBot(irc.IRCClient):
     """An IRC-server chat integration bot."""
-    
+
     def connectionMade(self):
         self.ops = []
         self.nickname = self.factory.main_factory.irc_nick
@@ -129,8 +127,8 @@ class ChatBot(irc.IRCClient):
                     self.msg(user, "07ban banned banreason boot derank kick rank shutdown spec")
                     self.msg(user, "07Use 'command arguments' to do it.")
                 elif command[1] == ("banreason"):
-                    if len(msg_command) == 3:
-                        username = msg_command[2]
+                    if len(command) == 3:
+                        username = command[2]
                         if not self.factory.isBanned(username):
                             self.msg(user,"07%s is not Banned." % username)
                         else:
@@ -251,11 +249,11 @@ class ChatBot(irc.IRCClient):
                             self.msg(self.factory.irc_channel, "07NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
                         elif msg_command[1] == ("about"):
                             self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft %s http://hlmc.net/ - Credits: Use '$%s credits'" % (VERSION, self.nickname))
-                            self.msg(self.factory.irc_channel, "07Name: "+self.factory.server_name+" owned by "+self.factory.owner)
+                            self.msg(self.factory.irc_channel, "07Name: "+self.factory.server_name+"; owned by "+self.factory.owner)
                             try:
                                 self.msg(self.factory.irc_channel, "07URL: "+self.factory.heartbeat.url)
                             except:
-                                self.msg(self.factory.irc_channel, "07URL: N/A")
+                                self.msg(self.factory.irc_channel, "07URL: N/A (minecraft.net is offline)")
                             self.msg(self.factory.irc_channel, "07Site: "+self.factory.info_url)
                         else:
                             self.msg(self.factory.irc_channel, "07Sorry, "+msg_command[1]+" is not a command!")
@@ -322,32 +320,32 @@ class ChatBot(irc.IRCClient):
                     msg = msg.replace("&d", "&d")
                     msg = msg.replace("&e", "&e")
                     msg = msg.replace("&f", "&f")
-                    msg = msg.replace("1", "&0")
-                    msg = msg.replace("2", "&1")
-                    msg = msg.replace("3", "&2")
-                    msg = msg.replace("10", "&3")
-                    msg = msg.replace("5", "&4")
-                    msg = msg.replace("4", "&5")
-                    msg = msg.replace("7", "&6")
-                    msg = msg.replace("15", "&7")
-                    msg = msg.replace("14", "&8")
-                    msg = msg.replace("12", "&9")
-                    msg = msg.replace("9", "&a")
-                    msg = msg.replace("11", "&b")
-                    msg = msg.replace("4", "&c")
-                    msg = msg.replace("13", "&d")
-                    msg = msg.replace("8", "&e")
                     msg = msg.replace("0", "&f")
-                    msg = msg.replace("01", "&0")
-                    msg = msg.replace("02", "&1")
-                    msg = msg.replace("03", "&2")
-                    msg = msg.replace("05", "&4")
-                    msg = msg.replace("04", "&5")
-                    msg = msg.replace("07", "&6")
-                    msg = msg.replace("09", "&a")
-                    msg = msg.replace("04", "&c")
-                    msg = msg.replace("08", "&e")
                     msg = msg.replace("00", "&f")
+                    msg = msg.replace("1", "&0")
+                    msg = msg.replace("01", "&0")
+                    msg = msg.replace("2", "&1")
+                    msg = msg.replace("02", "&1")
+                    msg = msg.replace("3", "&2")
+                    msg = msg.replace("03", "&2")
+                    msg = msg.replace("4", "&c")
+                    msg = msg.replace("04", "&c")
+                    msg = msg.replace("5", "&4")
+                    msg = msg.replace("05", "&4")
+                    msg = msg.replace("6", "&5")
+                    msg = msg.replace("06", "&5")
+                    msg = msg.replace("7", "&6")
+                    msg = msg.replace("07", "&6")
+                    msg = msg.replace("8", "&e")
+                    msg = msg.replace("08", "&e")
+                    msg = msg.replace("9", "&a")
+                    msg = msg.replace("09", "&a")
+                    msg = msg.replace("10", "&3")
+                    msg = msg.replace("11", "&b")
+                    msg = msg.replace("12", "&9")
+                    msg = msg.replace("13", "&d")
+                    msg = msg.replace("14", "&8")
+                    msg = msg.replace("15", "&7")
                     msg = msg.replace("./", " /")
                     msg = msg.replace(".!", " !")
                     if msg[len(msg)-2] == "&":
@@ -376,7 +374,7 @@ class ChatBot(irc.IRCClient):
         message = message.replace("&2", "03")
         message = message.replace("&3", "10")
         message = message.replace("&4", "05")
-        message = message.replace("&5", "04")
+        message = message.replace("&5", "06")
         message = message.replace("&6", "07")
         message = message.replace("&7", "15")
         message = message.replace("&8", "14")
@@ -387,6 +385,22 @@ class ChatBot(irc.IRCClient):
         message = message.replace("&d", "13")
         message = message.replace("&e", "08")
         message = message.replace("&f", "00")
+        username = username.replace("&0", "")
+        username = username.replace("&1", "")
+        username = username.replace("&2", "")
+        username = username.replace("&3", "")
+        username = username.replace("&4", "")
+        username = username.replace("&5", "")
+        username = username.replace("&6", "")
+        username = username.replace("&7", "")
+        username = username.replace("&8", "")
+        username = username.replace("&9", "")
+        username = username.replace("&a", "")
+        username = username.replace("&b", "")
+        username = username.replace("&c", "")
+        username = username.replace("&d", "")
+        username = username.replace("&e", "")
+        username = username.replace("&f", "")
         self.msg(self.factory.irc_channel, "%s: %s" % (username, message))
 
     def sendServerMessage(self, message,admin=False,user="",IRC=False):
@@ -397,7 +411,7 @@ class ChatBot(irc.IRCClient):
         message = message.replace("&2", "03")
         message = message.replace("&3", "10")
         message = message.replace("&4", "05")
-        message = message.replace("&5", "04")
+        message = message.replace("&5", "06")
         message = message.replace("&6", "07")
         message = message.replace("&7", "15")
         message = message.replace("&8", "14")
@@ -411,9 +425,9 @@ class ChatBot(irc.IRCClient):
         if admin:
             for op in self.ops:
                 if not op == user or not IRC:
-                    self.msg(op, "%s" % (message))
+                    self.msg(op, "%s" % message)
         else:
-            self.msg(self.factory.irc_channel, "%s" % (message, ))
+            self.msg(self.factory.irc_channel, "%s" % message)
 
     def sendAction(self, username, message):
         message = message.replace("&0", "01")
@@ -421,7 +435,7 @@ class ChatBot(irc.IRCClient):
         message = message.replace("&2", "03")
         message = message.replace("&3", "10")
         message = message.replace("&4", "05")
-        message = message.replace("&5", "04")
+        message = message.replace("&5", "06")
         message = message.replace("&6", "07")
         message = message.replace("&7", "15")
         message = message.replace("&8", "14")
@@ -437,43 +451,116 @@ class ChatBot(irc.IRCClient):
     # irc callbacks
 
     def irc_NICK(self, prefix, params):
-        """Called when an IRC user changes their nickname."""
+        "Called when an IRC user changes their nickname."
         old_nick = prefix.split('!')[0]
         new_nick = params[0]
         if old_nick in self.ops:
             self.ops.remove(old_nick)
             self.ops.append(new_nick)
-        pass
+        msg = "%s%s is now known as %s." % (COLOUR_YELLOW, old_nick, new_nick)
+        self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
 
-        
+
     def userKicked(self, kickee, channel, kicker, message):
-        """Called when I observe someone else being kicked from a channel.
-        """
+        "Called when I observe someone else being kicked from a channel."
         if kickee in self.ops:
-
             self.ops.remove(kickee)
-        pass
+        msg = "%s%s was kicked from %s by %s." % (COLOUR_YELLOW, kickee, channel, kicker)
+        self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
+        if not kickee == message:
+            msg = "%sReason: %s" % (COLOUR_YELLOW, message)
+            self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
+
 
     def userLeft(self, user, channel):
-        """Called when I see another user leaving a channel.
-        """
+        "Called when I see another user leaving a channel."
         if user in self.ops:
             self.ops.remove(user)
+        msg = "%s%s has left %s." % (COLOUR_YELLOW, user.split("!")[0], channel)
+        self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
+
+    def userJoined(self, user, channel):
+        "Called when I see another user joining a channel."
+        if user in self.ops:
+            self.ops.remove(user)
+        msg = "%s%s has joined %s." % (COLOUR_YELLOW, user.split("!")[0], channel)
+        self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
 
     def modeChanged(self, user, channel, set, modes, args):
+        "Called when someone changes a mode."
+        setUser = user.split("!")[0]
+        arguments = []
+        for element in args:
+            if element:
+                arguments.append(element.split("!")[0])
         if set and modes.startswith("o"):
+            if len(arguments) < 2:
+                msg = "%s%s was opped on %s by %s." % (COLOUR_YELLOW, arguments[0], channel, setUser)
+            else:
+                msg = "%sUsers opped on %s by %s: %s (%s)" % (COLOUR_YELLOW, channel, setUser, ", ".join(arguments), len(arguments))
+            self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
             for name in args:
                 if not name in self.ops:
                     self.ops.append(name)
         elif not set and modes.startswith("o"):
+            done = []
+            for name in args:
+                done.append(name.split("!")[0])
+            if len(arguments) < 2:
+                msg = "%s%s was deopped on %s by %s." % (COLOUR_YELLOW, arguments[0], channel, setUser)
+            else:
+                msg = "%sUsers deopped on %s by %s: %s (%s)" % (COLOUR_YELLOW, channel, setUser, ", ".join(arguments), len(arguments))
+            self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
             for name in args:
                 if name in self.ops:
                     self.ops.remove(name)
+        elif set and modes.startswith("v"):
+            if len(arguments) < 2:
+                msg = "%s%s was voiced on %s by %s." % (COLOUR_YELLOW, arguments[0], channel, setUser)
+            else:
+                msg = "%sUsers voiced on %s by %s: %s (%s)" % (COLOUR_YELLOW, channel, setUser, ", ".join(arguments), len(arguments))
+            self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
+            for name in args:
+                if not name in self.ops:
+                    self.ops.append(name)
+        elif not set and modes.startswith("v"):
+            done = []
+            for name in args:
+                done.append(name.split("!")[0])
+            if len(arguments) < 2:
+                msg = "%s%s was devoiced on %s by %s." % (COLOUR_YELLOW, arguments[0], channel, setUser)
+            else:
+                msg = "%sUsers devoiced on %s by %s: %s (%s)" % (COLOUR_YELLOW, channel, setUser, ", ".join(arguments), len(arguments))
+            self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
+            for name in args:
+                if name in self.ops:
+                    self.ops.remove(name)
+        elif set and modes.startswith("b"):
+            msg = "%sBan set in %s by %s." % (COLOUR_YELLOW, channel, setUser)
+            self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
+            msg = "%s(%s)" % (COLOUR_YELLOW, " ".join(args))
+            self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
+        elif not set and modes.startswith("b"):
+            msg = "%sBan lifted in %s by %s." % (COLOUR_YELLOW, channel, setUser)
+            self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
+            msg = "%s(%s)" % (COLOUR_YELLOW, " ".join(args))
+            self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
+    
+    def irc_QUIT(self, user, params):
+        userhost = user
+        user = user.split('!')[0]
+        quitMessage = params[0]
+        if userhost in self.ops:
+            self.ops.remove(userhost)
+        msg = "%s%s has quit IRC." % (COLOUR_YELLOW, user)
+        self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
+        msg = "%s(%s)" % (COLOUR_YELLOW, quitMessage)
+        self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
 
 class ChatBotFactory(protocol.ClientFactory):
     # the class of the protocol to build when new connection is made
     protocol = ChatBot
-    
+
     def __init__(self, main_factory):
         self.main_factory = main_factory
         self.instance = None
@@ -494,7 +581,7 @@ class ChatBotFactory(protocol.ClientFactory):
             message = message.replace("&2", "03")
             message = message.replace("&3", "10")
             message = message.replace("&4", "05")
-            message = message.replace("&5", "04")
+            message = message.replace("&5", "06")
             message = message.replace("&6", "07")
             message = message.replace("&7", "15")
             message = message.replace("&8", "14")
@@ -518,7 +605,7 @@ class ChatBotFactory(protocol.ClientFactory):
             message = message.replace("&2", "03")
             message = message.replace("&3", "10")
             message = message.replace("&4", "05")
-            message = message.replace("&5", "04")
+            message = message.replace("&5", "06")
             message = message.replace("&6", "07")
             message = message.replace("&7", "15")
             message = message.replace("&8", "14")
@@ -542,7 +629,7 @@ class ChatBotFactory(protocol.ClientFactory):
             message = message.replace("&2", "03")
             message = message.replace("&3", "10")
             message = message.replace("&4", "05")
-            message = message.replace("&5", "04")
+            message = message.replace("&5", "06")
             message = message.replace("&6", "07")
             message = message.replace("&7", "15")
             message = message.replace("&8", "14")

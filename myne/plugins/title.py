@@ -55,24 +55,23 @@ class TitlePlugin(ProtocolPlugin):
     @director_only
     def commandSetTitle(self, parts, byuser, overriderank):
         "/title username [title] - Director\nAliases: settitle\nGives or removes a title to username."
-        if len(parts)==3:
+        if len(parts)>2:
             rank = self.loadRank()
-            user = parts[1]
-            if len(parts[2])<6:
-                rank[user] = parts[2]
-                self.dumpRank(rank)
-                self.client.sendServerMessage("Added title.")
+            user = parts[1].lower()
+            rank[user] = (" ".join(parts[2:]))
+            self.dumpRank(rank)
+            if len(" ".join(parts[2:]))<8:
+                self.client.sendServerMessage("Added the title of: "+(" ".join(parts[2:])))
             else:
-                self.client.sendServerMessage("A title must be 5 character or less")
+                self.client.sendServerMessage("NOTICE: We recommend for you to keep Titles under 7 chars.")
+                self.client.sendServerMessage("Added the title of: "+(" ".join(parts[2:])))
         elif len(parts)==2:
             rank = self.loadRank()
-            user = parts[1]
+            user = parts[1].lower()
             if user not in rank:
                 self.client.sendServerMessage("Syntax: /title username title")
                 return False
             else:
                 rank.pop(user)
                 self.dumpRank(rank)
-                self.client.sendServerMessage("Removed title.")
-        elif len(parts)>3:
-            self.client.sendServerMessage("You may only set one word as a title.")
+                self.client.sendServerMessage("Removed the title.")

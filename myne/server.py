@@ -77,15 +77,7 @@ The Salt is also used to help verify users' identities.
         try:
             try:
                 self.factory.last_heartbeat = time.time()
-                fh = urllib.urlopen("http://www.minecraft.net/heartbeat.jsp", urllib.urlencode({
-                "port": self.factory.config.getint("network", "port"),
-                "users": len(self.factory.clients),
-                "max": self.factory.max_clients,
-                "name": self.factory.server_name,
-                "public": self.factory.public,
-                "version": 7,
-                "salt": self.factory.salt,
-                }))
+                fh = urllib.urlopen("http://www.minecraft.net/heartbeat.jsp", urllib.urlencode({"port": self.factory.config.getint("network", "port"), "users": len(self.factory.clients), "max": self.factory.max_clients, "name": self.factory.server_name, "public": self.factory.public, "version": 7, "salt": self.factory.salt}), timeout=15)
                 self.url = fh.read().strip()
                 if self.factory.console_delay == self.factory.delay_count:
                     logging.log(logging.INFO, "Heartbeat Sent. Your URL: %s" % self.url)
@@ -94,7 +86,7 @@ The Salt is also used to help verify users' identities.
                 if not self.factory.console.is_alive():
                     self.factory.console.run()
             except:
-                logging.log(logging.ERROR, traceback.format_exc())
+                logging.log(logging.ERROR, "minecraft.net seems to be offline")
         except:
             logging.log(logging.ERROR, traceback.format_exc())
         finally:
@@ -120,8 +112,7 @@ class MyneFactory(Factory):
         try:
             self.max_clients = self.config.getint("main", "max_clients")
         except:
-            print ("You might be using a outdated server.conf file")
-            print ("You need to rename server.example.conf to server.conf")
+            print ("NOTICE: You might be using a outdated server.conf file, you need to rename server.example.conf to server.conf")
             exit(1);
         self.server_name = self.config.get("main", "name")
         self.server_message = self.config.get("main", "description")
@@ -161,7 +152,7 @@ class MyneFactory(Factory):
         try:
             number = int(self.wordfilter.get("filter","count"))
         except:
-            print ("You need to rename wordfilter.example.conf to wordfilter.conf")
+            print ("NOTICE: You need to rename wordfilter.example.conf to wordfilter.conf")
             exit(1);
         for x in range(number):
             self.filter = self.filter + [[self.wordfilter.get("filter","s"+str(x)),self.wordfilter.get("filter","r"+str(x))]]
@@ -435,12 +426,17 @@ class MyneFactory(Factory):
         """
         try:
             if ASD and len(self.worlds[world_id].clients)>0:
-                logging.log(logging.ERROR, "YOU HAS ERROR, REPORT THIS TO GOOBER")
+#                logging.log(logging.ERROR, "YOU HAS ERROR, REPORT THIS TO GOOBER")
+                self.worlds[world_id].ASD.kill()
+                self.worlds[world_id].ASD = None
                 return
         except KeyError:
             return
-        assert world_id != self.default_name
-        if  not self.worlds[world_id].ASD == None:
+        try:
+            assert world_id != self.default_name
+        except:
+            client.sendServerMessage("You can't shutdown "+self.default_name+".")
+        if not self.worlds[world_id].ASD == None:
             self.worlds[world_id].ASD.kill()
             self.worlds[world_id].ASD = None
         for client in list(list(self.worlds[world_id].clients))[:]:

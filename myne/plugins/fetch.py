@@ -37,7 +37,10 @@ class FetchPlugin(ProtocolPlugin):
     commands = {
         "fetch": "commandFetch",
         "bring": "commandFetch",
+        "forcefetch": "commandForceFetch",
+        "forcebring": "commandForceFetch",
         "invite": "commandInvite",
+        "forceinvite": "commandFetch",
     }
 
     hooks = {
@@ -57,10 +60,17 @@ class FetchPlugin(ProtocolPlugin):
                     self.client.teleportTo(rx, ry, rz)
                 else:
                     self.client.changeToWorld(world.id, position=(rx, ry, rz))
+                self.client.sendServerMessage("You have accepted the fetch request.")
                 sender.sendServerMessage("%s has accepted your fetch request." % self.client.username)
+            elif message in ["n"]:
+                sender = self.client.var_fetchdata[0]
+                self.client.sendServerMessage("You did not accept the fetch request.")
+                sender.sendServerMessage("%s did not accept your request." % self.client.username)
             else:
                 sender = self.client.var_fetchdata[0]
-                sender.sendServerMessage("%s did not accept your request." % self.client.username)
+                self.client.sendServerMessage("You have ignored the fetch request.")
+                sender.sendServerMessage("%s has ignored your request." % self.client.username)
+                return
             self.client.var_fetchdata
             return True
     
@@ -68,19 +78,49 @@ class FetchPlugin(ProtocolPlugin):
     @op_only
     @username_command
     def commandFetch(self, user, byuser, overriderank):
-        "/fetch username - Op\nAliases: bring\nTeleports a player to be where you are"
+        "/fetch username - Op\nAliases: bring, forceinvite\nTeleports a player to be where you are"
         # Shift the locations right to make them into block coords
         rx = self.client.x >> 5
         ry = self.client.y >> 5
         rz = self.client.z >> 5
-        user.sendServerMessage("%s would like to fetch you." % self.client.username)
-        user.sendServerMessage("Do you wish to accept? [y]es/[n]o")
+        user.var_prefetchdata = (self.client,self.client.world)
+        if self.client.world.id == user.world.id:
+            user.sendServerMessage("%s would like to fetch you." % self.client.username)
+        else:
+            user.sendServerMessage("%s would like to fetch you to %s." % (self.client.username, self.client.world.id))
+        user.sendServerMessage("Do you wish to accept? [y]es [n]o")
         user.var_fetchrequest = True
         user.var_fetchdata = (self.client,self.client.world,rx,ry,rz)
         self.client.sendServerMessage("The fetch request has been sent.")
 
     @player_list
-    @op_only
+    @admin_only
+    @username_command
+    def commandForceFetch(self, user, byuser, overriderank):
+        "/forcefetch username - Admin\nAliases: forcebring\nTeleports a player to be where you are"
+        # Shift the locations right to make them into block coords
+        rx = self.client.x >> 5
+        ry = self.client.y >> 5
+        rz = self.client.z >> 5
+        if user.world == self.client.world:
+            user.teleportTo(rx, ry, rz)
+        else:
+            if self.client.isAdmin():
+                user.changeToWorld(self.client.world.id, position=(rx, ry, rz))
+            elif self.client.isMod():
+                user.changeToWorld(self.client.world.id, position=(rx, ry, rz))
+            else:
+                self.client.sendServerMessage("%s cannot be forcefetched from '%s'" % (self.client.username, user.world.id))
+                return
+        user.sendServerMessage("You have been forcefetched by %s" % self.client.username)
+
+    @player_list
+    @username_command
     def commandInvite(self, user, byuser, overriderank):
-        "/invite username - Op\nInvites a player to come to you."
-        self.client.sendServerMessage("Sorry, this command is under construction.")
+        "/invite username - Guest\nInvites a player to come to you."
+        if user.world == self.client.world:
+            self.client.sendServerMessage("%s has been invited." % user.username)
+            user.sendServerMessage("%s has invited you." % self.client.username)
+        else:
+            self.client.sendServerMessage("%s has been invited to %s." % (user.username, self.client.world.id))
+            user.sendServerMessage("%s has invited you to %s." % (self.client.username, self.client.world.id))

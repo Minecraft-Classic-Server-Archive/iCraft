@@ -59,7 +59,7 @@ class ModsPlugin(ProtocolPlugin):
 
     @info_list
     def commandDirectors(self, parts, byuser, overriderank):
-        "/direcors - Guest\nLists all Directors."
+        "/directors - Guest\nLists all Directors."
         if len(self.client.factory.directors):
             self.client.sendServerList(["Directors:"] + list(self.client.factory.directors))
 

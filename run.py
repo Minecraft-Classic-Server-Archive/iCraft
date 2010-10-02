@@ -29,43 +29,44 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import os
-import sys
-
-if not sys.version_info[:2] == (2, 6):
-    try:
-        if (os.uname()[0] == "Darwin"):
-            print ("Sorry, but your Mac OS X version is outdated.")
-            print ("We recommend running iCraft for Mac on 10.6+")
-            print ("or you need to install Python 2.6.x on 10.5")
-        else:
-            print ("Sorry, but you need Python 2.6.x to run iCraft")
-            print ("http://www.python.org/download/releases/2.6.5/")
-            print ("You'll also need Zope, Twisted and SimpleJSON.")
-    except:
-        print ("Sorry, but you need Python 2.6.x to run iCraft")
-        print ("http://www.python.org/download/releases/2.6.5/")
-        print ("You'll also need Zope, Twisted and SimpleJSON.")
-    exit(1);
-
 #!/usr/bin/python
 
+import os
+import sys
 import time
 import logging
 import os,shutil
 from myne.constants import *
 from logging.handlers import SMTPHandler
+from myne.server import MyneFactory
+from myne.controller import ControllerFactory
+
+if not sys.version_info[:2] == (2, 6):
+    try:
+        if (os.uname()[0] == "Darwin"):
+            print ("NOTICE: Sorry, but your Mac OS X version is outdated. We recommend running iCraft for Mac on 10.6+ or you need to install Python 2.6.x on 10.5")
+        else:
+            print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run iCraft; http://www.python.org/download/releases/2.6.5/")
+    except:
+        print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run iCraft; http://www.python.org/download/releases/2.6.5/")
+    exit(1);
 
 try:
     from twisted.internet import reactor
 except ImportError:
-    print ("Sorry, but you need Twisted + Zope to run iCraft")
-    print ("http://twistedmatrix.com/trac/wiki/Downloads")
-    print ("You can also try using this, readme included:")
-    print ("http://www.mediafire.com/?i2wmtfnzmay")
+    print ("NOTICE: Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads")
+    print ("You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
+    exit(1);
 
-from myne.server import MyneFactory
-from myne.controller import ControllerFactory
+print ("Now starting up iCraft %s.." % VERSION)
+
+try:
+    import Image
+except ImportError:
+    print ("NOTICE: PIL isn't installed, imagedraw won't work.")
+
+print ("ATTENTION: Please don't forget to check for updates; http://hlmc.net/ | irc.esper.net #iCraft")
+
 def LogTimestamp():
     if os.path.exists("logs/console/console.log"):
         shutil.copy("logs/console/console.log", "logs/console/console" +time.strftime("%Y%m%d%H%M%S",time.localtime(time.time())) +".log")
@@ -87,10 +88,6 @@ formatter = logging.Formatter("%(asctime)s - %(levelname)7s - %(message)s")
 console.setFormatter(formatter)
 # add the handler to the root logger
 logging.getLogger('').addHandler(console)
-
-logging.log(logging.INFO, "Starting up iCraft %s" % VERSION)
-logging.log(logging.INFO, "Please don't forget to check for updates.")
-logging.log(logging.INFO, "http://hlmc.net/ | irc.esper.net #iCraft")
 
 factory = MyneFactory()
 controller = ControllerFactory(factory)
@@ -125,9 +122,5 @@ finally:
         logging.log(logging.INFO, "Saving: %s" % world.basename);
         world.stop()
         world.save_meta()
-    logging.log(logging.INFO, "Done flushing...")
-    logging.log(logging.INFO, "Please don't forget to check for updates.")
-    logging.log(logging.INFO, "http://hlmc.net/ | irc.esper.net #iCraft")
-    if os.name is not "nt":
-        sys.stdout.write(chr(27)+"[m")
+    print ("ATTENTION: Please don't forget to check for updates; http://hlmc.net/ | irc.esper.net #iCraft")
     exit(1);

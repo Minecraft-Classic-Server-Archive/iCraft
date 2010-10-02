@@ -48,7 +48,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
                 return "You must provide a world"
         #Make builder
         if not server:
-            if not (self.client.username in world.ops or self.client.isMod()) and not overriderank:
+            if not (self.client.username.lower() in world.ops or self.client.isMod() or self.client.isWorldOwner()) and not overriderank:
                 return ("You are not high enough rank!")
         else:
             if not parts[-1] == "console":
@@ -301,7 +301,7 @@ def Credits(self, server=None):
     Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason,")
     Temp.append ("gdude2002, goober, gothfox, ntfwc, revenant, Saanix, tehcid,")
     Temp.append ("Varriount, willempiee")
-    Temp.append ("Others: 099, Akai, Antoligy, Aquaskys, Bidoof_King, fragmer,")
-    Temp.append ("Kelraider, MAup, MystX, NotMeh, PyroPyro, Rils, Roadcrosser,")
-    Temp.append ("Roujo, setveen, TkTech, Uninspired, ...")
+    Temp.append ("Others: 099, Akai, Antoligy, Aquaskys, Bidoof_King,")
+    Temp.append ("Bioniclegenius, fragmer, Kelraider, MAup, MystX, NotMeh,")
+    Temp.append ("PyroPyro, Red_Link, Rils, Roadcrosser, Roujo, setveen, sk8rjwd, TkTech, Uninspired, ...")
     return Temp

@@ -42,6 +42,7 @@ class OfflineMessPlugin(ProtocolPlugin):
           "s": "commandSendMessage",
           "inbox": "commandCheckMessages",
           "c": "commandClear",
+          "clear": "commandClear",
 	}
 		
         def commandSendMessage(self,parts, byuser, overriderank):
@@ -80,7 +81,7 @@ class OfflineMessPlugin(ProtocolPlugin):
                 self.client.sendServerMessage("You do not have any messages.")
 
         def commandClear(self,parts, byuser, overriderank):
-            "/c - Guest\nClears your Inbox of messages"
+            "/c - Guest\nAliases: clear\nClears your Inbox of messages"
             target = self.client.username.lower()
             file = open('offlinemessage.dat', 'r')
             messages = pickle.load(file)

@@ -97,6 +97,9 @@ class StdinPlugin(threading.Thread):
                         message = message.replace("&e", "&e")
                         message = message.replace("&f", "&f")
                         message = message.replace("./", " /")
+                        message = message.replace(".!", " !")
+                        message = message.replace(".@", " @")
+                        message = message.replace(".#", " #")
                         if message[len(message)-3] == "&":
                             print ("You can not use a color at the end of a message")
                             return
@@ -113,8 +116,10 @@ class StdinPlugin(threading.Thread):
                                         if client.username==message[1]:
                                             client.sendError("You were kicked!")
                                             print (message[1]+" has been kicked from the server.")
+                                            pass
                                         else:
                                             print ("User "+str(message[1])+" is not online.")
+                                            pass
                             elif message[0] == "ban":
                                 if len(message) == 1:
                                     print ("Please specify a username.")
@@ -197,14 +202,22 @@ class StdinPlugin(threading.Thread):
                                 else:
                                     self.server.queue.put((self, TASK_ACTION, (1, "&2", "Console", " ".join(message[1:]))))
                             elif message[0] == ("srb"):
-                                self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[URGENT] Server Reboot - Back in a Flash")))
+                                if len(message) == 1:
+                                    self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few.")))
+                                else:
+                                    self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few: "+(" ".join(message[1:])))))
+                            elif message[0] == ("srs"):
+                                if len(message) == 1:
+                                    self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later.")))
+                                else:
+                                    self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later: "+(" ".join(message[1:])))))
                             elif message[0] == ("help"):
                                 print ("Whispers: @username message")
                                 print ("WorldChat: !worldname message")
                                 print ("StaffChat: #message")
                                 print ("Commands: /cmdlist")
                             elif message[0] == ("cmdlist"):
-                                print ("about boot ban cmdlist cpr derank help kick me new pll plr plu rank say shutdown spec srb u")
+                                print ("about boot ban cmdlist cpr derank help kick me new pll plr plu rank say shutdown spec srb srs u")
                             elif message[0] == ("about"):
                                 print ("About The Server")
                                 print ("Powered by iCraft %s - http://hlmc.net/"%VERSION)
@@ -212,7 +225,7 @@ class StdinPlugin(threading.Thread):
                                 try:
                                     print ("URL: "+self.server.heartbeat.url)
                                 except:
-                                    print ("URL: N/A")
+                                    print ("URL: N/A (minecraft.net is offline)")
                             elif message[0] == ("say"):
                                 if len(message) == 1:
                                     print ("Please type a message.")
@@ -222,7 +235,7 @@ class StdinPlugin(threading.Thread):
                                 if len(message) == 1:
                                     print ("Please type a message.")
                                 else:
-                                    self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, "[URGENT] "+(" ".join(message[1:]))))
+                                    self.server.queue.put((self, TASK_SERVERURGENTMESSAGE, "[Urgent] "+(" ".join(message[1:]))))
                             elif message[0] == ("plr"):
                                 if len(message) == 1:
                                     print ("Please provide a plugin name.")

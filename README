@@ -1,0 +1,11 @@
+Thanks for choosing iCraft as your Creative Multiplayer software.
+
+PLEASE NOTE: iCraft is NOT for Alpha, so the Alpha client will NOT work with iCraft. If you are looking for a Survival Multiplayer software then we recommend you to use myne2.
+
+Step 1: Make sure you have Python 2.6 installed, if it's NOT 2.6.x (like 2.5, 2.7 or 3.x) then it will not work and error while attempting to run iCraft.
+
+Step 2: Try running run.py and follow the instructions it presents to you each time until you get iCraft working (the instructions that'd be put in this readme are actually intergrated in to the software!)
+
+iCraft should now be running, feel free to stop by on irc.esper.net #iCraft for more support with installation, help for commands or even stop in just to say hello and wish us the best of development. We love it when people hang around and take a part in our community and give us suggestions and feedback for iCraft. Good luck with your server.
+
+This README was written by iKJames for iCraft users, this is to guide you to install iCraft properly. THERE IS NO WARRANTY FOR FOLLOWING THIS README, IF DAMAGE TO YOUR SYSTEM IS DONE THEN THE ICRAFT TEAM IS NOT RESPONSIBLE FOR THE DAMAGES.

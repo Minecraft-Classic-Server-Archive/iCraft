@@ -33,7 +33,10 @@ from twisted.internet import reactor
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
-import Image
+try:
+    import Image
+except ImportError:
+    print ("NOTICE: Sorry, but you need PIL to use imagedraw.")
 import urllib
 import StringIO
 

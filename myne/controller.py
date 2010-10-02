@@ -38,18 +38,13 @@ try:
 except ImportError:
     try:
         if (os.uname()[0] == "Darwin"):
-            print ("Sorry, but you need SimpleJSON on Mac.")
-            print ("It's as easy as: easy_install simplejson")
+            print ("NOTICE: Sorry, but you need SimpleJSON on Mac. It's as easy as: easy_install simplejson")
         else:
-            print ("Sorry, but you need SimpleJSON to run iCraft")
-            print ("http://pypi.python.org/pypi/simplejson/")
-            print ("You can also try using this, readme included:")
-            print ("http://www.mediafire.com/?i2wmtfnzmay")
+            print ("NOTICE: Sorry, but you need SimpleJSON to run iCraft; http://pypi.python.org/pypi/simplejson/")
+            print ("You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
     except:
-        print ("Sorry, but you need SimpleJSON to run iCraft")
-        print ("http://pypi.python.org/pypi/simplejson/")
-        print ("You can also try using this, readme included:")
-        print ("http://www.mediafire.com/?i2wmtfnzmay")
+        print ("NOTICE: Sorry, but you need SimpleJSON to run iCraft; http://pypi.python.org/pypi/simplejson/")
+        print ("You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
     exit(1);
 
 from twisted.protocols.basic import LineReceiver

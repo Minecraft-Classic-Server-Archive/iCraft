@@ -416,9 +416,9 @@ class MyneServerProtocol(Protocol):
                 rank = self.loadRank()
                 user = self.username.lower()
                 if self.username.lower() in rank:
-                    self.title = "\""+rank[user]+"\" "
+                    self.title = rank[user]+" "
                 else:
-                    self.title = ''
+                    self.title = ""
                 self.usertitlename = self.title + self.username
                 override = self.runHook("chatmsg", message)                
                 goodchars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", "!", "@", "#", "$", "%", "*", "(", ")", "-", "_", "+", "=", "{", "[", "}", "]", ":", ";", "\"", "\'", "<", ",", ">", ".", "?", "/", "\\", "|"]
@@ -443,32 +443,32 @@ class MyneServerProtocol(Protocol):
                 message = message.replace("%d", "&d")
                 message = message.replace("%e", "&e")
                 message = message.replace("%f", "&f")
-                message = message.replace("1", "&0")
-                message = message.replace("2", "&1")
-                message = message.replace("3", "&2")
-                message = message.replace("10", "&3")
-                message = message.replace("5", "&4")
-                message = message.replace("4", "&5")
-                message = message.replace("7", "&6")
-                message = message.replace("15", "&7")
-                message = message.replace("14", "&8")
-                message = message.replace("12", "&9")
-                message = message.replace("9", "&a")
-                message = message.replace("11", "&b")
-                message = message.replace("4", "&c")
-                message = message.replace("13", "&d")
-                message = message.replace("8", "&e")
                 message = message.replace("0", "&f")
-                message = message.replace("01", "&0")
-                message = message.replace("02", "&1")
-                message = message.replace("03", "&2")
-                message = message.replace("05", "&4")
-                message = message.replace("04", "&5")
-                message = message.replace("07", "&6")
-                message = message.replace("09", "&a")
-                message = message.replace("04", "&c")
-                message = message.replace("08", "&e")
                 message = message.replace("00", "&f")
+                message = message.replace("1", "&0")
+                message = message.replace("01", "&0")
+                message = message.replace("2", "&1")
+                message = message.replace("02", "&1")
+                message = message.replace("3", "&2")
+                message = message.replace("03", "&2")
+                message = message.replace("4", "&c")
+                message = message.replace("04", "&c")
+                message = message.replace("5", "&4")
+                message = message.replace("05", "&4")
+                message = message.replace("6", "&5")
+                message = message.replace("06", "&5")
+                message = message.replace("7", "&6")
+                message = message.replace("07", "&6")
+                message = message.replace("8", "&e")
+                message = message.replace("08", "&e")
+                message = message.replace("9", "&a")
+                message = message.replace("09", "&a")
+                message = message.replace("10", "&3")
+                message = message.replace("11", "&b")
+                message = message.replace("12", "&9")
+                message = message.replace("13", "&d")
+                message = message.replace("14", "&8")
+                message = message.replace("15", "&7")
                 message = message.replace("./", " /")
                 message = message.replace(".!", " !")
                 message = message.replace(".@", " @")
@@ -487,6 +487,7 @@ class MyneServerProtocol(Protocol):
                     return
                 if message.startswith("/"):
                     # It's a command
+                    #message = message.lower()
                     parts = [x.strip() for x in message.split() if x.strip()]
                     command = parts[0].strip("/")
                     if not message.startswith("/tlog "):
@@ -535,7 +536,7 @@ class MyneServerProtocol(Protocol):
                     try:
                         func(parts, True, False) #byuser is true, overriderank is false
                     except Exception, e:
-                        self.sendServerMessage("Internal server error.")
+                        self.sendServerMessage("Internal Server Error")
                         if self.isDirector():
                             self.sendSplitServerMessage(traceback.format_exc(0).replace("Traceback (most recent call last):", ""))
                         self.log(traceback.format_exc(), level=logging.ERROR)
@@ -616,7 +617,11 @@ class MyneServerProtocol(Protocol):
                             else:
                                 self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
             else:
-                self.log("Unhandleable type %s" % type, logging.WARN)
+                if type == 2:
+                    logging.log(logging.WARN, "Alpha Client Attempted to Connect")
+                    self.transport.loseConnection()
+                else:
+                    self.log("Unhandleable type %s" % type, logging.WARN)
 
     def userColour(self):
         if self.isSpectator():
@@ -629,7 +634,7 @@ class MyneServerProtocol(Protocol):
             color = COLOUR_RED
         elif self.isMod():
             color = COLOUR_BLUE
-        elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro" or self.username.lower() == "tehcid" or self.username.lower() == "099" or self.username.lower() == "setveen" or self.username.lower() == "aquaskys" or self.username.lower() == "kelraider" or self.username.lower() == "uninspired" or self.username.lower() == "saanix" or self.username.lower() == "roujo" or self.username.lower() == "maup" or self.username.lower() == "mystx" or self.username.lower() == "akai" or self.username.lower() == "roadcrosser" or self.username.lower() == "antoligy":
+        elif self.username.lower() == "notch" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro" or self.username.lower() == "tehcid" or self.username.lower() == "099" or self.username.lower() == "setveen" or self.username.lower() == "aquaskys" or self.username.lower() == "kelraider" or self.username.lower() == "uninspired" or self.username.lower() == "saanix" or self.username.lower() == "roujo" or self.username.lower() == "maup" or self.username.lower() == "mystx" or self.username.lower() == "akai" or self.username.lower() == "roadcrosser" or self.username.lower() == "antoligy" or self.username.lower() == "bioniclegenius" or self.username.lower() == "red_link" or self.username.lower() == "sk8rjwd" or self.username.lower() == "ntfwc":
             color = COLOUR_YELLOW
         elif self.isWorldOwner():
             color = COLOUR_DARKYELLOW
@@ -792,16 +797,26 @@ class MyneServerProtocol(Protocol):
 
     def _sendMessage(self, prefix, message, id=127):
         "Utility function for sending messages, which does line splitting."
-        linelen = 63 - len(prefix)
         lines = []
+        temp = []
         thisline = ""
         words = message.split()
+        linelen = 63 - len(prefix)
         for x in words:
             if len(thisline + " " + x) < linelen:
                 thisline = thisline + " " + x
             else:
-                lines.append(thisline)
-                thisline = x
+                if len(x) > linelen:
+                    if not thisline == "":
+                        lines.append(thisline)
+                    while len(x) > linelen:
+                        temp.append(x[:linelen])
+                        x=x[linelen:]
+                    lines = lines + temp
+                    thisline = x
+                else:
+                    lines.append(thisline)
+                    thisline = x
         if thisline != "":
             lines.append(thisline)
         for line in lines:
@@ -810,6 +825,8 @@ class MyneServerProtocol(Protocol):
                     newline = line[1:]
                 else:
                     newline = line
+                if newline[len(newline)-2] == "&":
+                    newline = newline[:len(newline)-2]
                 self.sendPacked(TYPE_MESSAGE, id, prefix + newline)
 
     def sendAction(self, id, colour, username, text):

@@ -66,14 +66,15 @@ class MultiWorldPlugin(ProtocolPlugin):
     @world_list
     @admin_only
     def commandNew(self, parts, byuser, overriderank):
-        "/new worldname [templatename] - Admin\nAliases: mapadd\nMakes a new world, and boots it."
+        "/new worldname templatename - Admin\nAliases: mapadd\nMakes a new world, and boots it."
         if len(parts) == 1:
             self.client.sendServerMessage("Please specify a new worldname.")
         elif self.client.factory.world_exists(parts[1]):
             self.client.sendServerMessage("Worldname in use")
         else:
             if len(parts) == 2:
-                template = "default"
+                self.client.sendServerMessage("Sorry, but you need to specify a template.")
+                return
             elif len(parts) == 3 or len(parts) == 4:
                 template = parts[2]
             world_id = parts[1].lower()
@@ -172,6 +173,7 @@ class MultiWorldPlugin(ProtocolPlugin):
         if len(parts) != 2 and len(parts) != 3:
             self.client.sendServerMessage("Do /worlds all for all worlds or choose a letter.")
             self.client.sendServerList(["Online:"] + [id for id, world in self.client.factory.worlds.items() if self.client.canEnter(world)])
+
             return
         else:
             if parts[1] == 'all':
@@ -201,9 +203,8 @@ class MultiWorldPlugin(ProtocolPlugin):
             self.client.sendServerList(["Worlds:"] + newlist)
 
     @world_list
-    @admin_only
     def commandTemplates(self, parts, byuser, overriderank):
-        "/templates - Admin\nLists available templates"
+        "/templates - Guest\nLists available templates"
         self.client.sendServerList(["Templates:"] + os.listdir("templates/"))
 
     def commandHome(self, parts, byuser, overriderank):

@@ -41,6 +41,7 @@ class MessagingPlugin(ProtocolPlugin):
         "msg": "commandSay",
         "me": "commandMe",
         "srb": "commandSRB",
+        "srs": "commandSRS",
         "u": "commandUrgent",
         "urgent": "commandUrgent",
         "away": "commandAway",
@@ -65,7 +66,7 @@ class MessagingPlugin(ProtocolPlugin):
              self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away."))
              self.client.gone = 1
          else:
-             self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away"+COLOUR_WHITE+" "+(" ".join(parts[1:]))))
+             self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away "+(" ".join(parts[1:]))))
              self.client.gone = 1
 
     @player_list
@@ -89,8 +90,19 @@ class MessagingPlugin(ProtocolPlugin):
     
     @director_only
     def commandSRB(self, parts, byuser, overriderank):
-        "/srb - Director\nPrints out a reboot message."
-        self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[URGENT] Server Reboot - Back in a Flash")))
+        "/srb [reason] - Director\nPrints out a reboot message."
+        if len(parts) == 1:
+            self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few.")))
+        else:
+            self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Reboot] Be back in a few: "+(" ".join(parts[1:])))))
+
+    @director_only
+    def commandSRS(self, parts, byuser, overriderank):
+        "/srs [reason] - Director\nPrints out a shutdown message."
+        if len(parts) == 1:
+            self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later.")))
+        else:
+            self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, ("[Server Shutdown] See you later: "+(" ".join(parts[1:])))))
 
     @admin_only
     def commandUrgent(self, parts, byuser, overriderank):
@@ -98,4 +110,4 @@ class MessagingPlugin(ProtocolPlugin):
         if len(parts) == 1:
             self.client.sendServerMessage("Please type a message.")
         else:
-            self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, "[URGENT] "+(" ".join(parts[1:]))))
+            self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, "[Urgent] "+(" ".join(parts[1:]))))
