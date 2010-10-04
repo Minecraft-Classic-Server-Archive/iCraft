@@ -301,7 +301,7 @@ def Credits(self, server=None):
     Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason,")
     Temp.append ("gdude2002, goober, gothfox, ntfwc, revenant, Saanix, tehcid,")
     Temp.append ("Varriount, willempiee")
-    Temp.append ("Others: 099, Akai, Antoligy, Aquaskys, Bidoof_King,")
-    Temp.append ("Bioniclegenius, fragmer, Kelraider, MAup, MystX, NotMeh,")
-    Temp.append ("PyroPyro, Red_Link, Rils, Roadcrosser, Roujo, setveen, sk8rjwd, TkTech, Uninspired, ...")
+    Temp.append ("Others: 099, Akai, Antoligy, Aquaskys, Bidoof_King,")    V
+    Temp.append ("Bioniclegenius, BlueProtoman, fragmer, Kelraider, MAup,")
+    Temp.append ("MystX, NotMeh, PyroPyro, Red_Link, Rils, Roadcrosser, Roujo, setveen, sk8rjwd, TkTech, Uninspired, ...")
     return Temp

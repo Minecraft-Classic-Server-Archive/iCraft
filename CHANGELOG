@@ -1,3 +1,12 @@
+v2.6.4 (for Mac v1.1.2):
+
+FIXED:
+- Problem with the Heartbeat, this is the heart of this release (and the reason it was issued in the first place)
+- Added a new Internal Server Error (makes it easier for everyone to report errors)
+- Fixed various staff commands for if no staff existed
+- Fixed /motd to display properly
+- Updated the credits to add a team member
+
 v2.6.3 (for Mac v1.1.1):
 URGENT: FIXED A SECURITY EXPLOIT
 

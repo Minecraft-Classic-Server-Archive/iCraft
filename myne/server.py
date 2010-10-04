@@ -77,7 +77,15 @@ The Salt is also used to help verify users' identities.
         try:
             try:
                 self.factory.last_heartbeat = time.time()
-                fh = urllib.urlopen("http://www.minecraft.net/heartbeat.jsp", urllib.urlencode({"port": self.factory.config.getint("network", "port"), "users": len(self.factory.clients), "max": self.factory.max_clients, "name": self.factory.server_name, "public": self.factory.public, "version": 7, "salt": self.factory.salt}), timeout=15)
+                fh = urllib.urlopen("http://www.minecraft.net/heartbeat.jsp", urllib.urlencode({
+                "port": self.factory.config.getint("network", "port"),
+                "users": len(self.factory.clients),
+                "max": self.factory.max_clients,
+                "name": self.factory.server_name,
+                "public": self.factory.public,
+                "version": 7,
+                "salt": self.factory.salt,
+                }))
                 self.url = fh.read().strip()
                 if self.factory.console_delay == self.factory.delay_count:
                     logging.log(logging.INFO, "Heartbeat Sent. Your URL: %s" % self.url)

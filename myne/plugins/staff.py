@@ -56,21 +56,29 @@ class ModsPlugin(ProtocolPlugin):
         "/members - Guest\nLists all Members."
         if len(self.client.factory.members):
             self.client.sendServerList(["Members:"] + list(self.client.factory.members))
+        else:
+            self.client.sendServerMessage("Members: No one.")
 
     @info_list
     def commandDirectors(self, parts, byuser, overriderank):
         "/directors - Guest\nLists all Directors."
         if len(self.client.factory.directors):
             self.client.sendServerList(["Directors:"] + list(self.client.factory.directors))
+        else:
+            self.client.sendServerMessage("Directors: No one.")
 
     @info_list
     def commandAdmins(self, parts, byuser, overriderank):
         "/admins - Guest\nLists all Admins."
         if len(self.client.factory.admins):
             self.client.sendServerList(["Admins:"] + list(self.client.factory.admins))
+        else:
+            self.client.sendServerMessage("Admins: No one.")
 
     @info_list
     def commandMods(self, parts, byuser, overriderank):
         "/mods - Guest\nLists all Mods."
         if len(self.client.factory.mods):
             self.client.sendServerList(["Mods:"] + list(self.client.factory.mods))
+        else:
+            self.client.sendServerMessage("Mods: No one.")
