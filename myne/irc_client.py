@@ -36,8 +36,7 @@ try:
     from twisted.words.protocols import irc
     from twisted.words.protocols.irc import IRC
 except ImportError:
-    print ("NOTICE: Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads")
-    print ("You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
+    print ("NOTICE: Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
     exit(1);
 
 from twisted.internet import protocol
@@ -69,12 +68,14 @@ class ChatBot(irc.IRCClient):
 
     def signedOn(self):
         """Called when bot has succesfully signed on to server."""
+        logging.log(logging.INFO,"IRC client connected.")
+        self.msg("NickServ", "IDENTIFY %s" % self.password)
+        self.msg("ChanServ", "INVITE %s" % self.factory.irc_channel)
         self.join(self.factory.irc_channel)
 
     def joined(self, channel):
         """This will get called when the bot joins the channel."""
         logging.log(logging.INFO,"IRC client joined %s." % channel)
-        self.msg("NickServ", "IDENTIFY %s" % self.password)
 
     def sendError(self, error):
         self.log("Sending error: %s" % error)

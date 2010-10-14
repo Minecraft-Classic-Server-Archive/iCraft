@@ -32,7 +32,6 @@
 import logging
 import traceback
 import os
-
 try:
     import simplejson
 except ImportError:
@@ -40,13 +39,10 @@ except ImportError:
         if (os.uname()[0] == "Darwin"):
             print ("NOTICE: Sorry, but you need SimpleJSON on Mac. It's as easy as: easy_install simplejson")
         else:
-            print ("NOTICE: Sorry, but you need SimpleJSON to run iCraft; http://pypi.python.org/pypi/simplejson/")
-            print ("You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
+            print ("NOTICE: Sorry, but you need SimpleJSON to run iCraft; http://pypi.python.org/pypi/simplejson/ You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
     except:
-        print ("NOTICE: Sorry, but you need SimpleJSON to run iCraft; http://pypi.python.org/pypi/simplejson/")
-        print ("You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
+        print ("NOTICE: Sorry, but you need SimpleJSON to run iCraft; http://pypi.python.org/pypi/simplejson/ You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
     exit(1);
-
 from twisted.protocols.basic import LineReceiver
 from twisted.internet.protocol import Factory
 

@@ -46,7 +46,11 @@ import hashlib
 import random
 from myne.console import StdinPlugin
 from Queue import Queue, Empty
-from twisted.internet.protocol import Factory
+try:
+    from twisted.internet.protocol import Factory
+except:
+    print ("NOTICE: Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
+    exit(1);
 from twisted.internet import reactor
 from ConfigParser import RawConfigParser as ConfigParser
 from myne.protocol import MyneServerProtocol

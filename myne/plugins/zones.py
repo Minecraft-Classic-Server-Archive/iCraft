@@ -70,7 +70,6 @@ class ZonesPlugin(ProtocolPlugin):
     @op_only
     def commandNewZone(self, parts, byuser, overriderank):
         "/znew zonename user|rank [creator/rankname] - Op\nAliases: rbox\nCreates a new zone with the name you gave.\nUsers are added with /zone name player1 player2 ...\nRank Example: '/znew GuestArea rank all'\nUser Example: '/znew hotel1 user'. then '/zone hotel1 add <player1> <player2>'"
-        parts = parts.lower()
         if len(parts) < 3:
             self.client.sendServerMessage("Info missing. Usage - /znew name user|rank [rank]")
             return
@@ -152,12 +151,11 @@ class ZonesPlugin(ProtocolPlugin):
     @op_only
     def commandZone(self,parts, byuser, overriderank):
         "/zone name - Op\nShows users assigned to this zone\n'/zone name add|remove [player1 player2 ...]' to edit users."
-        parts = parts.lower()
         if len(parts)== 2:
             for id, zone in self.client.world.userzones.items():
                 if zone[0] == parts[1]:
                     try:
-                        self.client.sendServerMessage("Zone %s users: %s" %(zone[0],", ".join(map(str,zone[7:]))))
+                        self.client.sendSplitServerMessage("Zone %s users: %s" %(zone[0],", ".join(map(str,zone[7:]))))
                     except:
                         self.client.sendServerMessage("There are no users assigned to %s." %(zone[0]))
                     return
@@ -201,7 +199,6 @@ class ZonesPlugin(ProtocolPlugin):
     @op_only
     def commandDeZone(self, parts, byuser, overriderank):
         "/zremove name - Op\nRemoves a zone"
-        parts = parts.lower()
         if len(parts)==2:
             match = False
             for id, zone in self.client.world.userzones.items():
@@ -242,13 +239,12 @@ class ZonesPlugin(ProtocolPlugin):
             self.client.sendServerMessage("You must provide a zone name.")
 
     def commandListZones(self, parts, byuser, overriderank):
-        "zlist - Guest\nLists all the zones on this map."
+        "/zlist - Guest\nLists all the zones on this map."
         self.client.sendServerList(["User Zones:"] + [zone[0] for id, zone in self.client.world.userzones.items()])
         self.client.sendServerList(["Rank Zones:"] + [zone[0] for id, zone in self.client.world.rankzones.items()])
 
     def commandZshow(self, parts, byuser, overriderank):
         "/zshow [all|name] - Guest\nOutlnes the zone in water temporary."
-        parts = parts.lower()
         if not len(parts)==2:
             self.client.sendServerMessage("Please provide a zone to show")
             self.client.sendServerMessage("[or 'all' to show all zones]")
@@ -389,7 +385,6 @@ class ZonesPlugin(ProtocolPlugin):
     @op_only
     def commandClearZone(self,parts, byuser, overriderank):
         "/zclear name - Op\nClears everything within the zone."
-        parts = parts.lower()
         if not len(parts)==2:
             self.client.sendServerMessage("Please provide a zone to remove")
         else:
@@ -490,7 +485,6 @@ class ZonesPlugin(ProtocolPlugin):
     @op_only
     def commandZdelall(self, parts, byuser, overriderank):
         "/zdelall - Op\nRemoves all zones in a map (if you can delete them)"
-        parts = parts.lower()
         match = False
         for id, zone in self.client.world.userzones.items():
             if self.client.username in zone[6:] or self.client.isAdmin() or self.client.world.owner == self.client.username:
@@ -525,7 +519,6 @@ class ZonesPlugin(ProtocolPlugin):
     @op_only
     def commandZoneWho(self, parts, byuser, overriderank):
         "/zwho - Op\nTells you whose zone you're currently in, if any."
-        parts = parts.lower()
         x = self.client.x >> 5
         y = self.client.y >> 5
         z = self.client.z >> 5
@@ -551,7 +544,6 @@ class ZonesPlugin(ProtocolPlugin):
     @op_only
     def commandRename(self,parts, byuser, overriderank):
         "/zrename oldname newname - Op\nRenames a zone."
-        parts = parts.lower()
         if not len(parts)==3:
             self.client.sendServerMessage("Please provide an old and new zone name.")
         else:

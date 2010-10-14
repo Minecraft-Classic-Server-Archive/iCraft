@@ -297,11 +297,10 @@ def Credits(self, server=None):
     else:
         factory = self.client.factory
     Temp.append ("Thanks to the following people for making iCraft possible...")
-    Temp.append ("Creators: aera (Myne), PixelEater (Mynecraft), iKJames")
-    Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason,")
-    Temp.append ("gdude2002, goober, gothfox, ntfwc, revenant, Saanix, tehcid,")
-    Temp.append ("Varriount, willempiee")
-    Temp.append ("Others: 099, Akai, Antoligy, Aquaskys, Bidoof_King,")
-    Temp.append ("Bioniclegenius, BlueProtoman, fragmer, Kelraider, MAup,")
-    Temp.append ("MystX, NotMeh, PyroPyro, Red_Link, Rils, Roadcrosser, Roujo, setveen, sk8rjwd, TkTech, Uninspired, ...")
+    Temp.append ("Mojang Specifications (Minecraft): Notch, dock, ez, ...")
+    Temp.append ("Creators: aera aka AndrewGodwin (Myne and The Archives), iKJames aka KingJames, JamesKirslis (hlmc.net, iCraft)")
+    Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason, gdude2002, goober, gothfox, ntfwc, PixelEater, revenant,")
+    Temp.append ("Saanix, tehcid, Varriount, willempiee")
+    Temp.append ("Others: 099, Akai, Antoligy, Aquaskys, Bidoof_King, Bioniclegenius (Red_Link), BlueProtoman, eugo (Knossus), fragmer,")
+    Temp.append ("Kelraider, MAup, MystX, NotMeh, PyroPyro, Rils, Roadcrosser, Roujo, setveen, sk8rjwd, TkTech, Uninspired, ...")
     return Temp

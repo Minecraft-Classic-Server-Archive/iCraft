@@ -42,6 +42,7 @@ from myne.server import MyneFactory
 from myne.controller import ControllerFactory
 
 if not sys.version_info[:2] == (2, 6):
+    print ("ATTENTION: Do you need help with iCraft? Join us on hlmc.net or irc.esper.net #iCraft or feel free to just come and hang out, we appreciate it.")
     try:
         if (os.uname()[0] == "Darwin"):
             print ("NOTICE: Sorry, but your Mac OS X version is outdated. We recommend running iCraft for Mac on 10.6+ or you need to install Python 2.6.x on 10.5")
@@ -51,21 +52,15 @@ if not sys.version_info[:2] == (2, 6):
         print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run iCraft; http://www.python.org/download/releases/2.6.5/")
     exit(1);
 
-try:
-    from twisted.internet import reactor
-except ImportError:
-    print ("NOTICE: Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads")
-    print ("You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
-    exit(1);
-
 print ("Now starting up iCraft %s.." % VERSION)
+print ("- Please don't forget to check for updates. Do you need help with iCraft? Feel free to stop by or just hang out, we appreciate it; http://hlmc.net/ | irc.esper.net #iCraft")
 
 try:
-    import Image
+    from twisted.internet import *
+    from zope.interface import *
 except ImportError:
-    print ("NOTICE: PIL isn't installed, imagedraw won't work.")
-
-print ("ATTENTION: Please don't forget to check for updates; http://hlmc.net/ | irc.esper.net #iCraft")
+    print ("NOTICE: Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
+    exit(1);
 
 def LogTimestamp():
     if os.path.exists("logs/console/console.log"):
@@ -99,6 +94,11 @@ formatter = logging.Formatter("%(asctime)s: %(message)s")
 fh.setFormatter(formatter)
 #Add the handler
 money_logger.addHandler(fh)
+
+try:
+    import Image
+except ImportError:
+    print ("NOTICE: PIL isn't installed, imagedraw won't work.")
 
 # Setup email handler
 if factory.config.has_section("email"):

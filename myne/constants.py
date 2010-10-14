@@ -33,11 +33,11 @@ import os
 
 try:
     if (os.uname()[0] == "Darwin"):
-        VERSION = "for Mac v1.1.2"
+        VERSION = "for Mac v1.1.3"
     else:
-        VERSION = "v2.6.4"
+        VERSION = "v2.6.5"
 except:
-    VERSION = "v2.6.4"
+    VERSION = "v2.6.5"
 
 FORMAT_LENGTHS = {
     "b": 1,
