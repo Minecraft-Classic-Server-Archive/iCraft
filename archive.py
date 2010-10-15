@@ -175,7 +175,7 @@ def main():
        try:
 	    config.read(os.path.join(os.path.dirname(__file__), "client.conf"))
        except:
-           print ("You need to rename client.example.conf to client.conf")
+           logging.log(logging.ERROR, "You need to rename client.example.conf to client.conf")
            exit(1);
 	rip(sys.argv[1], config.get("client", "username"), config.get("client", "password"))
 

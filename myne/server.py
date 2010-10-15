@@ -49,7 +49,7 @@ from Queue import Queue, Empty
 try:
     from twisted.internet.protocol import Factory
 except:
-    print ("NOTICE: Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
+    logging.log(logging.ERROR, "Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
     exit(1);
 from twisted.internet import reactor
 from ConfigParser import RawConfigParser as ConfigParser
@@ -124,7 +124,7 @@ class MyneFactory(Factory):
         try:
             self.max_clients = self.config.getint("main", "max_clients")
         except:
-            print ("NOTICE: You might be using a outdated server.conf file, you need to rename server.example.conf to server.conf")
+            logging.log(logging.ERROR, "You might be using a outdated server.conf file, you need to rename server.example.conf to server.conf")
             exit(1);
         self.server_name = self.config.get("main", "name")
         self.server_message = self.config.get("main", "description")
@@ -164,7 +164,7 @@ class MyneFactory(Factory):
         try:
             number = int(self.wordfilter.get("filter","count"))
         except:
-            print ("NOTICE: You need to rename wordfilter.example.conf to wordfilter.conf")
+            logging.log(logging.ERROR, "You need to rename wordfilter.example.conf to wordfilter.conf")
             exit(1);
         for x in range(number):
             self.filter = self.filter + [[self.wordfilter.get("filter","s"+str(x)),self.wordfilter.get("filter","r"+str(x))]]

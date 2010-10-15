@@ -35,9 +35,9 @@ try:
     if (os.uname()[0] == "Darwin"):
         VERSION = "for Mac v1.1.3"
     else:
-        VERSION = "v2.6.5"
+        VERSION = "v2.6.6"
 except:
-    VERSION = "v2.6.5"
+    VERSION = "v2.6.6"
 
 FORMAT_LENGTHS = {
     "b": 1,

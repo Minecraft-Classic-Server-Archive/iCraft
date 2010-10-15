@@ -38,11 +38,9 @@ import logging
 import os,shutil
 from myne.constants import *
 from logging.handlers import SMTPHandler
-from myne.server import MyneFactory
-from myne.controller import ControllerFactory
 
 if not sys.version_info[:2] == (2, 6):
-    print ("ATTENTION: Do you need help with iCraft? Join us on hlmc.net or irc.esper.net #iCraft or feel free to just come and hang out, we appreciate it.")
+    print ("ATTENTION: Do you need help with iCraft? hlmc.net or irc.esper.net #iCraft")
     try:
         if (os.uname()[0] == "Darwin"):
             print ("NOTICE: Sorry, but your Mac OS X version is outdated. We recommend running iCraft for Mac on 10.6+ or you need to install Python 2.6.x on 10.5")
@@ -52,29 +50,17 @@ if not sys.version_info[:2] == (2, 6):
         print ("NOTICE: Sorry, but you need Python 2.6.x (Zope, Twisted and SimpleJSON) to run iCraft; http://www.python.org/download/releases/2.6.5/")
     exit(1);
 
-print ("Now starting up iCraft %s.." % VERSION)
-print ("- Please don't forget to check for updates. Do you need help with iCraft? Feel free to stop by or just hang out, we appreciate it; http://hlmc.net/ | irc.esper.net #iCraft")
-
-try:
-    from twisted.internet import *
-    from zope.interface import *
-except ImportError:
-    print ("NOTICE: Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
-    exit(1);
-
 def LogTimestamp():
     if os.path.exists("logs/console/console.log"):
         shutil.copy("logs/console/console.log", "logs/console/console" +time.strftime("%Y%m%d%H%M%S",time.localtime(time.time())) +".log")
         f=open("logs/console/console.log",'w')
         f.close()
-    reactor.callLater(6*60*60, LogTimestamp)#24hours*60minutes*60seconds
 LogTimestamp()
 logging.basicConfig(
     format="%(asctime)s - %(levelname)7s - %(message)s",
     level=("--debug" in sys.argv) and logging.DEBUG or logging.INFO,
     datefmt="%Y-%m-%d %H:%M:%S",  filename="logs/console/console.log",
 )
-
 # define a Handler which writes DEBUG messages or higher to the sys.stderr
 console = logging.StreamHandler()
 # set a format which is simpler for console use
@@ -84,6 +70,25 @@ console.setFormatter(formatter)
 # add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
+print ("Now starting up iCraft %s..." % VERSION)
+print ("- Please don't forget to check for updates. Do you need help with iCraft? Feel free to stop by; http://hlmc.net/ | irc.esper.net #iCraft")
+
+try:
+    from twisted.internet import *
+    from zope.interface import *
+except ImportError:
+    logging.log(logging.ERROR, "Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
+    exit(1);
+
+try:
+    import Image
+except ImportError:
+    logging.log(logging.INFO, "Sorry, but you'll need PIL to use imagedraw.")
+
+from myne.server import MyneFactory
+from myne.controller import ControllerFactory
+
+reactor.callLater(6*60*60, LogTimestamp)#24hours*60minutes*60seconds
 factory = MyneFactory()
 controller = ControllerFactory(factory)
 reactor.listenTCP(factory.config.getint("network", "port"), factory)
@@ -94,11 +99,6 @@ formatter = logging.Formatter("%(asctime)s: %(message)s")
 fh.setFormatter(formatter)
 #Add the handler
 money_logger.addHandler(fh)
-
-try:
-    import Image
-except ImportError:
-    print ("NOTICE: PIL isn't installed, imagedraw won't work.")
 
 # Setup email handler
 if factory.config.has_section("email"):

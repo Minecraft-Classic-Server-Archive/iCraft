@@ -1,3 +1,13 @@
+=========================
+
+v2.6.6 (for Mac v1.1.4):
+
+FIXED:
+- Friendly Errors with server startup
+- Friendly Errors not being logged to the console logs
+
+=========================
+
 v2.6.5 (for Mac v1.1.3):
 
 FIXED:
@@ -10,6 +20,8 @@ FIXED:
 - Problem with zones listing users without line breaking
 - Pontential problems in the irc bot
 
+=========================
+
 v2.6.4 (for Mac v1.1.2):
 
 FIXED:
@@ -18,6 +30,8 @@ FIXED:
 - Fixed various staff commands for if no staff existed
 - Fixed /motd to display properly
 - Updated the credits to add a team member
+
+=========================
 
 v2.6.3 (for Mac v1.1.1):
 URGENT: FIXED A SECURITY EXPLOIT
@@ -51,6 +65,8 @@ FIXED:
 - Problems if minecraft.net is offline
 - Error stuff deaing with Alpha clients
 
+=========================
+
 v2.6.2 (for Mac v1.1.0):
 
 ADDED:
@@ -80,6 +96,8 @@ FIXED:
 - Problem with certian ranks being able to build solid, water and lava in other worlds if they couldn't
 - Error when they did a invalid block while using bind
 
+=========================
+
 v2.6.1 (for Mac v1.0.1):
 
 ADDED:
@@ -104,6 +122,8 @@ FIXED:
 - Fixed errors caused in the console
 - Pontential bug allowing people to tweet from cmdblocks (possible security concern)
 - Improved Garbage Collection (pontential memory leaks and new information display)
+
+=========================
 
 v2.6.0 (for Mac v1.0.0);
 - Initial release on Mac, introduces proper Mac support.
@@ -174,137 +194,184 @@ KNOWN ISSUES:
 - the invite command is still under construction
 - and some other problems we may or may not be aware of
 
+=========================
+
 v2.5.2:
-CHANGED: Tweets now sent out use a different format, hashtag in the end instead of parenthesis in the front
-FIXED: Creeper Mob crashing the users in certain cases
-FIXED: A bcb message mentioning blb
-FIXED: auto-cpr- now it'll restart after 3 minutes not 5, avoiding the 5 minute rule
-REMOVED: Cloud mob - was too buggy (should of been commented out)
+
+CHANGED:
+- Tweets now sent out use a different format, hashtag in the end instead of parenthesis in the front
+
+FIXED:
+- Creeper Mob crashing the users in certain cases
+- A bcb message mentioning blb
+- auto-cpr- now it'll restart after 3 minutes not 5, avoiding the 5 minute rule
+
+REMOVED:
+- Cloud mob - was too buggy (should of been commented out)
+
+=========================
 
 v2.5.1:
-ADDED: More yellow names
-ADDED: More people to the credits list
-FIXED: Chat should now wrap more properly
-FIXED: credits will display properly in irc
+
+ADDED:
+- More yellow names
+- More people to the credits list
+
+FIXED:
+- Chat should now wrap more properly
+- credits will display properly in irc
+
+=========================
 
 v2.5.0:
-NOTICE: Removed WoM specs, we no longer grab new specs.
-ADDED: line command to make lines
-ADDED: pyramid command
-ADDED: stairs command for spiral staircases
-ADDED: curve command
-ADDED: recthird command for things needing 3 block changes (still needs conversion)
-ADDED: bwb to build wall blocks
-ADDED: bhcb to build hollow blocks that are checkered
-ADDED: bcb to build checkered blocks
-ADDED: csphere command
-ADDED: circle command
-ADDED: dome command
-ADDED: ellipsoid command
-ADDED: polytri command
-ADDED: info command to view block info
-ADDED: Many IRC Admin commands
-ADDED: StaffChat to IRC
-ADDED: Various mobs, have fun!
-ADDED: sendPlainWorldMessage for plugins, useful if you need a WorldMessage using color.
-ADDED: Fully redone server.conf
-ADDED: imagedraw, draws images from a URL (needs PIL)
-ADDED: mine command, step over and it'll explode
-ADDED: Python syntax to IFs (need quotes)
-ADDED: $rank and $rnum for cmdblocks
-ADDED: $posx, $posy, $posz and $posa to cmdblocks
-ADDED: cmdblocks can now make builders/ops and take them away
-ADDED: Members, they're global builders with some extras
-ADDED: Categories for cmdlist
-ADDED: gchat command
-ADDED: partial names in username commands
-ADDED: create command, it'll let you generate maps with the power of 2 - reduces the needs for flatgrass templates
-ADDED: delete command, now it deletes worlds to its own folder
-ADDED: Platform-based fly command
-ADDED: Colorful logging
-ADDED: Teal in block list
-ADDED: Word Filter
-ADDED: Status script
-ADDED: Converter
-ADDED: Archiver
-ADDED: Many alises for various commands, allowing old commands to work and ease transitions from other softwares
-ADDED: Anti-Grief
-ADDED: Bash script for Linux users
-ADDED: members command, lists all members
-ADDED: specced command, shows a list of specced users
-ADDED: banned command, shows banned users
-ADDED: World Owner rank, can op/deop
-ADDED: Many more variables for cmdblocks
-ADDED: Pages for cmdinfo
-ADDED: freeze, which freezes the player in position
-ADDED: twitter plugin
-ADDED: Many new aliases for block names
-ADDED: Now you can change the name of default
-CHANGED: Last block changes now stores the last 3 points, not 2
-CHANGED: backups can now be renamed without being overwritten
-CHANGED: tnt and lava
-CHANGED: All chats take your rank in for display purposes
-CHANGED: specs now show as Black
-CHANGED: complete overhaul to server.conf
-CHANGED: Directors limit is now unlimited (1024 cubed)
-CHANGED: Owners can now be case-insensitive.
-CHANGED: The license is now the CC by-nc-sa 3.0
-CHANGED: about, it's now more detailed
-CHANGED: More descriptive errors.
-CHANGED: start.bat now works
-CHANGED: Console now displays as darkgreen
-CHANGED: verify_names is now hardcoded as on
-CHANGED: "Spectator" now shows as "Spec" to the user
-CHANGED: 20 commands limit is now 50 commands for cmdblocks
-CHANGED: msgblocks now show as green
-CHANGED: StaffChat now formats like WorldChat and Whispers
-CHANGED: Console logs go under the console folder in logs
-CHANGED: Currency is now called Minecash
-CHANGED: Some block color names being updated to match minecraftwiki.net
-FIXED: heartbeating
-FIXED: away/back not showing IRC/Console
-FIXED: space in the self command of cmdblocks
-FIXED: Logging
-FIXED: Dispay problems with /status
-FIXED: Alert for new inbox messages (was broke)
-FIXED: Owner rank, now finished (can director/dedirector)
-FIXED: restore taking you to default (now it'll take you back when finished)
-FIXED: Duplicate messages
-FIXED: Now you can restore default
+- Removed WoM specs, we no longer grab new specs.
+
+ADDED:
+- line command to make lines
+- pyramid command
+- stairs command for spiral staircases
+- curve command
+- recthird command for things needing 3 block changes (still needs conversion)
+- bwb to build wall blocks
+- bhcb to build hollow blocks that are checkered
+- bcb to build checkered blocks
+- csphere command
+- circle command
+- dome command
+- ellipsoid command
+- polytri command
+- info command to view block info
+- Many IRC Admin commands
+- StaffChat to IRC
+- Various mobs, have fun!
+- sendPlainWorldMessage for plugins, useful if you need a WorldMessage using color.
+- Fully redone server.conf
+- imagedraw, draws images from a URL (needs PIL)
+- mine command, step over and it'll explode
+- Python syntax to IFs (need quotes)
+- $rank and $rnum for cmdblocks
+- $posx, $posy, $posz and $posa to cmdblocks
+- cmdblocks can now make builders/ops and take them away
+- Members, they're global builders with some extras
+- Categories for cmdlist
+- gchat command
+- partial names in username commands
+- create command, it'll let you generate maps with the power of 2 - reduces the needs for flatgrass templates
+- delete command, now it deletes worlds to its own folder
+- Platform-based fly command
+- Colorful logging
+- Teal in block list
+- Word Filter
+- Status script
+- Converter
+- Archiver
+- Many alises for various commands, allowing old commands to work and ease transitions from other softwares
+- Anti-Grief
+- Bash script for Linux users
+- members command, lists all members
+- specced command, shows a list of specced users
+- banned command, shows banned users
+- World Owner rank, can op/deop
+- Many more variables for cmdblocks
+- Pages for cmdinfo
+- freeze, which freezes the player in position
+- twitter plugin
+- Many new aliases for block names
+- Now you can change the name of default
+
+CHANGED:
+- Last block changes now stores the last 3 points, not 2
+- backups can now be renamed without being overwritten
+- tnt and lava
+- All chats take your rank in for display purposes
+- specs now show as Black
+- complete overhaul to server.conf
+- Directors limit is now unlimited (1024 cubed)
+- Owners can now be case-insensitive.
+- The license is now the CC by-nc-sa 3.0
+- about, it's now more detailed
+- More descriptive errors.
+- start.bat now works
+- Console now displays as darkgreen
+- verify_names is now hardcoded as on
+- "Spectator" now shows as "Spec" to the user
+- 20 commands limit is now 50 commands for cmdblocks
+- msgblocks now show as green
+- StaffChat now formats like WorldChat and Whispers
+- Console logs go under the console folder in logs
+- Currency is now called Minecash
+- Some block color names being updated to match minecraftwiki.net
+
+FIXED:
+- heartbeating
+- away/back not showing IRC/Console
+- space in the self command of cmdblocks
+- Logging
+- Dispay problems with /status
+- Alert for new inbox messages (was broke)
+- Owner rank, now finished (can director/dedirector)
+- restore taking you to default (now it'll take you back when finished)
+- Duplicate messages
+- Now you can restore default
+
+=========================
 
 v2.0.4:
 SECURITY: /pay using negative amounts (was Mod+, now Director+)
 
+=========================
+
+v2.0.3:
+Rick Roll'd
+
+=========================
+
 v2.0.2:
-FIXED: LAN Support
-FIXED: bind/replace not working correctly
-FIXED: wait in Interact (cmdblocks)
+
+FIXED:
+- LAN Support
+- bind/replace not working correctly
+- wait in Interact (cmdblocks)
+
+=========================
 
 v2.0.1:
-SECURITY: Heartbeats are now safer
-NOTICE: cmdblocks use the Interact Programming Langauge, the first ever Minecraft Programming Langauge (you interact and program it all in game!)
-ADDED: Server URL logged to url.txt
-ADDED: blb, bhb, bwb, and replace for portals and msgblocks
-ADDED: wait in cmdblocks
-ADDED: Last command stuff via /b
-ADDED: $block(x,y,z) and $bname(blockint) and $bname($blockChanged(x,y,z)) for cmdblocks
-ADDED: IF's for cmdblocks
-ADDED: builder/op'ing in cmdblocks
-ADDED: 20 commands limit instead of 10 for cmdblocks, this'll allow even more rich enviorments then before
-ADDED: GetBlockValue function
-ADDED: getinput, getnum, getblock, getyesno to cmdblocks (inputs)
-ADDED: global dic() vars: ServerVars, ClientVars, and WorldVars
-FIXED: cmdblocks for guests (they got spammed if they couldn't do it)
-FIXED: Portals to use new /l based system
-FIXED: None has disconnected.
-FIXED: Help for ban and banb
-FIXED: Speccing offline people
-FIXED: Error logging for cmdblocks
-FIXED: tnt and tree (tnt is improved, works great with lava)
-FIXED: IRC Bot
-FIXED: Blocks not showing up if Guest/Builder (finally you can catch griefers)
-FIXED: unflood (no longer removes spouts)
-REMOVED: admin commands from IRC (there is none!)
+- cmdblocks use the Interact Programming Langauge, the first ever Minecraft Programming Langauge (you interact and program it all in game!)
+
+SECURITY:
+- Heartbeats are now safer
+
+ADDED:
+- Server URL logged to url.txt
+- blb, bhb, bwb, and replace for portals and msgblocks
+- wait in cmdblocks
+- Last command stuff via /b
+- $block(x,y,z) and $bname(blockint) and $bname($blockChanged(x,y,z)) for cmdblocks
+- IF's for cmdblocks
+- builder/op'ing in cmdblocks
+- 20 commands limit instead of 10 for cmdblocks, this'll allow even more rich enviorments then before
+- GetBlockValue function
+- getinput, getnum, getblock, getyesno to cmdblocks (inputs)
+- global dic() vars: ServerVars, ClientVars, and WorldVars
+
+FIXED:
+- cmdblocks for guests (they got spammed if they couldn't do it)
+- Portals to use new /l based system
+- None has disconnected.
+- Help for ban and banb
+- Speccing offline people
+- Error logging for cmdblocks
+- tnt and tree (tnt is improved, works great with lava)
+- IRC Bot
+- Blocks not showing up if Guest/Builder (finally you can catch griefers)
+- unflood (no longer removes spouts)
+
+REMOVED:
+- admin commands from IRC (there is none!)
+
+=========================
 
 v2.0:
 Initial Release
+
+=========================

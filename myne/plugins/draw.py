@@ -36,7 +36,8 @@ from myne.constants import *
 try:
     import Image
 except ImportError:
-    print ("NOTICE: Sorry, but you need PIL to use imagedraw.")
+    logging.log(logging.ERROR, "Sorry, but you need PIL to use imagedraw.")
+    exit(1);
 import urllib
 import StringIO
 
