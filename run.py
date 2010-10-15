@@ -85,6 +85,7 @@ try:
 except ImportError:
     logging.log(logging.INFO, "Sorry, but you'll need PIL to use imagedraw.")
 
+from twisted import reactor
 from myne.server import MyneFactory
 from myne.controller import ControllerFactory
 

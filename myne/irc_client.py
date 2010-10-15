@@ -249,7 +249,7 @@ class ChatBot(irc.IRCClient):
                             self.msg(self.factory.irc_channel, "07Use '$"+self.nickname+" command arguments' to do it.")
                             self.msg(self.factory.irc_channel, "07NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
                         elif msg_command[1] == ("about"):
-                            self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft %s http://hlmc.net/ - Credits: Use '$%s credits'" % (VERSION, self.nickname))
+                            self.msg(self.factory.irc_channel, "07About the Server, powered by 04iCraft %s 07http://hlmc.net/ - Credits: Use '$%s credits'" % (VERSION, self.nickname))
                             self.msg(self.factory.irc_channel, "07Name: "+self.factory.server_name+"; owned by "+self.factory.owner)
                             try:
                                 self.msg(self.factory.irc_channel, "07URL: "+self.factory.heartbeat.url)
