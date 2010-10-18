@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -56,29 +62,21 @@ class ModsPlugin(ProtocolPlugin):
         "/members - Guest\nLists all Members."
         if len(self.client.factory.members):
             self.client.sendServerList(["Members:"] + list(self.client.factory.members))
-        else:
-            self.client.sendServerMessage("Members: No one.")
 
     @info_list
     def commandDirectors(self, parts, byuser, overriderank):
         "/directors - Guest\nLists all Directors."
         if len(self.client.factory.directors):
             self.client.sendServerList(["Directors:"] + list(self.client.factory.directors))
-        else:
-            self.client.sendServerMessage("Directors: No one.")
 
     @info_list
     def commandAdmins(self, parts, byuser, overriderank):
         "/admins - Guest\nLists all Admins."
         if len(self.client.factory.admins):
             self.client.sendServerList(["Admins:"] + list(self.client.factory.admins))
-        else:
-            self.client.sendServerMessage("Admins: No one.")
 
     @info_list
     def commandMods(self, parts, byuser, overriderank):
         "/mods - Guest\nLists all Mods."
         if len(self.client.factory.mods):
             self.client.sendServerList(["Mods:"] + list(self.client.factory.mods))
-        else:
-            self.client.sendServerMessage("Mods: No one.")

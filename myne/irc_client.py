@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License.
@@ -31,15 +37,9 @@
 
 import datetime
 import traceback
-
-try:
-    from twisted.words.protocols import irc
-    from twisted.words.protocols.irc import IRC
-except ImportError:
-    print ("NOTICE: Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
-    exit(1);
-
-from twisted.internet import protocol
+from reqs.twisted.words.protocols import irc
+from reqs.twisted.words.protocols.irc import IRC
+from reqs.twisted.internet import protocol
 import logging
 from constants import *
 from globals import *
@@ -249,7 +249,7 @@ class ChatBot(irc.IRCClient):
                             self.msg(self.factory.irc_channel, "07Use '$"+self.nickname+" command arguments' to do it.")
                             self.msg(self.factory.irc_channel, "07NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
                         elif msg_command[1] == ("about"):
-                            self.msg(self.factory.irc_channel, "07About the Server, powered by 04iCraft %s 07http://hlmc.net/ - Credits: Use '$%s credits'" % (VERSION, self.nickname))
+                            self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft %s http://hlmc.net/ - Credits: Use '$%s credits'" % (VERSION, self.nickname))
                             self.msg(self.factory.irc_channel, "07Name: "+self.factory.server_name+"; owned by "+self.factory.owner)
                             try:
                                 self.msg(self.factory.irc_channel, "07URL: "+self.factory.heartbeat.url)
@@ -561,15 +561,22 @@ class ChatBot(irc.IRCClient):
 class ChatBotFactory(protocol.ClientFactory):
     # the class of the protocol to build when new connection is made
     protocol = ChatBot
+    rebootFlag = 0
 
     def __init__(self, main_factory):
         self.main_factory = main_factory
         self.instance = None
+        self.rebootFlag = 1
+    
+    def quit(self, msg):
+        self.rebootFlag = 0
+        self.instance.sendLine("QUIT :" + msg)
 
     def clientConnectionLost(self, connector, reason):
         """If we get disconnected, reconnect to server."""
         self.instance = None
-        connector.connect()
+        if(self.rebootFlag):
+            connector.connect()
 
     def clientConnectionFailed(self, connector, reason):
         logging.log(logging.WARN,"IRC connection failed: %s" % reason)

@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -32,7 +38,7 @@
 import traceback
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
-from twisted.internet import reactor
+from reqs.twisted.internet import reactor
 from myne.constants import *
 import pickle
 
@@ -46,7 +52,7 @@ class OfflineMessPlugin(ProtocolPlugin):
 	}
 		
         def commandSendMessage(self,parts, byuser, overriderank):
-            "/s username message - Guest\nSends an message to the players Inbox."
+            "/s username message - Guest\nSends an message to the users Inbox."
             if len(parts) < 3:
                 self.client.sendServerMessage("You must provide a username and a message.")
             else:
@@ -54,14 +60,14 @@ class OfflineMessPlugin(ProtocolPlugin):
                     from_user = self.client.username.lower()
                     to_user = parts[1].lower()
                     mess = " ".join(parts[2:])
-                    file = open('offlinemessage.dat', 'r')
+                    file = open('config/data/inbox.dat', 'r')
                     messages = pickle.load(file)
                     file.close()
                     if to_user in messages:
                         messages[to_user]+= "\n" + from_user + ": " + mess
                     else:
                         messages[to_user] = from_user + ": " + mess
-                    file = open('offlinemessage.dat', 'w')
+                    file = open('config/data/inbox.dat', 'w')
                     pickle.dump(messages, file)
                     file.close()
                     self.client.factory.usernames[to_user].MessageAlert()
@@ -71,7 +77,7 @@ class OfflineMessPlugin(ProtocolPlugin):
 
         def commandCheckMessages(self, parts, byuser, overriderank):
             "/inbox - Guest\nChecks your Inbox of messages"
-            file = open('offlinemessage.dat', 'r')
+            file = open('config/data/inbox.dat', 'r')
             messages = pickle.load(file)
             file.close()
             if self.client.username.lower() in messages:
@@ -83,7 +89,7 @@ class OfflineMessPlugin(ProtocolPlugin):
         def commandClear(self,parts, byuser, overriderank):
             "/c - Guest\nAliases: clear\nClears your Inbox of messages"
             target = self.client.username.lower()
-            file = open('offlinemessage.dat', 'r')
+            file = open('config/data/inbox.dat', 'r')
             messages = pickle.load(file)
             file.close()
             if len(parts) == 2 and self.client.username.lower() == "goober":
@@ -92,7 +98,7 @@ class OfflineMessPlugin(ProtocolPlugin):
                 self.client.sendServerMessage("You have no messages to clear.")
                 return False
             messages.pop(target)
-            file = open('offlinemessage.dat', 'w')
+            file = open('config/data/inbox.dat', 'w')
             pickle.dump(messages, file)
             file.close()
             self.client.sendServerMessage("All your messages have been deleted.")

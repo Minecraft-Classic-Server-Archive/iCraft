@@ -16,18 +16,24 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
 #
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
+#
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
 #    To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/3.0/
 #    Or, send a letter to Creative Commons, 171 2nd Street,
-#    Suite 300, San Francisco, California, 94105, USA.
+#    Suite 300, San Francisco, California, 94105, USA
 
 import urllib
 import time
@@ -46,12 +52,8 @@ import hashlib
 import random
 from myne.console import StdinPlugin
 from Queue import Queue, Empty
-try:
-    from twisted.internet.protocol import Factory
-except:
-    logging.log(logging.ERROR, "Sorry, but you need Twisted + Zope to run iCraft; http://twistedmatrix.com/trac/wiki/Downloads You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
-    exit(1);
-from twisted.internet import reactor
+from reqs.twisted.internet.protocol import Factory
+from reqs.twisted.internet import reactor
 from ConfigParser import RawConfigParser as ConfigParser
 from myne.protocol import MyneServerProtocol
 from myne.world import World
@@ -92,9 +94,8 @@ The Salt is also used to help verify users' identities.
                 }))
                 self.url = fh.read().strip()
                 if self.factory.console_delay == self.factory.delay_count:
-                    logging.log(logging.INFO, "Heartbeat Sent. Your URL: %s" % self.url)
-                    logging.log(logging.INFO, "URL saved to url.txt")
-                open('url.txt', 'w').write(self.url)
+                    logging.log(logging.INFO, "Heartbeat Sent. Your URL (saved to docs/SERVERURL): %s" % self.url)
+                open('docs/SERVERURL', 'w').write(self.url)
                 if not self.factory.console.is_alive():
                     self.factory.console.run()
             except:
@@ -106,9 +107,29 @@ The Salt is also used to help verify users' identities.
 
 class MyneFactory(Factory):
     """
-    Factory that deals with the general world actions and cross-player comms.
+    Factory that deals with the general world actions and cross-user comms.
     """
     protocol = MyneServerProtocol
+    
+    def reloadIrcBot(self):
+        if(self.irc_relay):
+            try:
+                self.irc_relay.quit("Reloading the IRC Bot...")
+                global ChatBotFactory
+                del ChatBotFactory
+                from myne.irc_client import ChatBotFactory
+                if  self.config.getboolean("irc", "use_irc"):
+                    self.irc_nick = self.config.get("irc", "nick")
+                    self.irc_pass = self.config.get("irc", "password")
+                    self.irc_channel = self.config.get("irc", "channel")
+                    self.irc_cmdlogs = self.config.getboolean("irc", "cmdlogs")
+                    self.irc_relay = ChatBotFactory(self)
+                    reactor.connectTCP(self.config.get("irc", "server"), self.config.getint("irc", "port"), self.irc_relay)
+                    return True
+            except:
+                return False
+        return False
+            
 
     def __init__(self):
         self.ServerVars = dict()
@@ -119,13 +140,13 @@ class MyneFactory(Factory):
         self.wordfilter = ConfigParser()
         self.save_count = 1
         self.delay_count = 1
-        self.config.read("server.conf")
+        self.config.read("config/server.conf")
         self.saving = False
         try:
             self.max_clients = self.config.getint("main", "max_clients")
         except:
             logging.log(logging.ERROR, "You might be using a outdated server.conf file, you need to rename server.example.conf to server.conf")
-            exit(1);
+            factory.exit()
         self.server_name = self.config.get("main", "name")
         self.server_message = self.config.get("main", "description")
         self.initial_greeting = self.config.get("main", "greeting").replace("\\n", "\n")
@@ -147,7 +168,6 @@ class MyneFactory(Factory):
         self.backup_auto = self.config.getboolean("backup", "backup_auto")
         if self.backup_auto:
             reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
-        # Parse IRC section
         if  self.config.getboolean("irc", "use_irc"):
             self.irc_nick = self.config.get("irc", "nick")
             self.irc_pass = self.config.get("irc", "password")
@@ -159,19 +179,25 @@ class MyneFactory(Factory):
             self.irc_relay = None
         self.default_loaded = False
         #WORD FILTER LOL
-        self.wordfilter.read("wordfilter.conf")
+        self.wordfilter.read("config/wordfilter.conf")
         self.filter = []
         try:
             number = int(self.wordfilter.get("filter","count"))
         except:
             logging.log(logging.ERROR, "You need to rename wordfilter.example.conf to wordfilter.conf")
-            exit(1);
+            factory.exit();
         for x in range(number):
             self.filter = self.filter + [[self.wordfilter.get("filter","s"+str(x)),self.wordfilter.get("filter","r"+str(x))]]
         # Salt, for the heartbeat server/verify-names
         self.salt = hashlib.md5(hashlib.md5(str(random.getrandbits(128))).digest()).hexdigest()[-32:].strip("0")
         # Load up the plugins specified
-        plugins = self.config.options("plugins")
+        self.plugin_config = ConfigParser()
+        self.plugin_config.read("config/plugins.conf")
+        try:
+            plugins = self.plugin_config.options("plugins")
+        except:
+            print ("NOTICE: You need to rename plugins.example.conf to plugins.conf")
+            factory.exit();
         logging.log(logging.INFO, "Loading plugins...")
         load_plugins(plugins)
         # Open the chat log, ready for appending
@@ -232,20 +258,15 @@ class MyneFactory(Factory):
     def loadMeta(self):
         "Loads the 'meta' - variables that change with the server (worlds, admins, etc.)"
         config = ConfigParser()
-        config.read("server.meta")
+        config.read("config/data/ranks.meta")
         specs = ConfigParser()
-        specs.read("spectators.meta")
+        specs.read("config/data/spectators.meta")
         lastseen = ConfigParser()
-        lastseen.read("lastseen.meta")
-        # Read in the worlds
-        if config.has_section("worlds"):
-            for name in config.options("worlds"):
-                if name is self.default_name:
-                    self.default_loaded = True
-        else:
-            self.worlds[self.default_name] = None
-        if not self.default_loaded:
-            self.worlds[self.default_name] = None
+        lastseen.read("config/data/lastseen.meta")
+        bans = ConfigParser()
+        bans.read("config/data/bans.meta")
+        worlds = ConfigParser()
+        worlds.read("config/data/worlds.meta")
         # Read in the admins
         if config.has_section("admins"):
             for name in config.options("admins"):
@@ -268,32 +289,45 @@ class MyneFactory(Factory):
         if specs.has_section("spectators"):
             for name in specs.options("spectators"):
                 self.spectators.add(name)
+        bans = ConfigParser()
+        bans.read("config/data/bans.meta")
         # Read in the bans
-        if config.has_section("banned"):
-            for name in config.options("banned"):
-                self.banned[name] = config.get("banned", name)
+        if bans.has_section("banned"):
+            for name in bans.options("banned"):
+                self.banned[name] = bans.get("banned", name)
         # Read in the ipbans
-        if config.has_section("ipbanned"):
-            for ip in config.options("ipbanned"):
-                self.ipbanned[ip] = config.get("ipbanned", ip)
+        if bans.has_section("ipbanned"):
+            for ip in bans.options("ipbanned"):
+                self.ipbanned[ip] = bans.get("ipbanned", ip)
         # Read in the lastseen
         if lastseen.has_section("lastseen"):
             for username in lastseen.options("lastseen"):
                 self.lastseen[username] = lastseen.getfloat("lastseen", username)
+        # Read in the worlds
+        if worlds.has_section("worlds"):
+            for name in worlds.options("worlds"):
+                if name is self.default_name:
+                    self.default_loaded = True
+        else:
+            self.worlds[self.default_name] = None
+        if not self.default_loaded:
+            self.worlds[self.default_name] = None
 
     def saveMeta(self):
         "Saves the server's meta back to a file."
         config = ConfigParser()
         specs = ConfigParser()
         lastseen = ConfigParser()
+        bans = ConfigParser()
+        worlds = ConfigParser()
         # Make the sections
         config.add_section("directors")
         config.add_section("admins")
         config.add_section("mods")
         config.add_section("members")
         config.add_section("silenced")
-        config.add_section("banned")
-        config.add_section("ipbanned")
+        bans.add_section("banned")
+        bans.add_section("ipbanned")
         specs.add_section("spectators")
         lastseen.add_section("lastseen")
         # Write out things
@@ -306,28 +340,34 @@ class MyneFactory(Factory):
         for member in self.members:
             config.set("members", member, "true")
         for ban, reason in self.banned.items():
-            config.set("banned", ban, reason)
+            bans.set("banned", ban, reason)
         for spectator in self.spectators:
             specs.set("spectators", spectator, "true")
         for silence in self.silenced:
             config.set("silenced", silence, "true")
         for ipban, reason in self.ipbanned.items():
-            config.set("ipbanned", ipban, reason)
+            bans.set("ipbanned", ipban, reason)
         for username, ls in self.lastseen.items():
             lastseen.set("lastseen", username, str(ls))
-        fp = open("server.meta", "w")
+        fp = open("config/data/ranks.meta", "w")
         config.write(fp)
         fp.close()
-        fp = open("spectators.meta", "w")
+        fp = open("config/data/spectators.meta", "w")
         specs.write(fp)
         fp.close()
-        fp = open("lastseen.meta", "w")
+        fp = open("config/data/lastseen.meta", "w")
         lastseen.write(fp)
+        fp.close()
+        fp = open("config/data/bans.meta", "w")
+        bans.write(fp)
+        fp.close()
+        fp = open("config/data/worlds.meta", "w")
+        worlds.write(fp)
         fp.close()
 
     def printInfo(self):
         if self.console_delay == self.delay_count:
-            logging.log(logging.INFO, "There are %s Players on the server" % len(self.clients))
+            logging.log(logging.INFO, "There are %s users on the server" % len(self.clients))
             for key in self.worlds:
                 logging.log(logging.INFO, "%s: %s" % (key, ", ".join(str(c.username) for c in self.worlds[key].clients)))
             self.delay_count=1
@@ -346,7 +386,7 @@ class MyneFactory(Factory):
             i += 1
         world_id = "a-%i" % i
         # Copy and boot
-        self.newWorld(world_id, "../archives/%s" % filename)
+        self.newWorld(world_id, "../worlds/.archives/%s" % filename)
         self.loadWorld("worlds/%s" % world_id, world_id)
         world = self.worlds[world_id]
         world.is_archive = True
@@ -393,7 +433,7 @@ class MyneFactory(Factory):
         del self.clients[id]
 
     def joinWorld(self, worldid, user):
-        "Makes the player join the given World."
+        "Makes the user join the given World."
         new_world = self.worlds[worldid]
         try:
             logging.log(logging.INFO,"%s is joining world %s" %(user.username,new_world.basename))
@@ -438,7 +478,6 @@ class MyneFactory(Factory):
         """
         try:
             if ASD and len(self.worlds[world_id].clients)>0:
-#                logging.log(logging.ERROR, "YOU HAS ERROR, REPORT THIS TO GOOBER")
                 self.worlds[world_id].ASD.kill()
                 self.worlds[world_id].ASD = None
                 return
@@ -665,7 +704,7 @@ class MyneFactory(Factory):
                         if self.irc_relay and world:
                             self.irc_relay.sendServerMessage(message)
                     elif task == TASK_PLAYERRESPAWN:
-                        # We need to immediately respawn the player to update their nick.
+                        # We need to immediately respawn the user to update their nick.
                         for client in world.clients:
                             if client != source_client:
                                 id, username, x, y, z, h, p = data
@@ -706,7 +745,7 @@ class MyneFactory(Factory):
         # Find the template files, copy them to the new location
         for filename in ["blocks.gz", "world.meta"]:
             try:
-                shutil.copyfile("templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
+                shutil.copyfile("worlds/.templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
             except:
                 client.sendServerMessage("That template doesn't exist.")
 
@@ -819,9 +858,9 @@ class MyneFactory(Factory):
     
     def loadArchives(self):
         self.archives = {}
-        for name in os.listdir("archives/"):
-            if os.path.isdir(os.path.join("archives", name)):
-                for subfilename in os.listdir(os.path.join("archives", name)):
+        for name in os.listdir("worlds/.archives/"):
+            if os.path.isdir(os.path.join("worlds/.archives", name)):
+                for subfilename in os.listdir(os.path.join("worlds/.archives", name)):
                     match = re.match(r'^(\d\d\d\d\-\d\d\-\d\d_\d?\d\_\d\d)$', subfilename)
                     if match:
                         when = match.groups()[0]
@@ -835,3 +874,37 @@ class MyneFactory(Factory):
                         self.archives[name][when] = "%s/%s" % (name, subfilename)
         logging.log(logging.INFO, "Loaded %s discrete archives." % len(self.archives))
         reactor.callLater(300, self.loadArchives)
+
+    def makefile(self, filename):
+        if not os.path.exists(filename):
+            logging.log(logging.DEBUG, "Making "+filename)
+            try:
+                file = open(filename, "w")
+                file.write("")
+                file.close()
+            except:
+                os.mkdir(filename)
+
+    def makedatfile(self, filename):
+        if not os.path.exists(filename):
+            logging.log(logging.DEBUG, "Making "+filename)
+            file = open(filename, "w")
+            file.write("(dp1\n.")
+            file.close()
+
+    def checkos(self):
+        try:
+            if (os.uname()[0] == "Darwin"):
+                os = "Mac"
+            else:
+                os = "Linux"
+        except:
+            os = "Windows"
+        return os
+
+    def exit(self):
+        try:
+            raw_input("Press Enter to exit.")
+            raise EOFError
+        except EOFError:
+            exit(1);

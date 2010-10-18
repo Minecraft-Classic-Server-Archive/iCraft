@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -298,16 +304,20 @@ class World(object):
         self.entitylist = []
         if config.has_section("entitylist"):
             for option in config.options("entitylist"):
-                destination = [x.strip() for x in config.get("entitylist", option).split(",")]
-                for i in range(len(destination)):
-                    try:
-                        destination[i] = int(destination[i])
-                    except:
-                        if destination[i] == "False":
-                            destination[i] = False
-                        elif destination[i] == "True":
-                            destination[i] = True
-                self.entitylist.append([destination[0],(destination[1],destination[2],destination[3])] + destination[4:])
+                entry = config.get("entitylist", option)
+                if entry.find("[") != -1:
+                    self.entitylist.append(eval(entry))
+                else:
+                    entry = [x.strip() for x in config.get("entitylist", option).split(",")]
+                    for i in range(len(entry)):
+                        try:
+                            entry[i] = int(entry[i])
+                        except:
+                            if entry[i] == "False":
+                                entry[i] = False
+                            elif entry[i] == "True":
+                                entry[i] = True
+                    self.entitylist.append([entry[0],(entry[1],entry[2],entry[3])] + entry[4:])
 
     @property
     def store_raw_blocks(self):
@@ -337,8 +347,8 @@ class World(object):
         config.add_section("autoshutdown")
         config.add_section("userzones")
         config.add_section("rankzones")
-        config.add_section("chat")
         config.add_section("entitylist")
+        config.add_section("chat")
         config.set("size", "x", str(self.x))
         config.set("size", "y", str(self.y))
         config.set("size", "z", str(self.z))
@@ -395,7 +405,7 @@ class World(object):
         # Store entitylist
         for i in range(len(self.entitylist)):
             entry = self.entitylist[i]
-            config.set("entitylist", str(i), ", ".join(map(str, [entry[0],entry[1][0],entry[1][1],entry[1][2]] + entry[2:])))
+            config.set("entitylist", str(i), str(entry))
             
         fp = open(self.meta_path, "w")
         config.write(fp)
@@ -404,6 +414,8 @@ class World(object):
     @classmethod
     def create(cls, basename, x, y, z, sx, sy, sz, sh, levels):
         "Creates a new World file set"
+        if not os.path.exists("worlds/"):
+            os.mkdir("worlds/")
         os.mkdir(basename)
         world = cls(basename, load=False)
         BlockStore.create_new(world.blocks_path, x, y, z, levels)

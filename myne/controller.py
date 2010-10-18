@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -32,19 +38,9 @@
 import logging
 import traceback
 import os
-try:
-    import simplejson
-except ImportError:
-    try:
-        if (os.uname()[0] == "Darwin"):
-            logging.log(logging.ERROR, "Sorry, but you need SimpleJSON on Mac. It's as easy as: easy_install simplejson")
-        else:
-            logging.log(logging.ERROR, "Sorry, but you need SimpleJSON to run iCraft; http://pypi.python.org/pypi/simplejson/ You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
-    except:
-        logging.log(logging.ERROR, "Sorry, but you need SimpleJSON to run iCraft; http://pypi.python.org/pypi/simplejson/ You can also try using this, readme included: http://www.mediafire.com/?i2wmtfnzmay")
-    exit(1);
-from twisted.protocols.basic import LineReceiver
-from twisted.internet.protocol import Factory
+import json
+from reqs.twisted.protocols.basic import LineReceiver
+from reqs.twisted.internet.protocol import Factory
 
 class ControllerProtocol(LineReceiver):
     """
@@ -52,18 +48,18 @@ class ControllerProtocol(LineReceiver):
     """
     def connectionMade(self):
         peer = self.transport.getPeer()
-        logging.log(logging.INFO, "Control connection made from %s:%s" % (peer.host, peer.port))
+        logging.log(logging.DEBUG, "Control connection made from %s:%s" % (peer.host, peer.port))
         self.factory, self.controller_factory = self.factory.main_factory, self.factory
-    
+
     def connectionLost(self, reason):
         peer = self.transport.getPeer()
-        logging.log(logging.INFO, "Control connection lost from %s:%s" % (peer.host, peer.port))
-    
+        logging.log(logging.DEBUG, "Control connection lost from %s:%s" % (peer.host, peer.port))
+
     def sendJson(self, data):
-        self.sendLine(simplejson.dumps(data))
-    
+        self.sendLine(json.dumps(data))
+
     def lineReceived(self, line):
-        data = simplejson.loads(line)
+        data = json.loads(line)
         peer = self.transport.getPeer()
         if data['password'] != self.factory.control_password:
             self.sendJson({"error": "invalid password"})
@@ -75,19 +71,19 @@ class ControllerProtocol(LineReceiver):
             except AttributeError:
                 self.sendLine("ERROR Unknown command '%s'" % command)
             else:
-                logging.log(logging.INFO, "Control: %s %s (%s:%s)" % (command.upper(), data, peer.host, peer.port))
+                logging.log(logging.DEBUG, "Control: %s %s (%s:%s)" % (command.upper(), data, peer.host, peer.port))
                 try:
                     func(data)
                 except Exception, e:
                     self.sendLine("ERROR %s" % e)
                     traceback.print_exc()
-    
+
     def commandUsers(self, data):
         self.sendJson({"users": list(self.factory.usernames.keys())})
-        
+
     def commandOwner(self, data):
         self.sendJson({"owner": list(self.factory.owner)})
-                
+
     def commandDirectors(self, data):
         self.sendJson({"directors": list(self.factory.directors)})
 
@@ -96,13 +92,16 @@ class ControllerProtocol(LineReceiver):
 
     def commandMods(self, data):
         self.sendJson({"mods": list(self.factory.mods)})
-                
+
+    def commandMembers(self, data):
+        self.sendJson({"members": list(self.factory.members)})
+
     def commandSpecs(self, data):
         self.sendJson({"specs": list(self.factory.spectators)})
-    
+
     def commandWorlds(self, data):
         self.sendJson({"worlds": list(self.factory.worlds.keys())})
-    
+
     def commandUserworlds(self, data):
         self.sendJson({"worlds": [
             (world.id, [client.username for client in world.clients if client.username], {
@@ -113,10 +112,19 @@ class ControllerProtocol(LineReceiver):
                 "archive": world.is_archive,
                 "locked": not world.all_write,
                 "physics": world.physics,
+                "zones": world.zoned,
+                "gchat": world.global_chat,
+                "colors": world.highlight_ops,
+                "fwater": world.finite_water,
+                "solids": world.admin_blocks,
+                "x": world.x,
+                "y": world.y,
+                "z": world.z,
+                "owner": world.owner,
             })
             for world in self.factory.worlds.values()
         ]})
-    
+
     def commandWorldinfo(self, data):
         world = self.factory.worlds[data['world_id']]
         self.sendJson({
@@ -127,10 +135,19 @@ class ControllerProtocol(LineReceiver):
             "archive": world.is_archive,
             "locked": not world.all_write,
             "physics": world.physics,
+            "zones": world.zoned,
+            "gchat": world.global_chat,
+            "colors": world.highlight_ops,
+            "fwater": world.finite_water,
+            "solids": world.admin_blocks,
+            "x": world.x,
+            "y": world.y,
+            "z": world.z,
+            "owner": world.owner,
         })
 
 class ControllerFactory(Factory):
     protocol = ControllerProtocol
-    
+
     def __init__(self, main_factory):
         self.main_factory = main_factory

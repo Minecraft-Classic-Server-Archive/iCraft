@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -78,7 +84,7 @@ class FetchPlugin(ProtocolPlugin):
     @op_only
     @username_command
     def commandFetch(self, user, byuser, overriderank):
-        "/fetch username - Op\nAliases: bring, forceinvite\nTeleports a player to be where you are"
+        "/fetch username - Op\nAliases: bring, forceinvite\nTeleports a user to be where you are"
         # Shift the locations right to make them into block coords
         rx = self.client.x >> 5
         ry = self.client.y >> 5
@@ -97,7 +103,7 @@ class FetchPlugin(ProtocolPlugin):
     @admin_only
     @username_command
     def commandForceFetch(self, user, byuser, overriderank):
-        "/forcefetch username - Admin\nAliases: forcebring\nTeleports a player to be where you are"
+        "/forcefetch username - Admin\nAliases: forcebring\nTeleports a user to be where you are"
         # Shift the locations right to make them into block coords
         rx = self.client.x >> 5
         ry = self.client.y >> 5
@@ -117,7 +123,7 @@ class FetchPlugin(ProtocolPlugin):
     @player_list
     @username_command
     def commandInvite(self, user, byuser, overriderank):
-        "/invite username - Guest\nInvites a player to come to you."
+        "/invite username - Guest\nInvites a user to come to you."
         if user.world == self.client.world:
             self.client.sendServerMessage("%s has been invited." % user.username)
             user.sendServerMessage("%s has invited you." % self.client.username)

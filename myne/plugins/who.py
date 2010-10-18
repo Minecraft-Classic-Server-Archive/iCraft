@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -68,25 +74,35 @@ class PlayersPlugin(ProtocolPlugin):
 
     @player_list
     def commandWho(self, parts, byuser, overriderank):
-        "/who [username] - Guest\nAliases: pinfo, players, whois\nOnline players, or player lookup."
+        "/who [username] - Guest\nAliases: pinfo, users, whois\nOnline users, or user lookup."
         if len(parts) < 2:
             self.client.sendServerMessage("Do '/who username' for more info.")
-            self.client.sendServerList(["Players:"] + list(self.client.factory.usernames))
+            self.client.sendServerList(["Users:"] + list(self.client.factory.usernames))
         else:
             def loadBank():
-                file = open('balances.dat', 'r')
+                file = open('config/data/balances.dat', 'r')
                 bank_dic = cPickle.load(file)
                 file.close()
                 return bank_dic
+            def loadRank():
+                file = open('config/data/titles.dat', 'r')
+                rank_dic = cPickle.load(file)
+                file.close()
+                return rank_dic
             bank = loadBank()
+            rank = loadRank()
             user = parts[1].lower()
+            try:
+                title = self.client.factory.usernames[user].title
+            except:
+                title = ""
             if parts[1].lower() in self.client.factory.usernames:
                 #Parts is an array, always, so we get the first item.
                 username = self.client.factory.usernames[parts[1].lower()]
                 if self.client.isAdmin():
-                    self.client.sendNormalMessage(self.client.factory.usernames[user].userColour()+parts[1]+COLOUR_YELLOW+" | "+str(username.transport.getPeer().host))
+                    self.client.sendNormalMessage(("%s" %(title))+self.client.factory.usernames[user].userColour()+parts[1]+COLOUR_YELLOW+" ("+str(username.transport.getPeer().host)+")")
                 else:
-                    self.client.sendNormalMessage(self.client.userColour()+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+self.client.userColour()+parts[1])
                 if username.gone == 1:
                     self.client.sendNormalMessage(COLOUR_DARKPURPLE+"Away"+COLOUR_YELLOW+" in %s" % (username.world.id))
                 else:
@@ -99,25 +115,25 @@ class PlayersPlugin(ProtocolPlugin):
                 #Parts is an array, always, so we get the first item.
                 username = parts[1].lower()
                 if username in self.client.factory.spectators:
-                    self.client.sendNormalMessage(COLOUR_BLACK+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_BLACK+parts[1])
                 elif username in self.client.factory.owner:
-                    self.client.sendNormalMessage(COLOUR_DARKGREEN+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKGREEN+parts[1])
                 elif username in self.client.factory.directors:
-                    self.client.sendNormalMessage(COLOUR_GREEN+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_GREEN+parts[1])
                 elif username in self.client.factory.admins:
-                    self.client.sendNormalMessage(COLOUR_RED+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_RED+parts[1])
                 elif username in self.client.factory.mods:
-                    self.client.sendNormalMessage(COLOUR_BLUE+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_BLUE+parts[1])
                 elif username in self.client.world.owner:
-                    self.client.sendNormalMessage(COLOUR_DARKYELLOW+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKYELLOW+parts[1])
                 elif username in self.client.world.ops:
-                    self.client.sendNormalMessage(COLOUR_DARKCYAN+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKCYAN+parts[1])
                 elif username in self.client.factory.members:
-                    self.client.sendNormalMessage(COLOUR_GREY+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_GREY+parts[1])
                 elif username in self.client.world.writers:
-                    self.client.sendNormalMessage(COLOUR_CYAN+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_CYAN+parts[1])
                 else:
-                    self.client.sendNormalMessage(COLOUR_WHITE+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_WHITE+parts[1])
                 if username not in self.client.factory.lastseen:
                     self.client.sendNormalMessage(COLOUR_DARKRED+"Offline"+COLOUR_YELLOW+" (Never seen)")
                 else:

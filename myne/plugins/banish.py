@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -59,19 +65,19 @@ class BanishPlugin(ProtocolPlugin):
     @op_only
     @username_command
     def commandBanish(self, user, byuser, overriderank):
-        "/worldkick username - Op\nAliases: banish\nBanishes the Player to the default world."
+        "/worldkick username - Op\nAliases: banish\nBanishes the user to the default world."
         if user.world == self.client.world:
             user.sendServerMessage("You were WorldKicked from '%s'." % self.client.world.id)
             user.changeToWorld("default")
-            self.client.sendServerMessage("Player %s got WorldKicked." % user.username)
+            self.client.sendServerMessage("User %s got WorldKicked." % user.username)
         else:
-            self.client.sendServerMessage("Your Player is in another world!")
+            self.client.sendServerMessage("Your user is in another world!")
 
     @player_list
     @op_only
     @only_username_command
     def commandWorldBan(self, username, byuser, overriderank):
-        "/worldban username - Op\nWorldBan a Player from this Map."
+        "/worldban username - Op\nWorldBan a user from this Map."
         if self.client.world.isworldbanned(username):
             self.client.sendServerMessage("%s is already WorldBanned." % username)
         else:
@@ -86,7 +92,7 @@ class BanishPlugin(ProtocolPlugin):
     @op_only
     @only_username_command
     def commandUnWorldban(self, username, byuser, overriderank):
-        "/unworldban username - Op\nAliases: deworldban\nRemoves the WorldBan on the Player."
+        "/unworldban username - Op\nAliases: deworldban\nRemoves the WorldBan on the user."
         if not self.client.world.isworldbanned(username):
             self.client.sendServerMessage("%s is not WorldBanned." % username)
         else:

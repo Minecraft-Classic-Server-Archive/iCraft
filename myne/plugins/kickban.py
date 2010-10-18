@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -72,7 +78,7 @@ class KickBanPlugin(ProtocolPlugin):
     @mod_only
     @username_command
     def commandKick(self, user, byuser, overriderank, params=[]):
-        "/kick username [reason] - Mod\nKicks the Player off the server."
+        "/kick username [reason] - Mod\nKicks the user off the server."
         if params:
             user.sendError("Kicked: %s" % " ".join(params))
             self.client.sendServerMessage("They were just kicked.")
@@ -84,7 +90,7 @@ class KickBanPlugin(ProtocolPlugin):
     @admin_only
     @only_username_command
     def commandBanBoth(self, username, byuser, overriderank, params=[]):
-        "/banb username reason - Admin\nName and IP ban a Player from this server."
+        "/banb username reason - Admin\nName and IP ban a user from this server."
         if not params:
             self.client.sendServerMessage("Please give a reason.")
         else:
@@ -96,7 +102,7 @@ class KickBanPlugin(ProtocolPlugin):
     @admin_only
     @only_username_command
     def commandBan(self, username, byuser, overriderank, params=[]):
-        "/ban username reason - Admin\nBans the Player from this server."
+        "/ban username reason - Admin\nBans the user from this server."
         if self.client.factory.isBanned(username):
             self.client.sendServerMessage("%s is already Banned." % username)
         else:
@@ -112,7 +118,7 @@ class KickBanPlugin(ProtocolPlugin):
     @director_only
     @only_username_command
     def commandIpban(self, username, byuser, overriderank, params=[]):
-        "/ipban username reason - Director\nBan a Player's IP from this server."
+        "/ipban username reason - Director\nBan a user's IP from this server."
         ip = self.client.factory.usernames[username].transport.getPeer().host
         if self.client.factory.isIpBanned(ip):
             self.client.sendServerMessage("%s is already IPBanned." % ip)
@@ -129,7 +135,7 @@ class KickBanPlugin(ProtocolPlugin):
     @admin_only
     @only_username_command
     def commandUnban(self, username, byuser, overriderank):
-        "/unban username - Admin\nRemoves the Ban on the Player."
+        "/unban username - Admin\nRemoves the Ban on the user."
         if not self.client.factory.isBanned(username):
             self.client.sendServerMessage("%s is not Banned." % username)
         else:
@@ -151,7 +157,7 @@ class KickBanPlugin(ProtocolPlugin):
     @admin_only    
     @only_username_command
     def commandReason(self, username, byuser, overriderank):
-        "/banreason username - Admin\nGives the reason a Player was Banned."
+        "/banreason username - Admin\nGives the reason a user was Banned."
         if not self.client.factory.isBanned(username):
             self.client.sendServerMessage("%s is not Banned." % username)
         else:
@@ -170,16 +176,16 @@ class KickBanPlugin(ProtocolPlugin):
     @player_list
     @mod_only
     def commandUnFreeze(self, parts, byuser, overriderank):
-        "/unfreeze playername - Mod\nAliases: defreeze, unstop\nUnfreezes the player, allowing them to move again."
+        "/unfreeze username - Mod\nAliases: defreeze, unstop\nUnfreezes the user, allowing them to move again."
         try:
             username = parts[1]
         except:
-            self.client.sendServerMessage("No player name given.")
+            self.client.sendServerMessage("No username given.")
             return
         try:
             user = self.client.factory.usernames[username]
         except:
-            self.client.sendServerMessage("Player is not online.")
+            self.client.sendServerMessage("User is not online.")
             return
         user.frozen = False
         user.sendNormalMessage("&4You have been unfrozen by %s!" % self.client.username)
@@ -187,16 +193,16 @@ class KickBanPlugin(ProtocolPlugin):
     @player_list
     @mod_only
     def commandFreeze(self, parts, byuser, overriderank):
-        "/freeze playername - Mod\nAliases: stop\nFreezes the player, preventing them from moving."
+        "/freeze username - Mod\nAliases: stop\nFreezes the user, preventing them from moving."
         try:
             username = parts[1]
         except:
-            self.client.sendServerMessage("No player name given.")
+            self.client.sendServerMessage("No username given.")
             return
         try:
             user = self.client.factory.usernames[username]
         except:
-            self.client.sendServerMessage("Player is not online.")
+            self.client.sendServerMessage("User is not online.")
             return
         user.frozen = True
         user.sendNormalMessage("&4You have been frozen by %s!" % self.client.username)
@@ -205,7 +211,7 @@ class KickBanPlugin(ProtocolPlugin):
     #@mod_only
     #@only_username_command
     #def commandIpshun(self, username, byuser, overriderank):
-    #    "/ipspec playername - Mod\nAliases: ipshun\nIPSpec a Player's IP in this server."
+    #    "/ipspec username - Mod\nAliases: ipshun\nIPSpec a user's IP in this server."
     #    ip = self.client.factory.usernames[username].transport.getPeer().host
     #    if self.client.factory.isIpShunned(ip):
     #        self.client.sendServerMessage("%s is already IPSpecced." % ip)

@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -29,7 +35,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-from twisted.internet import reactor
+from reqs.twisted.internet import reactor
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
@@ -40,6 +46,7 @@ import random
 import time
 import cPickle
 from myne.timer import ResettableTimer
+var_maxcommandsperblock = 100
 
 class CommandPlugin(ProtocolPlugin):
     
@@ -54,6 +61,7 @@ class CommandPlugin(ProtocolPlugin):
         "cmddelend": "commandCommanddelend",
         "cmdshow": "commandShowcmdblocks",
         "cmdinfo": "commandcmdinfo",
+        "cmddelcmd": "commandcmddelcmd",
     }
     
     hooks = {
@@ -64,7 +72,7 @@ class CommandPlugin(ProtocolPlugin):
     }
     
     def gotClient(self):
-        self.twocoordcommands = list(["blb", "bhb", "bwb", "mountain", "hill", "dune", "pit", "lake", "hole", "copy", "replace"])
+        self.twocoordcommands = list(["blb", "bhb", "bwb", "mountain", "hill", "dune", "pit", "lake", "hole", "copy", "replace","line"])
         self.onecoordcommands = list(["sphere", "hsphere", "paste"])
         self.command_remove = False
         self.last_block_position = None
@@ -84,7 +92,7 @@ class CommandPlugin(ProtocolPlugin):
         self.infoindex = None
 
     def loadBank(self):
-        file = open('balances.dat', 'r')
+        file = open('config/data/balances.dat', 'r')
         bank_dic = cPickle.load(file)
         file.close()
         return bank_dic
@@ -92,7 +100,6 @@ class CommandPlugin(ProtocolPlugin):
     def message(self, message):
         if self.cmdinfolines is not None:
             if message.lower() == "next":
-
                 self.infoindex+=10
                 index = int(self.infoindex)
                 print self.cmdinfolines
@@ -181,7 +188,9 @@ class CommandPlugin(ProtocolPlugin):
                     if runcmd:
                         func(parts, False, guest)
                 except UnboundLocalError:
-                    self.client.sendServerMessage("Internal Server Error")
+                    self.client.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
+                    self.client.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")
+                    self.client.log(traceback.format_exc(), level=logging.ERROR)
             elif message.lower() == "n" or message.lower() == "no":
                 self.listeningforpay = False
                 self.runningcmdlist = list({})
@@ -242,7 +251,6 @@ class CommandPlugin(ProtocolPlugin):
         if self.client.world.has_command(x, y, z):
             if self.cmdinfo:
                 cmdlist = self.client.world.get_command(x, y, z)
-                
                 if len(cmdlist)<11:
                     self.client.sendServerMessage("Page 1 of 1:")
                     for x in cmdlist:
@@ -283,7 +291,7 @@ class CommandPlugin(ProtocolPlugin):
             self.command_remove = False
             
     def posChanged(self, x, y, z, h, p):
-        "Hook trigger for when the player moves"
+        "Hook trigger for when the user moves"
         rx = x >> 5
         ry = y >> 5
         rz = z >> 5
@@ -348,13 +356,13 @@ class CommandPlugin(ProtocolPlugin):
             elif parts[1].lower() == "variables":
                 if len(parts) > 2:
                     if parts[2].lower() == "bank":
-                        self.client.sendServerMessage("$bank - Balance of the player.")
+                        self.client.sendServerMessage("$bank - Balance of the user.")
                     elif parts[2].lower() == "block":
                         self.client.sendServerMessage("$block(x,y,x) - Block type, as a integer, for xyz")
                     elif parts[2].lower() == "bname":
                         self.client.sendServerMessage("$bname - Returns the block num as name, can use with $block")
                     elif parts[2].lower() == "cname":
-                        self.client.sendServerMessage("$cname - Name color of the player.")
+                        self.client.sendServerMessage("$cname - Name color of the user.")
                     elif parts[2].lower() == "date":
                         self.client.sendServerMessage("$date - Date of the server, Month/Day/Year")
                     elif parts[2].lower() == "eval":
@@ -368,21 +376,21 @@ class CommandPlugin(ProtocolPlugin):
                     elif parts[2].lower() == "ircnet":
                         self.client.sendServerMessage("$ircnet - Returns the IRC network.")
                     elif parts[2].lower() == "name":
-                        self.client.sendServerMessage("$name - Username of the player.")
+                        self.client.sendServerMessage("$name - Username of the user.")
                     elif parts[2].lower() == "owner":
                         self.client.sendServerMessage("$owner - Returns the server owner.")
                     elif parts[2].lower() == "posa":
-                        self.client.sendServerMessage("$posa - Returns the xyz of the player.")
+                        self.client.sendServerMessage("$posa - Returns the xyz of the user.")
                     elif parts[2].lower() == "posx":
-                        self.client.sendServerMessage("$posx - Returns the x of the player.")
+                        self.client.sendServerMessage("$posx - Returns the x of the user.")
                     elif parts[2].lower() == "posy":
-                        self.client.sendServerMessage("$posy - Returns the y of the player.")
+                        self.client.sendServerMessage("$posy - Returns the y of the user.")
                     elif parts[2].lower() == "posz":
-                        self.client.sendServerMessage("$posz - Returns the z of the player.")
+                        self.client.sendServerMessage("$posz - Returns the z of the user.")
                     elif parts[2].lower() == "rank":
-                        self.client.sendServerMessage("$rank - Rank name of the player.")
+                        self.client.sendServerMessage("$rank - Rank name of the user.")
                     elif parts[2].lower() == "ranknum":
-                        self.client.sendServerMessage("$ranknum - Rank number of the player.")
+                        self.client.sendServerMessage("$ranknum - Rank number of the user.")
                     elif parts[2].lower() == "rnd":
                         self.client.sendServerMessage("$rnd(min,max) - Returns a random number between the min and max.")
                     elif parts[2].lower() == "server":
@@ -411,39 +419,50 @@ class CommandPlugin(ProtocolPlugin):
                 self.placing_cmd = True
                 self.client.sendServerMessage("You are now placing command blocks.")
         else:
-            if parts[1] in self.twocoordcommands:
-                if len(parts) <  8:
-                    if len(self.client.last_block_changes) > 1:
-                        x, y, z = self.client.last_block_changes[0]
-                        x2, y2, z2 = self.client.last_block_changes[1]
-                        parts.append(x)
-                        parts.append(y)
-                        parts.append(z)
-                        parts.append(x2)
-                        parts.append(y2)
-                        parts.append(z2)
-                        
-            if parts[1] in self.onecoordcommands:
-                if len(parts) < 5:
-                    if len(self.client.last_block_changes) > 1:
-                        x, y, z = self.client.last_block_changes[0]
-                        parts.append(x)
-                        parts.append(y)
-                        parts.append(z)
+            if parts[0] != "//cmd":
+                if parts[1] in self.twocoordcommands:
+                    if len(parts) <  8:
+                        if len(self.client.last_block_changes) > 1:
+                            x, y, z = self.client.last_block_changes[0]
+                            x2, y2, z2 = self.client.last_block_changes[1]
+                            parts.append(x)
+                            parts.append(y)
+                            parts.append(z)
+                            parts.append(x2)
+                            parts.append(y2)
+                            parts.append(z2)
+                if parts[1] in self.onecoordcommands:
+                    if len(parts) < 5:
+                        if len(self.client.last_block_changes) > 1:
+                            x, y, z = self.client.last_block_changes[0]
+                            parts.append(x)
+                            parts.append(y)
+                            parts.append(z)
+            parts[0] = "/cmd"
             commandtext = ""
             for x in parts:
                    commandtext = commandtext + " " + str(x)
             if not self.command_cmd is None:
-                if len(self.command_cmd) == 50:
-                        self.client.sendServerMessage("You can only use 50 commands per block!")
-                else:       
+                if len(self.command_cmd) >= var_maxcommandsperblock:
+                        self.client.sendServerMessage("You can only use %s commands per block!" % var_maxcommandsperblock)
+                else:
+                    var_string = ""
+                    var_cmdparts = parts[1:]
+                    for index in range(len(var_cmdparts)):
+                        if index == 0:
+                            var_string = var_string + str(var_cmdparts[0])
+                        else:
+                            var_string = var_string + ' ' + str(var_cmdparts[index])
                     self.command_cmd.append(commandtext)
                     if len(self.command_cmd) > 1:     
-                        self.client.sendServerMessage("Command added.")
+                        self.client.sendServerMessage("Command %s added." % var_string)
                     else:
                         self.client.sendServerMessage("You are now creating a command block.")
                         self.client.sendServerMessage("Use /cmd command again to add a command")
+                        self.client.sendServerMessage("Use //cmd command to add a command without adding")
+                        self.client.sendServerMessage("any coordinates (for things like blb,sphere,etc.).")
                         self.client.sendServerMessage("Type /cmd with no args to start placing the block.")
+                        self.client.sendServerMessage("Command %s added." % var_string)
 
     @mod_only                    
     def commandGuestCommand(self, parts, byuser, permissionoverride):
@@ -455,25 +474,27 @@ class CommandPlugin(ProtocolPlugin):
                 self.client.sendServerMessage("You are now placing guest command blocks.")
                 self.placing_cmd = True
         else:
-            if parts[1] in self.twocoordcommands:
-                if len(parts) <  8:
-                    if len(self.client.last_block_changes) > 1:
-                        x, y, z = self.client.last_block_changes[0]
-                        x2, y2, z2 = self.client.last_block_changes[1]
-                        parts.append(x)
-                        parts.append(y)
-                        parts.append(z)
-                        parts.append(x2)
-                        parts.append(y2)
-                        parts.append(z2)
-                        
-            if parts[1] in self.onecoordcommands:
-                if len(parts) < 5:
-                    if len(self.client.last_block_changes) > 1:
-                        x, y, z = self.client.last_block_changes[0]
-                        parts.append(x)
-                        parts.append(y)
-                        parts.append(z)
+            if parts[0] != "//gcmd":
+                if parts[1] in self.twocoordcommands:
+                    if len(parts) <  8:
+                        if len(self.client.last_block_changes) > 1:
+                            x, y, z = self.client.last_block_changes[0]
+                            x2, y2, z2 = self.client.last_block_changes[1]
+                            parts.append(x)
+                            parts.append(y)
+                            parts.append(z)
+                            parts.append(x2)
+                            parts.append(y2)
+                            parts.append(z2)
+                            
+                if parts[1] in self.onecoordcommands:
+                    if len(parts) < 5:
+                        if len(self.client.last_block_changes) > 1:
+                            x, y, z = self.client.last_block_changes[0]
+                            parts.append(x)
+                            parts.append(y)
+                            parts.append(z)
+            parts[0] = "/gcmd"
             commandtext = ""
             command = str(parts[1])
             cmdspecials = ["wait", "if", "exit", "getinput", "getnum", "getblock", "getyn", "self"] #not actual commands but can be used in cmdblocks
@@ -484,50 +505,45 @@ class CommandPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("Unknown command '%s'" % command)
                     return
                 if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
-
                     return
-
                 if getattr(func, "director_only", False) and not self.client.isDirector():
-
                     return
-
                 if getattr(func, "admin_only", False) and not self.client.isAdmin():
-
                     return
-
                 if getattr(func, "mod_only", False) and not (self.client.isMod() or self.client.isAdmin()):
-
                     return
-
                 if getattr(func, "op_only", False) and not (self.client.isOp() or self.isWorldOwner() or self.client.isMod()):
-
                     return
-
                 if getattr(func, "worldowner_only", False) and not (self.client.isWorldOwner() or self.client.isMod()):
-
                     return
-
                 if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-
                     return
-
                 if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-
                     return
             for x in parts:
                    commandtext = commandtext + " " + str(x)
             if not self.command_cmd is None:
-                if len(self.command_cmd) == 50:
-                        self.client.sendServerMessage("You can only use 50 commands per block!")
-                else:       
+                if len(self.command_cmd) >= var_maxcommandsperblock:
+                        self.client.sendServerMessage("You can only use %s commands per block!" % var_maxcommandsperblock)
+                else:
+                    var_string = ""
+                    var_cmdparts = parts[1:]
+                    for index in range(len(var_cmdparts)):
+                        if index == 0:
+                            var_string = var_string + str(var_cmdparts[0])
+                        else:
+                            var_string = var_string + ' ' + str(var_cmdparts[index])
                     self.command_cmd.append(commandtext)
                     if len(self.command_cmd) > 1:     
-                        self.client.sendServerMessage("Command added.")
+                        self.client.sendServerMessage("Command %s added." % var_string)
                     else:
                         self.client.sendServerMessage("You are now creating a guest command block.")
                         self.client.sendServerMessage("WARNING: Commands on this block can be run by ANYONE")
                         self.client.sendServerMessage("Use /gcmd command again to add a command")
+                        self.client.sendServerMessage("Use //gcmd command to add a command without adding")
+                        self.client.sendServerMessage("any coordinates (for things like blb,sphere,etc.).")
                         self.client.sendServerMessage("Type /gcmd with no args to start placing the block.")
+                        self.client.sendServerMessage("Command %s added." % var_string)
                         
     @writer_only
     def commandSensorCommand(self, parts, byuser, permissionoverride):
@@ -539,43 +555,52 @@ class CommandPlugin(ProtocolPlugin):
                 self.placing_cmd = True
                 self.client.sendServerMessage("You are now placing sensor command blocks.")
         else:
-            twocoordcommands=["blb", "bhb", "bwb", "mountain", "hill", "dune", "pit", "lake", "hole", "copy", "replace"]
-            onecoordcommands=["sphere", "hsphere", "paste"]
-            if parts[1] in self.twocoordcommands:
-                if len(parts) <  8:
-                    if len(self.client.last_block_changes) > 1:
-                        x, y, z = self.client.last_block_changes[0]
-                        x2, y2, z2 = self.client.last_block_changes[1]
-                        parts.append(x)
-                        parts.append(y)
-                        parts.append(z)
-                        parts.append(x2)
-                        parts.append(y2)
-                        parts.append(z2)
-                        
-            if parts[1] in self.onecoordcommands:
-                if len(parts) < 5:
-                    if len(self.client.last_block_changes) > 1:
-                        x, y, z = self.client.last_block_changes[0]
-                        parts.append(x)
-                        parts.append(y)
-                        parts.append(z)
+            if parts[0] != "//scmd":
+                if parts[1] in self.twocoordcommands:
+                    if len(parts) <  8:
+                        if len(self.client.last_block_changes) > 1:
+                            x, y, z = self.client.last_block_changes[0]
+                            x2, y2, z2 = self.client.last_block_changes[1]
+                            parts.append(x)
+                            parts.append(y)
+                            parts.append(z)
+                            parts.append(x2)
+                            parts.append(y2)
+                            parts.append(z2)
+                if parts[1] in self.onecoordcommands:
+                    if len(parts) < 5:
+                        if len(self.client.last_block_changes) > 1:
+                            x, y, z = self.client.last_block_changes[0]
+                            parts.append(x)
+                            parts.append(y)
+                            parts.append(z)
+            parts[0] = "/scmd"
             commandtext = ""
             for x in parts:
                    commandtext = commandtext + " " + str(x)
             if not self.command_cmd is None:
-                if len(self.command_cmd) == 50:
-                        self.client.sendServerMessage("You can only use 50 commands per block!")
-                else:       
+                if len(self.command_cmd) >= var_maxcommandsperblock:
+                        self.client.sendServerMessage("You can only use %s commands per block!" % var_maxcommandsperblock)
+                else:
+                    var_string = ""
+                    var_cmdparts = parts[1:]
+                    for index in range(len(var_cmdparts)):
+                        if index == 0:
+                            var_string = var_string + str(var_cmdparts[0])
+                        else:
+                            var_string = var_string + ' ' + str(var_cmdparts[index])
                     self.command_cmd.append(commandtext)
                     if len(self.command_cmd) > 1:     
-                        self.client.sendServerMessage("Command added.")
+                        self.client.sendServerMessage("Command %s added." % var_string)
                     else:
                         self.client.sendServerMessage("You are now creating a sensor command block.")
-                        self.client.sendServerMessage("Use /scmd command again to add a command")
+                        self.client.sendServerMessage("Use /scmd command again to add a command.")
+                        self.client.sendServerMessage("Use //scmd command to add a command without adding")
+                        self.client.sendServerMessage("any coordinates (for things like blb,sphere,etc.).")
                         self.client.sendServerMessage("Type /scmd with no args to start placing the block.")
+                        self.client.sendServerMessage("Command %s added." % var_string)
                         
-    @mod_only                    
+    @mod_only
     def commandGuestSensorCommand(self, parts, byuser, permissionoverride):
         "/gscmd command [arguments] - Mod\nMakes the next block you place a guest sensor command block."
         if len(parts) < 2:
@@ -585,25 +610,26 @@ class CommandPlugin(ProtocolPlugin):
                 self.client.sendServerMessage("You are now placing guest sensor command blocks.")
                 self.placing_cmd = True
         else:
-            if parts[1] in self.twocoordcommands:
-                if len(parts) <  8:
-                    if len(self.client.last_block_changes) > 1:
-                        x, y, z = self.client.last_block_changes[0]
-                        x2, y2, z2 = self.client.last_block_changes[1]
-                        parts.append(x)
-                        parts.append(y)
-                        parts.append(z)
-                        parts.append(x2)
-                        parts.append(y2)
-                        parts.append(z2)
-                        
-            if parts[1] in self.onecoordcommands:
-                if len(parts) < 5:
-                    if len(self.client.last_block_changes) > 1:
-                        x, y, z = self.client.last_block_changes[0]
-                        parts.append(x)
-                        parts.append(y)
-                        parts.append(z)
+            if parts[0] != "//gscmd":
+                if parts[1] in self.twocoordcommands:
+                    if len(parts) <  8:
+                        if len(self.client.last_block_changes) > 1:
+                            x, y, z = self.client.last_block_changes[0]
+                            x2, y2, z2 = self.client.last_block_changes[1]
+                            parts.append(x)
+                            parts.append(y)
+                            parts.append(z)
+                            parts.append(x2)
+                            parts.append(y2)
+                            parts.append(z2)
+                if parts[1] in self.onecoordcommands:
+                    if len(parts) < 5:
+                        if len(self.client.last_block_changes) > 1:
+                            x, y, z = self.client.last_block_changes[0]
+                            parts.append(x)
+                            parts.append(y)
+                            parts.append(z)
+            parts[0] = "/gscmd"
             commandtext = ""
             command = str(parts[1])
             cmdspecials = ["wait", "if", "exit", "getinput", "getnum", "getblock", "getyn", "self"]  #not actual commands but can be used in cmdblocks
@@ -614,88 +640,91 @@ class CommandPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("Unknown command '%s'" % command)
                     return
                 if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
-
                     self.client.sendServerMessage("'%s' is not available to specs." % command)
-
                     return
-
                 if getattr(func, "director_only", False) and not self.client.isDirector():
-
                     self.client.sendServerMessage("'%s' is a Director-only command!" % command)
-
                     return
-
                 if getattr(func, "admin_only", False) and not self.client.isAdmin():
-
                     self.client.sendServerMessage("'%s' is an Admin-only command!" % command)
-
                     return
-
                 if getattr(func, "mod_only", False) and not (self.client.isMod() or self.client.isAdmin()):
-
                     self.client.sendServerMessage("'%s' is a Mod-only command!" % command)
-
                     return
-
                 if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-
                     self.client.sendServerMessage("'%s' is an Op-only command!" % command)
-
                     return
-
                 if getattr(func, "worldowner_only", False) and not (self.client.isWorldOwner() or self.client.isMod()):
-
                     self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
-
                     return
-
                 if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isMod()):
-
                     self.client.sendServerMessage("'%s' is a Member-only command!" % command)
-
                     return
-
                 if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-
                     self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
-
                     return
             for x in parts:
                    commandtext = commandtext + " " + str(x)
             if not self.command_cmd is None:
-                if len(self.command_cmd) == 50:
-                        self.client.sendServerMessage("You can only use 50 commands per block!")
-                else:       
+                if len(self.command_cmd) >= var_maxcommandsperblock:
+                        self.client.sendServerMessage("You can only use %s commands per block!" % var_maxcommandsperblock)
+                else:
+                    var_string = ""
+                    var_cmdparts = parts[1:]
+                    for index in range(len(var_cmdparts)):
+                        if index == 0:
+                            var_string = var_string + str(var_cmdparts[0])
+                        else:
+                            var_string = var_string + ' ' + str(var_cmdparts[index])
                     self.command_cmd.append(commandtext)
                     if len(self.command_cmd) > 1:     
-                        self.client.sendServerMessage("Command added.")
+                        self.client.sendServerMessage("Command %s added." % var_string)
                     else:
                         self.client.sendServerMessage("You are now creating a guest sensor command block.")
-                        self.client.sendServerMessage("WARNING: Commands on this block can be run by ANYONE")
-                        self.client.sendServerMessage("Use /gscmd command again to add a command")
+                        self.client.sendServerMessage("WARNING: Commands on this block can be run by ANYONE.")
+                        self.client.sendServerMessage("Use /gscmd command again to add a command.")
+                        self.client.sendServerMessage("Use //gscmd command to add a command without adding")
+                        self.client.sendServerMessage("any coordinates (for things like blb,sphere,etc.).")
                         self.client.sendServerMessage("Type /gscmd with no args to start placing the block.")
+                        self.client.sendServerMessage("Command %s added." % var_string)
 
     @writer_only
     def commandCommandend(self, parts, byuser, permissionoverride):
-        "/cmdend - Builder\nStops placing command blocks."
-        self.command_cmd =  self.command_cmd = list({})
+        "/cmdend [save]- Builder\nStops placing command blocks (type save to save your commands)."
+        if len(parts) == 2:
+            if parts[1] == 'save':
+                self.client.sendServerMessage("Current command block and its commands maintained")
+            else:
+                self.command_cmd = list({})
+        else:
+            self.command_cmd = list({})
         self.command_remove = False
         self.placing_cmd = False
         self.client.sendServerMessage("You are no longer placing command blocks.")
-    
-    
+        self.client.sendServerMessage("Note: you can type '/cmdend save' to keep the block you are")
+        self.client.sendServerMessage("making and it's commands.")
+
     @writer_only
     def commandCommanddel(self, parts, byuser, permissionoverride):
         "/cmddel - Builder\nEnables Command-deleting mode"
         self.client.sendServerMessage("You are now able to delete command blocks. /cmddelend to stop")
         self.command_remove = True
-    
+
+    @writer_only
+    def commandcmddelcmd(self, parts, byuser, permissionoverride):
+        "/cmddel - Builder\nDeletes the previous command for the block."
+        if len(self.command_cmd) > 0:
+            del self.command_cmd[len(self.command_cmd)-1]
+            self.client.sendServerMessage("Previous command, for the block, deleted")
+        else:
+            self.client.sendServerMessage("There is no block command to delete")
+
     @writer_only
     def commandCommanddelend(self, parts, byuser, permissionoverride):
         "/cmddelend - Builder\nDisables Command-deleting mode"
         self.client.sendServerMessage("Command deletion mode ended.")
         self.command_remove = False
-        
+
     @writer_only
     def commandShowcmdblocks(self, parts, byuser, permissionoverride):
        "/cmdshow - Builder\nShows all command blocks as yellow, only to you."
@@ -703,15 +732,13 @@ class CommandPlugin(ProtocolPlugin):
            x, y, z = self.client.world.get_coords(offset)
            self.client.sendPacked(TYPE_BLOCKSET, x, y, z, BLOCK_YELLOW)
        self.client.sendServerMessage("All commands appearing yellow temporarily.")
-    
+
     @writer_only
     @on_off_command
     def commandcmdinfo(self, onoff, byuser, permissionoverride):
        "/cmdinfo - Builder\nTells you the commands in a cmdblock"
        self.cmdinfo = onoff == "on"
        self.client.sendServerMessage("Command block info is now %s." %onoff)
-
-
 
     def runcommands(self):
         try:
@@ -753,9 +780,20 @@ class CommandPlugin(ProtocolPlugin):
             thiscmd = thiscmd.replace("$irc", self.client.factory.config.get("irc", "server") + " " + self.client.factory.irc_channel)
             thiscmd = thiscmd.replace("$ircchan", self.client.factory.irc_channel)
             thiscmd = thiscmd.replace("$ircnet", self.client.factory.config.get("irc", "server"))
+        else:
+            thiscmd = thiscmd.replace("$irc", "N/A")
+            thiscmd = thiscmd.replace("$ircchan", "N/A")
+            thiscmd = thiscmd.replace("$ircnet", "N/A")
         thiscmd = thiscmd.replace("$owner", self.client.factory.owner)
+        thiscmd = thiscmd.replace("$year", time.strftime("%Y",time.localtime(time.time())))
+        thiscmd = thiscmd.replace("$month", time.strftime("%m",time.localtime(time.time())))
+        thiscmd = thiscmd.replace("$day", time.strftime("%d",time.localtime(time.time())))
         thiscmd = thiscmd.replace("$date", time.strftime("%m/%d/%Y",time.localtime(time.time())))
+        thiscmd = thiscmd.replace("$rdate", time.strftime("%d/%m/%Y",time.localtime(time.time())))
+        thiscmd = thiscmd.replace("$sdate", time.strftime("%m/%d",time.localtime(time.time())))
+        thiscmd = thiscmd.replace("$rsdate", time.strftime("%d/%m",time.localtime(time.time())))
         thiscmd = thiscmd.replace("$time", time.strftime("%H:%M:%S",time.localtime(time.time())))
+        thiscmd = thiscmd.replace("$stime", time.strftime("%H:%M",time.localtime(time.time())))
         myrank = "guest"
         myranknum = 1
         if self.client.isSpectator():
@@ -802,7 +840,7 @@ class CommandPlugin(ProtocolPlugin):
                     limits = thiscmd[thiscmd.find("(", num)+1:thiscmd.find(")", num+5)].split(",")
                     thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], str(random.randint(int(limits[0]), int(limits[1])))) #holy crap this is complicated
                 except:
-                    self.client.sendServerMessage("$rnd syntax error! Use $rnd(num1,num2)")
+                    self.client.sendServerMessage("$rnd Syntax Error; Use: $rnd(num1,num2)")
         for num in range(len(thiscmd)):
             if thiscmd[num:(num+6)] == "$block":
                 try:
@@ -814,7 +852,7 @@ class CommandPlugin(ProtocolPlugin):
                     block = ord(self.client.world.blockstore.raw_blocks[check_offset])
                     thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], str(block)) #holy crap this is complicated
                 except:
-                    self.client.sendServerMessage("$block syntax error! Use $block(x,y,z)")
+                    self.client.sendServerMessage("$block Syntax Error; Use: $block(x,y,z)")
         for num in range(len(thiscmd)):
             if thiscmd[num:(num+5)] == "$eval":
                 try:
@@ -831,7 +869,7 @@ class CommandPlugin(ProtocolPlugin):
                     expression = str(eval(thiscmd[thiscmd.find("(", num)+1:lastindex+1]))
                     thiscmd = thiscmd.replace(thiscmd[num:lastindex+2], expression) #holy crap this is complicated
                 except:
-                    self.client.sendServerMessage("$eval syntax error! Use $eval(expression)")
+                    self.client.sendServerMessage("$eval Syntax Error; Use: $eval(expression)")
         blocklist = ["air", "rock", "grass", "dirt", "cobblestone", "wood", "plant", "solid", "water", "still water", "lava", "still lava", "sand", "gravel", "gold ore", "iron ore", "coal ore", "trunk", "leaf", "sponge", "glass", "red cloth", "orange cloth", "yellow cloth", "lime green cloth", "green cloth", "turquoise cloth", "cyan cloth", "blue cloth", "dark blue cloth", "violet cloth", "purple cloth", "magenta cloth", "pink cloth", "black cloth", "gray cloth", "white cloth", "flower", "rose", "red mushroom", "brown mushroom", "gold", "iron", "double step", "step", "brick", "TNT", "bookshelf", "mossy cobblestone", "obsidian"]
         for num in range(len(thiscmd)):
             if thiscmd[num:(num+6)] == "$bname":
@@ -839,7 +877,7 @@ class CommandPlugin(ProtocolPlugin):
                     blocknum = int(thiscmd[thiscmd.find("(", num)+1:thiscmd.find(")", num+5)])
                     thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], blocklist[blocknum]) #holy crap this is complicated
                 except:
-                    self.client.sendServerMessage("$bname syntax error! Use $bname(blockint)")
+                    self.client.sendServerMessage("$bname Syntax Error; Use: $bname(blockint)")
         if thiscmd.startswith(" if"):
             try:
                 condition = thiscmd[4:thiscmd.find(":")]
@@ -847,43 +885,9 @@ class CommandPlugin(ProtocolPlugin):
                     runcmd=False
                 thiscmd = thiscmd.replace(thiscmd[:thiscmd.find(":")+1], "")
             except:
-                self.client.sendServerMessage("if syntax error! Use if a=b: command!")
-                
+                self.client.sendServerMessage("IF Syntax Error; Use:: if \"a\"=\"b\": command!")
         parts = thiscmd.split()
-        
         command = str(parts[0])
-
-
-        #since whispers aren't commands, we have to handle it seperately...
-        if command.startswith("@"):
-            runcmd = False
-            username = command.lstrip("@").lower()
-            text = ""
-            firstword = True #This is to keep the @username part from being included as text
-            for word in parts:
-                if not firstword:
-                    text = text + " " + word
-                firstword = False
-            if text == "":
-                self.client.sendServerMessage("Please include a message to send.")
-            else:
-
-                if username in self.client.factory.usernames:
-                    self.client.factory.usernames[username].sendWhisper(self.client.username, text)
-
-                    self.client.sendWhisper(self.client.username, text)
-
-                    self.client.log("@"+self.client.username+" to "+username+": "+text)
-
-                    self.client.whisperlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | @"+self.client.username+" to "+username+": "+text+"\n")
-
-                    self.client.whisperlog.flush()
-
-                else:
-
-                    self.client.sendServerMessage("%s is currently offline." % username)
-
-
         #Require confirmation
         if command == "pay":
             try:
@@ -987,80 +991,48 @@ class CommandPlugin(ProtocolPlugin):
                 if runcmd:
                     self.client.sendServerMessage("Unknown command '%s'" % command)
                 runcmd = False
-
             func = self.client.commands[command.lower()]
         except KeyError:
             if runcmd:
                 self.client.sendServerMessage("Unknown command '%s'" % command)
-
                 runcmd = False
-
-
         if runcmd is True:
             if guest is False:
                 if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
-
                     self.client.sendServerMessage("'%s' is not available to specs." % command)
-
                     runcmd = False
-
                 if getattr(func, "director_only", False) and not self.client.isDirector():
-
                     self.client.sendServerMessage("'%s' is a Director-only command!" % command)
-
                     runcmd = False
-
                 if getattr(func, "admin_only", False) and not self.client.isAdmin():
-
                     self.client.sendServerMessage("'%s' is an Admin-only command!" % command)
-
                     runcmd = False
-
                 if getattr(func, "mod_only", False) and not (self.client.isMod() or self.client.isAdmin()):
-
                     self.client.sendServerMessage("'%s' is a Mod-only command!" % command)
-
                     runcmd = False
-
                 if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isMod()):
-
                     self.client.sendServerMessage("'%s' is an Op-only command!" % command)
-
                     runcmd = False
-
                 if getattr(func, "worldowner_only", False) and not (self.client.isWorldOwner() or self.client.isMod()):
-
                     self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
-
                     runcmd = False
-
                 if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-
                     self.client.sendServerMessage("'%s' is a Member-only command!" % command)
-
                     runcmd = False
-
                 if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-
                     self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
-
                     runcmd = False
-
             try:
-
                 try:
                     if runcmd:
                         func(parts, False, guest)
                 except UnboundLocalError:
-                    self.client.sendServerMessage("Internal Server Error")
+                    self.client.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
+                    self.client.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")
                     self.client.log(traceback.format_exc(), level=logging.ERROR)
             except Exception, e:
-
-                self.client.sendServerMessage("Internal Server Error")
-
+                self.client.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
+                self.client.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")
                 self.client.log(traceback.format_exc(), level=logging.ERROR)
         self.runningcmdlist.remove(self.runningcmdlist[0])
         reactor.callLater(0.1, self.runcommands)
-
-        
-

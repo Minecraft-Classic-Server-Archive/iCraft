@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -31,7 +37,7 @@
 
 import os
 import shutil
-from twisted.internet import reactor
+from reqs.twisted.internet import reactor
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
@@ -75,6 +81,7 @@ class BackupPlugin(ProtocolPlugin):
             os.mkdir(path)
             try:
                 shutil.copy(world_dir + "blocks.gz", path)
+                shutil.copy(world_dir + "world.meta", path)
             except:
                 self.client.sendServerMessage("Your backup attempt has went wrong, please try again.")
             if len(parts) > 2:
@@ -110,6 +117,10 @@ class BackupPlugin(ProtocolPlugin):
                 old_clients = self.client.factory.worlds[world_id].clients                    
                 if not os.path.exists(world_dir+"blocks.gz.new"):
                     shutil.copy(world_dir+"backup/%s/blocks.gz" %backup_number,world_dir)
+                    try:
+                        shutil.copy(world_dir+"backup/%s/world.meta" %backup_number,world_dir)
+                    except:
+                        pass
                 else:
                     reactor.callLater(1, self.commandRestore(self, parts, overriderank))
                 self.client.factory.loadWorld("worlds/%s" % world_id, world_id)

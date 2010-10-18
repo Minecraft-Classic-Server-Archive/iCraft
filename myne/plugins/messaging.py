@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -53,32 +59,45 @@ class MessagingPlugin(ProtocolPlugin):
     @player_list
     def commandBack(self, parts, byuser, overriderank):
         "/back - Guest\nPrints out message of you coming back."
-        if len(parts) != 1:
-            self.client.sendServerMessage("This command doesn't need arguments")
-        else:
-            self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " is now: Back."))
-            self.client.gone = 0
+        if byuser:
+            if len(parts) != 1:
+                self.client.sendServerMessage("This command doesn't need arguments")
+            else:
+                if self.client.isSilenced():
+                    self.client.sendServerMessage("Cat got your tongue?")
+                else:
+                    self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " is now: Back."))
+                self.client.gone = 0
+                self.client.resetIdleTimer()
     
     @player_list
     def commandAway(self, parts, byuser, overriderank):
-         "/away reason - Guest\nAliases: afk, brb\nPrints out message of you going away."
-         if len(parts) == 1:
-             self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away."))
-             self.client.gone = 1
-         else:
-             self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away "+(" ".join(parts[1:]))))
-             self.client.gone = 1
+        "/away reason - Guest\nAliases: afk, brb\nPrints out message of you going away."
+        if byuser:
+            if len(parts) == 1:
+                if self.client.isSilenced():
+                    self.client.sendServerMessage("Cat got your tongue?")
+                else:
+                    self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away."))
+            else:
+                if self.client.isSilenced():
+                    self.client.sendServerMessage("Cat got your tongue?")
+                else:
+                    self.client.factory.queue.put((self.client, TASK_AWAYMESSAGE, self.client.username + " has gone: Away "+(" ".join(parts[1:]))))
+            self.client.gone = 1
+            self.client.resetIdleTimer()
 
     @player_list
     def commandMe(self, parts, byuser, overriderank):
         "/me action - Guest\nPrints 'username action'"
-        if len(parts) == 1:
-            self.client.sendServerMessage("Please type an action.")
-        else:
-            if self.client.isSilenced():
-                self.client.sendServerMessage("You are Silenced and lost your tongue.")
+        if byuser:
+            if len(parts) == 1:
+                self.client.sendServerMessage("Please type an action.")
             else:
-                self.client.factory.queue.put((self.client, TASK_ACTION, (self.client.id, self.client.userColour(), self.client.username, " ".join(parts[1:]))))
+                if self.client.isSilenced():
+                    self.client.sendServerMessage("Cat got your tongue?")
+                else:
+                    self.client.factory.queue.put((self.client, TASK_ACTION, (self.client.id, self.client.userColour(), self.client.username, " ".join(parts[1:]))))
     
     @mod_only
     def commandSay(self, parts, byuser, overriderank):

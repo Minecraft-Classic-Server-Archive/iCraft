@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -49,18 +55,18 @@ class HidePlugin(ProtocolPlugin):
         self.hidden = False
     
     def playerMoved(self, x, y, z, h, p):
-        "Stops transmission of player positions if hide is on."
+        "Stops transmission of user positions if hide is on."
         if self.hidden:
             return False
     
     @player_list
     @op_only
     def commandHide(self, params, byuser, overriderank):
-        "/hide - Op\nAliases: cloak\nHides you so no other players can see you. Toggle."
+        "/hide - Op\nAliases: cloak\nHides you so no other users can see you. Toggle."
         if not self.hidden:
             self.client.sendServerMessage("You have vanished.")
             self.hidden = True
-            # Send the "player has disconnected" command to people
+            # Send the "user has disconnected" command to people
             self.client.queueTask(TASK_PLAYERLEAVE, [self.client.id])
         else:
             self.client.sendServerMessage("That was Magic!")

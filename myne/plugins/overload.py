@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -29,7 +35,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-from twisted.internet import reactor
+from reqs.twisted.internet import reactor
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
@@ -46,7 +52,7 @@ class OverloadPlugin(ProtocolPlugin):
     @admin_only
     @username_command
     def commandOverload(self, client, byuser, overriderank):
-        "/overload username - Admin\nSends the players client a massive fake map."
+        "/overload username - Admin\nSends the users client a massive fake map."
         client.sendOverload()
         self.client.sendServerMessage("Overload sent to %s" % client.username)
 
@@ -54,7 +60,7 @@ class OverloadPlugin(ProtocolPlugin):
     #@mod_only
     #@username_command
     #def commandSend(self, client, byuser, overriderank):
-        #"/send username [world] - Mod\nSends the players client another world."
+        #"/send username [world] - Mod\nSends the users client another world."
         #if user.isMod():
             #self.client.sendServerMessage("You cannot send Staff!")
         #if len(parts) == 2:
@@ -65,9 +71,9 @@ class OverloadPlugin(ProtocolPlugin):
             #else:
                 #user.sendServerMessage("You were sent to '%s'." % self.client.world.id)
                 #user.changeToWorld("default")
-                #self.client.sendServerMessage("Player %s was sent." % user.username)
+                #self.client.sendServerMessage("User %s was sent." % user.username)
         #else:
-            #self.client.sendServerMessage("Your Player is in another world!")
+            #self.client.sendServerMessage("Your user is in another world!")
 
     @mod_only
     def commandBlazer(self, parts, byuser, overriderank):

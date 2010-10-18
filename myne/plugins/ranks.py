@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -81,7 +87,7 @@ class ModsPlugin(ProtocolPlugin):
     @player_list
     @op_only
     def commandDeRank(self, parts, byuser, overriderank):
-        "/derank rankname username - Op\nMakes playername lose the rank of rankname."
+        "/derank rankname username - Op\nMakes username lose the rank of rankname."
         if len(parts) < 3:
             self.client.sendServerMessage("You must specify a rank and username.")
         else:
@@ -127,14 +133,14 @@ class ModsPlugin(ProtocolPlugin):
     @mod_only
     @only_username_command
     def commandSpec(self, username, byuser, overriderank):
-        "/spec username - Mod\nMakes the player as a spec."
+        "/spec username - Mod\nMakes the user as a spec."
         self.client.sendServerMessage(Spec(self, username, byuser, overriderank))
      
     @player_list
     @mod_only
     @only_username_command
     def commandDeSpec(self, username, byuser, overriderank):
-        "/unspec username - Mod\nRemoves the player as a spec."
+        "/unspec username - Mod\nRemoves the user as a spec."
         try:
             self.client.factory.spectators.remove(username)
         except:

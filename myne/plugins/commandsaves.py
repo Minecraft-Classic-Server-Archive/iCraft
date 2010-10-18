@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -32,7 +38,7 @@
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
-from twisted.internet import reactor
+from reqs.twisted.internet import reactor
 import logging
 
 class DynamitePlugin(ProtocolPlugin):
@@ -50,7 +56,7 @@ class DynamitePlugin(ProtocolPlugin):
         self.savedcommands = list({})
 
     def Message(self, message):
-        if message.startswith("/") and not message.split()[0] == "/b":
+        if message.startswith("/") and not message.split()[0].lower() == "/b":
             self.lastcommand = message
     
     @info_list
@@ -104,5 +110,6 @@ class DynamitePlugin(ProtocolPlugin):
         try:
             func(parts, True, False) #byuser is true, overriderank is false
         except Exception, e:
-            self.client.sendServerMessage("Internal Server Error")
+            self.client.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
+            self.client.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")
             self.client.log(traceback.format_exc(), level=logging.ERROR)

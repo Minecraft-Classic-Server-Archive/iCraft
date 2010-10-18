@@ -1,4 +1,4 @@
 @ECHO off
 TITLE iCraft
-run.py
+C:\Python26\python.exe run.py
 PAUSE

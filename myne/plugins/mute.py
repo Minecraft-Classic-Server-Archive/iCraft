@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -66,7 +72,7 @@ class MutePlugin(ProtocolPlugin):
     @player_list
     @only_username_command
     def commandUnmute(self, username, byuser, overriderank):
-        "/unmute username - Guest\nLets you hear messages from this player again"
+        "/unmute username - Guest\nLets you hear messages from this user again"
         if username in self.muted:
             self.muted.remove(username)
             self.client.sendServerMessage("%s unmuted." % username)
@@ -85,7 +91,7 @@ class MutePlugin(ProtocolPlugin):
     @mod_only
     @only_username_command
     def commandSilence(self, username, byuser, overriderank):
-        "/silence username - Mod\nDisallows the Player to talk."
+        "/silence username - Mod\nDisallows the user to talk."
         if self.client.factory.usernames[username].isMod():
             self.client.sendServerMessage("You cannot silence staff!")
             return
@@ -96,7 +102,7 @@ class MutePlugin(ProtocolPlugin):
     @mod_only
     @only_username_command
     def commandDesilence(self, username, byuser, overriderank):
-        "/desilence username - Mod\nAliases: unsilence\nAllows the Player to talk."
+        "/desilence username - Mod\nAliases: unsilence\nAllows the user to talk."
         if self.client.factory.isSilenced(username):
             self.client.factory.silenced.remove(username)
             self.client.sendServerMessage("%s is no longer Silenced." % username.lower())

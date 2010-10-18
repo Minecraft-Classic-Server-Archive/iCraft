@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -80,6 +86,26 @@ def Rank(self, parts, byuser, overriderank,server=None):
         world.ops.add(username)
         return ("Opped %s" % username)
         #make op
+    elif parts[1] == "worldowner":
+        if len(parts) > 3:
+            try:
+                world = factory.worlds[parts[3]]
+            except KeyError:
+                return ("Unknown world \"%s\"" %parts[3])
+        else:
+            if not server:
+                world = self.client.world
+            else:
+                return "You must provide a world"
+        if not server:
+            if self.client.isWorldOwner()==False and not overriderank:
+                return ("You are not high enough rank!")
+        else:
+            if not parts[-1] == "console":
+                return ("You are not high enough rank!")
+        self.client.world.owner = (username)
+        return ("%s is now a world owner." % username)
+        #make world owner    
     elif parts[1] == "member":
         #make them a member
         if not server:
@@ -197,6 +223,34 @@ def DeRank(self, parts, byuser, overriderank, server=None):
                 user.sendOpUpdate()
         return ("Deopped %s" % username)
         #make op
+    elif parts[1] == "worldowner":
+        if len(parts) > 3:
+            try:
+                world = factory.worlds[parts[3]]
+            except KeyError:
+                return ("Unknown world \"%s\"" %parts[3])
+        else:
+            if not server:
+                world = self.client.world
+            else:
+                return "You must provide a world"
+        if not server:
+            if not self.client.isWorldOwner() and world != self.client.world:
+                return ("You are not an World Owner!")
+        else:
+            if not parts[-1] == "console":
+                if not factory.isWorldOwner(parts[-1]):
+                    return ("You are not high enough rank!")
+        try:
+            self.client.world.owner = ("")
+        except KeyError:
+            return ("%s is not a world owner." % username)
+        if username in factory.usernames:
+            user = factory.usernames[username]
+            if user.world == world:
+                user.sendOpUpdate()
+        return ("%s is no longer the world owner." % username)
+        #make worldowner
     elif parts[1] == "member":
         #make them a member
         if not server:
@@ -299,8 +353,8 @@ def Credits(self, server=None):
     Temp.append ("Thanks to the following people for making iCraft possible...")
     Temp.append ("Mojang Specifications (Minecraft): Notch, dock, ez, ...")
     Temp.append ("Creators: aera aka AndrewGodwin (Myne and The Archives), iKJames aka KingJames, JamesKirslis (hlmc.net, iCraft)")
-    Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason, gdude2002, goober, gothfox, ntfwc, PixelEater, revenant,")
-    Temp.append ("Saanix, tehcid, Varriount, willempiee")
-    Temp.append ("Others: 099, Akai, Antoligy, Aquaskys, Bidoof_King, Bioniclegenius (Red_Link), BlueProtoman, eugo (Knossus), fragmer,")
-    Temp.append ("Kelraider, MAup, MystX, NotMeh, PyroPyro, Rils, Roadcrosser, Roujo, setveen, sk8rjwd, TkTech, Uninspired, ...")
+    Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason, eugo (Knossus), gdude2002, goober, gothfox, NotMeh, ntfwc,")
+    Temp.append ("PixelEater, revenant, Saanix, sk8rjwd, tehcid, Varriount, willempiee")
+    Temp.append ("Others: 099, 2k10, Akai, Antoligy, Aquaskys, Bidoof_King, Bioniclegenius (Red_Link), BlueProtoman, fragmer, Kelraider,")
+    Temp.append ("MAup, MystX, PyroPyro, Rils, Roadcrosser, Roujo, setveen, TkTech, Uninspired, ...")
     return Temp

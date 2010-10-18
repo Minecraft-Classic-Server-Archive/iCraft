@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -45,16 +51,16 @@ class MoneyPlugin(ProtocolPlugin):
     }
 
     money_logger = logging.getLogger('TransactionLogger')
-    
+
     #System methods, not for commands
     def loadBank(self):
-        file = open('balances.dat', 'r')
+        file = open('config/data/balances.dat', 'r')
         bank_dic = cPickle.load(file)
         file.close()
         return bank_dic
     
     def dumpBank(self, bank_dic):
-        file = open('balances.dat', 'w')
+        file = open('config/data/balances.dat', 'w')
         cPickle.dump(bank_dic, file)
         file.close()
     
@@ -92,7 +98,7 @@ class MoneyPlugin(ProtocolPlugin):
         if self.client.username.lower() in bank:
             bank[target] = amount
             self.dumpBank(bank)
-            self.client.sendServerMessage("Set player balance to M%d" % amount)
+            self.client.sendServerMessage("Set user balance to M%d" % amount)
         else:
             self.client.sendServerMessage("You don't have bank account, use /bank to make one!")
             

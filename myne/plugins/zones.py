@@ -16,12 +16,18 @@
 #                   <Clay Sweetser> CDBKJmom@aol.com AKA "Varriount"
 #                   <James Kirslis> james@helplarge.com AKA "iKJames"
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
+#                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
+#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
+#                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
+#                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
 #                   <Nick Tolrud> ntolrud@yahoo.com AKA "ntfwc"
 #                   <Noel Benzinger> ronnygmod@gmail.com AKA "Dwarfy"
 #                   <Randy Lyne> qcksilverdragon@gmail.com AKA "goober"
 #                   <Willem van der Ploeg> willempieeploeg@live.nl AKA "willempiee"
+#
+#    Disclaimer: Parts of this code may have been contributed by the end-users.
 #
 #    iCraft is licensed under the Creative Commons
 #    Attribution-NonCommercial-ShareAlike 3.0 Unported License. 
@@ -29,7 +35,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-from twisted.internet import reactor
+from reqs.twisted.internet import reactor
 from myne.plugins import ProtocolPlugin
 from myne.decorators import *
 from myne.constants import *
@@ -69,7 +75,7 @@ class ZonesPlugin(ProtocolPlugin):
 
     @op_only
     def commandNewZone(self, parts, byuser, overriderank):
-        "/znew zonename user|rank [creator/rankname] - Op\nAliases: rbox\nCreates a new zone with the name you gave.\nUsers are added with /zone name player1 player2 ...\nRank Example: '/znew GuestArea rank all'\nUser Example: '/znew hotel1 user'. then '/zone hotel1 add <player1> <player2>'"
+        "/znew zonename user|rank [creator/rankname] - Op\nAliases: rbox\nCreates a new zone with the name you gave.\nUsers are added with /zone name user1 user2 ...\nRank Example: '/znew GuestArea rank all'\nUser Example: '/znew hotel1 user'. then '/zone hotel1 add <user1> <user2>'"
         if len(parts) < 3:
             self.client.sendServerMessage("Info missing. Usage - /znew name user|rank [rank]")
             return
@@ -144,13 +150,13 @@ class ZonesPlugin(ProtocolPlugin):
                     i+=1
 
             self.client.sendServerMessage("User zone %s has been created."%parts[1].lower())
-            self.client.sendServerMessage("Now use /zone name add|remove [player1 player2 ...]")
+            self.client.sendServerMessage("Now use /zone name add|remove [user1 user2 ...]")
         else:
             self.client.sendServerMessage("You need to provide a zone type. (ie user or rank)")
 
     @op_only
     def commandZone(self,parts, byuser, overriderank):
-        "/zone name - Op\nShows users assigned to this zone\n'/zone name add|remove [player1 player2 ...]' to edit users."
+        "/zone name - Op\nShows users assigned to this zone\n'/zone name add|remove [user1 user2 ...]' to edit users."
         if len(parts)== 2:
             for id, zone in self.client.world.userzones.items():
                 if zone[0] == parts[1]:
