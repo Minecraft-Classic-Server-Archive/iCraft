@@ -1,5 +1,30 @@
 =========================
 
+v3.0:
+This changes everything. Again.
+
+Now with many improvements compared to the Public Beta.
+Includes the following changes (and much more not listed);
+
+ADDED:
+- A message for if the reqs folder doesn't exist
+- A new Python Status Script
+- More templates with even more to come
+
+CHANGED:
+- The myne folder to be core
+- The names of several plugins
+- server.conf to split it up in to several files
+
+FIXED:
+- The console not printing everything after startup
+- It so that entities will work
+- The away kick to properly work
+- The heartbeat so the server is more stable
+- The controller to work better
+
+=========================
+
 v3.0 Public Beta:
 Giving a taste as we need feedback to improve for the 3.0 release.
 

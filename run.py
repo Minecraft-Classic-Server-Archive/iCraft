@@ -42,77 +42,111 @@ import sys
 import time
 import logging
 import os,shutil
-from reqs.twisted.internet import reactor
+try:
+    from reqs.twisted.internet import reactor
+except:
+    print ("NOTICE: You forgot to place the 'reqs/' folder (from requirements.zip) in to the root folder.")
+    try:
+        raw_input("Press Enter to exit.")
+        raise EOFError
+    except EOFError:
+        sys.exit(1);
 from logging.handlers import SMTPHandler
-from myne.constants import *
-from myne.server import MyneFactory
-from myne.controller import ControllerFactory
-
-if not sys.version_info[:2] == (2, 6):
-    print ("NOTICE: Sorry, but you need Python 2.6.x to run iCraft; http://www.python.org/download/releases/2.6.6/")
-    exit(1);
+from core.constants import *
+from core.server import MyneFactory
+from core.controller import ControllerFactory
+from ConfigParser import RawConfigParser as ConfigParser
 
 print ("Now starting up iCraft %s (with setup).." % VERSION)
 print ("- Please don't forget to check for updates.")
 print ("- Do you need help with iCraft? Feel free to stop by; http://hlmc.net/ | irc.esper.net #iCraft")
 
+if not os.path.exists("logs/"):
+    os.mkdir("logs/")
+if not os.path.exists("logs/console/"):
+    os.mkdir("logs/console/")
+if not os.path.exists("logs/console/console.log"):
+    file = open("logs/console/console.log", "w")
+    file.write("")
+    file.close()
+
+def LogTimestamp():
+    if os.path.exists("logs/console/console.log"):
+        shutil.copy("logs/console/console.log", "logs/console/console." +time.strftime("%m-%d-%Y_%H",time.localtime(time.time())) +".log")
+        f=open("logs/console/console.log",'w')
+        f.close()
+    reactor.callLater(6*60*60, LogTimestamp)#24hours*60minutes*60seconds
+
+useConsoleLog = True
+#Disable file logging if using nohup
+if os.name == "posix" and os.path.exists("nohup.out"):
+    if "_" in os.environ.keys():
+        if os.environ["_"] == "/usr/bin/nohup":
+            useConsoleLog = False
+
+if useConsoleLog:            
+    logging.basicConfig(
+        format="%(asctime)s - %(levelname)7s - %(message)s",
+        level=("--debug" in sys.argv) and logging.DEBUG or logging.INFO,
+        datefmt="%m/%d/%Y (%H:%M:%S)", filename="logs/console/console.log",
+    )
+    # define a Handler which writes DEBUG messages or higher to the sys.stderr
+    console = logging.StreamHandler()
+    # set a format which is simpler for console use
+    formatter = logging.Formatter("%(asctime)s - %(levelname)7s - %(message)s")
+    # tell the handler to use this format
+    console.setFormatter(formatter)
+    # add the handler to the root logger
+    logging.getLogger('').addHandler(console)
+    LogTimestamp()
+else:
+    logging.basicConfig(
+        format="%(asctime)s - %(levelname)7s - %(message)s",
+        level=("--debug" in sys.argv) and logging.DEBUG or logging.INFO,
+        datefmt="%m/%d/%Y (%H:%M:%S)",
+    )
+    logging.log(logging.INFO, "Console Logs aren't being used in favor of nohup.out")
+
 factory = MyneFactory()
-factory.makefile("logs/")
 factory.makefile("logs/chat.log")
 factory.makefile("logs/server.log")
 factory.makefile("logs/staff.log")
 factory.makefile("logs/whisper.log")
 factory.makefile("logs/world.log")
-factory.makefile("logs/console/")
-factory.makefile("logs/console/console.log")
 factory.makefile("config/data/")
+factory.makefile("core/plugins/isoimage/images/")
 factory.makefile("worlds/.archives/")
 factory.makedatfile("config/data/balances.dat")
 factory.makedatfile("config/data/inbox.dat")
 factory.makedatfile("config/data/jail.dat")
 factory.makedatfile("config/data/titles.dat")
-
-def LogTimestamp():
-    if os.path.exists("logs/console/console.log"):
-        shutil.copy("logs/console/console.log", "logs/console/console" +time.strftime("%Y%m%d%H%M%S",time.localtime(time.time())) +".log")
-        f=open("logs/console/console.log",'w')
-        f.close()
-    reactor.callLater(6*60*60, LogTimestamp)#24hours*60minutes*60seconds
-LogTimestamp()
-logging.basicConfig(
-    format="%(asctime)s - %(levelname)7s - %(message)s",
-    level=("--debug" in sys.argv) and logging.DEBUG or logging.INFO,
-    datefmt="%Y-%m-%d %H:%M:%S",  filename="logs/console/console.log",
-)
-# define a Handler which writes DEBUG messages or higher to the sys.stderr
-console = logging.StreamHandler()
-# set a format which is simpler for console use
-formatter = logging.Formatter("%(asctime)s - %(levelname)7s - %(message)s")
-# tell the handler to use this format
-console.setFormatter(formatter)
-# add the handler to the root logger
-logging.getLogger('').addHandler(console)
-
 controller = ControllerFactory(factory)
 reactor.listenTCP(factory.config.getint("network", "port"), factory)
 reactor.listenTCP(factory.config.getint("network", "controller_port"), controller)
+if factory.use_email:
+    if factory.email_config.getboolean("email", "need_auth"):
+        email = logging.handlers.SMTPHandler(
+            (factory.email_config.get("email", "host"),factory.email_config.get("email", "port")),
+            factory.email_config.get("email", "from"),
+            [factory.email_config.get("email", "to")],
+            factory.email_config.get("email", "subject"),
+            (factory.email_config.get("email", "username"), factory.email_config.get("email", "password")),
+        )
+    else:
+        email = logging.handlers.SMTPHandler(
+            (factory.email_config.get("email", "host"),factory.email_config.get("email", "port")),
+            factory.email_config.get("email", "from"),
+            [factory.email_config.get("email", "to")],
+            factory.email_config.get("email", "subject"),
+        )
+    email.setLevel(logging.ERROR)
+    logging.root.addHandler(email)
 money_logger = logging.getLogger('TransactionLogger')
 fh = logging.FileHandler('logs/server.log')
 formatter = logging.Formatter("%(asctime)s: %(message)s")
 fh.setFormatter(formatter)
 #Add the handler
 money_logger.addHandler(fh)
-
-# Setup email handler
-if factory.config.has_section("email"):
-    emh = SMTPHandler(
-        factory.config.get("email", "host"),
-        factory.config.get("email", "from"),
-        [factory.config.get("email", "to")],
-        factory.config.get("email", "subject"),
-    )
-    emh.setLevel(logging.ERROR)
-    logging.root.addHandler(emh)
 
 try:
     reactor.run()
@@ -126,4 +160,8 @@ finally:
         world.stop()
         world.save_meta()
     print ("ATTENTION: Please don't forget to check for updates; http://hlmc.net/ | irc.esper.net #iCraft")
-    factory.exit()
+    try:
+        raw_input("Press Enter to exit.")
+        raise EOFError
+    except EOFError:
+        sys.exit(1);

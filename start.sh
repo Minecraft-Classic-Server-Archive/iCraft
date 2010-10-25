@@ -1,1 +1,0 @@
-nohup nice python2.6 run.py &

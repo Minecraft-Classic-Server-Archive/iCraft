@@ -45,9 +45,9 @@ import urllib2
 import cookielib
 import re
 from reqs.twisted.internet import reactor, protocol
-from myne.protocol import MyneServerProtocol, TYPE_FORMATS
-from myne.server import MyneFactory
-from myne.constants import *
+from core.protocol import MyneServerProtocol, TYPE_FORMATS
+from core.server import MyneFactory
+from core.constants import *
 
 class RipClient(MyneServerProtocol):
 	"""Once connected, send a message, then print the result."""

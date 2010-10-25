@@ -28,10 +28,7 @@ Download and extract the reqs folder in to your iCraft folder
 Step 3: Configure the config files found in the config folder (rename
 all of them with .example.conf to .conf)
 
-Step 4 [OPTIONAL]: Install Psyco if you want to speed up iCraft a
-little.
-
-Step 5: Get on and enjoy iCraft, as it should now be working. Good luck
+Step 4: Get on and enjoy iCraft, as it should now be working. Good luck
 with your server.
 
 =========================
