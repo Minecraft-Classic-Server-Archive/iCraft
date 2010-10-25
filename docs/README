@@ -19,16 +19,13 @@ Need support? Want to chat or hang out with us? Go to irc.esper.net
 ========== INSTALL:
 =========================
 
-Step 1: Install Python 2.6, Python 2.5/2.7/3.x will not work with
-iCraft.
+Step 1: Install Python 2.6. Python 2.5/2.7 may work, Python 3.x WON'T.
 
-Step 2: http://bitbucket.org/iKJames/icraft/downloads/requirements.zip
-Download and extract the reqs folder in to your iCraft folder
+Step 2: Configure the config files found in the config folder (rename
+all of them with .example.conf to .conf, exception of irc/email -
+rename them IF you want what they offer)
 
-Step 3: Configure the config files found in the config folder (rename
-all of them with .example.conf to .conf)
-
-Step 4: Get on and enjoy iCraft, as it should now be working. Good luck
+Step 3: Get on and enjoy iCraft, as it should now be working. Good luck
 with your server.
 
 =========================
@@ -37,8 +34,8 @@ with your server.
 
 A full upgrading guide will exist in due time.
 
-Currently the only upgrade instructions are for iCraft 2.6 -> 3.0
-See hlmc.net/wiki for the latest upgrade instructions
+Currently the only upgrade instructions are for iCraft 2.6 -> (Public
+Beta ->) 3.0; See hlmc.net/wiki for the latest upgrade instructions
 
 =========================
 ========== CREDITS:
