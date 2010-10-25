@@ -37,7 +37,7 @@
 
 import os
 
-VERSION = "Dev Build 21"
+VERSION = "3.0"
 
 FORMAT_LENGTHS = {
     "b": 1,
