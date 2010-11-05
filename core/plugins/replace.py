@@ -91,17 +91,15 @@ class BrepPlugin(ProtocolPlugin):
             if z > z2:
                 z, z2 = z2, z
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             # Stop them doing silly things
             if (x2 - x) * (y2 - y) * (z2 - z) > limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to replace.")
@@ -218,17 +216,15 @@ class BrepPlugin(ProtocolPlugin):
             if z > z2:
                 z, z2 = z2, z
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             # Stop them doing silly things
             if (x2 - x) * (y2 - y) * (z2 - z) > limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to rep.")
@@ -328,17 +324,15 @@ class BrepPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("All parameters must be integers")
                     return
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             var_locxchecklist = [(1,0,0),(-1,0,0)]
             var_locychecklist = [(0,1,0),(0,-1,0)]
             var_loczchecklist = [(0,0,1),(0,0,-1)]

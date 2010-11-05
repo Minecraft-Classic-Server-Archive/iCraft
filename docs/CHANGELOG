@@ -1,5 +1,25 @@
 =========================
 
+v3.0.1:
+NOTE: This does not list all the changes, some were minor or in the back end.
+
+ADDED:
+- Dynamic Server Config (DSC)
+- New away kick time, build limit and global color/chat options
+
+CHANGED:
+- Code cleanup (tabs are now 4 spaces)
+- Some of the file structure (templates/archives in core, isoimage in core, extras)
+- The ISE's in entities
+- The Member rank is now above guests and below builders
+
+FIXED:
+- Templates folder missing
+- All the /help commands to be more understandable
+- The /worlds command sometimes showing worlds beginning with a dot
+
+=========================
+
 v3.0:
 This changes everything. Again.
 

@@ -61,6 +61,7 @@ class MultiWorldPlugin(ProtocolPlugin):
         "maps": "commandWorlds",
         "templates": "commandTemplates",
         "reboot": "commandReboot",
+        "reload": "commandReboot",
         "home": "commandHome",
         "create": "commandCreate",
         "delete": "commandDelete",
@@ -125,7 +126,7 @@ class MultiWorldPlugin(ProtocolPlugin):
     @world_list
     @mod_only
     def commandReboot(self, parts, byuser, overriderank):
-        "/reboot worldname - Mod\nReboots a map"
+        "/reboot worldname - Mod\nAliases: reload\nReboots a world"
         if len(parts) == 1:
             self.client.sendServerMessage("Please specify a worldname.")
         else:
@@ -179,11 +180,15 @@ class MultiWorldPlugin(ProtocolPlugin):
         if len(parts) != 2 and len(parts) != 3:
             self.client.sendServerMessage("Do /worlds all for all worlds or choose a letter.")
             self.client.sendServerList(["Online:"] + [id for id, world in self.client.factory.worlds.items() if self.client.canEnter(world)])
-
             return
         else:
+            worldlist = os.listdir("worlds/")
+            newworldlist = []
+            for world in worldlist:
+                if not world.startswith("."):
+                    newworldlist.append(world)
             if parts[1] == 'all':
-                self.client.sendServerList(["Worlds:"] + os.listdir("worlds/"))
+                self.client.sendServerList(["Worlds:"] + newworldlist)
                 return
             if len(parts[1]) != 1:
                 self.client.sendServerMessage("Only specify one starting letter per entry, not multiple")
@@ -201,20 +206,19 @@ class MultiWorldPlugin(ProtocolPlugin):
                 a = letter1
                 letter1 = letter2
                 letter2 = a
-            worldlist = os.listdir("worlds/")
             newlist = []
-            for world in worldlist:
-                if letter1 <= ord(world[0]) <= letter2 and not world.startswith("."):
+            for world in newworldlist:
+                if letter1 <= ord(world[0]) <= letter2:
                     newlist.append(world)
             self.client.sendServerList(["Worlds:"] + newlist)
 
     @world_list
     def commandTemplates(self, parts, byuser, overriderank):
         "/templates - Guest\nLists available templates"
-        self.client.sendServerList(["Templates:"] + os.listdir("worlds/.templates/"))
+        self.client.sendServerList(["Templates:"] + os.listdir("core/templates/"))
 
     def commandHome(self, parts, byuser, overriderank):
-        "Takes you home, where else?"
+        "/home - Guest\nTakes you home, where else?"
         self.client.changeToWorld("default")
 
     @world_list
@@ -275,7 +279,7 @@ class MultiWorldPlugin(ProtocolPlugin):
     @world_list
     @admin_only
     def commandUnDelete(self, parts, byuser, overriderank):
-        "/undelete worldname - Admin\nRestores a deleted map."
+        "/undelete worldname - Admin\nRestores a deleted world."
         if len(parts) < 2:
             self.client.sendServerMessage("Please specify a worldname.")
             return

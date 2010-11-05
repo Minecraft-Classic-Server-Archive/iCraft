@@ -50,7 +50,7 @@ class IsoImage(ProtocolPlugin):
 
     @op_only
     def commandIso(self, parts, byuser, overriderank):
-        "/isoimage [1-4] - Op\nCreates and IsoImage of the current map."
+        "/isoimage [1-4] - Op\nCreates an IsoImage of the current world."
         if len(parts) == 2:
             if str(parts[1]) in "1234":
                 angle = parts[1]
@@ -61,11 +61,11 @@ class IsoImage(ProtocolPlugin):
             angle = 1
         world = self.client.world
         pathname = os.getcwd()
-        savepath = pathname + "/core/plugins/isoimage/images/"
+        savepath = pathname + "/core/isoimage/images/"
         mapname = world.basename.split("/")[1]
         mappath = pathname + "/worlds/" + mapname
         try:
-            os.chdir(pathname + "/core/plugins/isoimage/")
+            os.chdir(pathname + "/core/isoimage/")
             if self.checkos == "Windows":
                 os.system('java -Xms512M -Xmx1024M -cp minecraft-server.jar; OrigFormat save "%s" server_level.dat'%mappath)
                 os.system('java -Xms128M -Xmx1024M -cp minecraft-server.jar;IsoCraft++.jar isocraft server_level.dat tileset.png output.png %s -1 -1 -1 -1 -1 -1 visible'%str(angle))

@@ -220,16 +220,19 @@ class StdinPlugin(threading.Thread):
                             elif message[0] == ("ircrehash"):
                                 print ("Rehashing the IRC Bot..")
                                 self.server.reloadIrcBot()
+                            elif message[0] == ("rehash"):
+                                print ("Rehashing the Server Configuration..")
+                                self.server.reloadConfig()
                             elif message[0] == ("help"):
                                 print ("Whispers: @username message")
                                 print ("WorldChat: !worldname message")
                                 print ("StaffChat: #message")
                                 print ("Commands: /cmdlist")
                             elif message[0] == ("cmdlist"):
-                                print ("about boot ban cmdlist cpr derank help ircrehash kick me new pll plr plu rank say shutdown spec srb srs u")
+                                print ("about boot ban cmdlist cpr derank help ircrehash kick me new pll plr plu rank rehash say shutdown spec srb srs u")
                             elif message[0] == ("about"):
                                 print ("About The Server")
-                                print ("Powered by iCraft %s - http://hlmc.net/"%VERSION)
+                                print ("Powered by iCraft %s; %s | %s" % (INFO_VERSION, INFO_WEBSITE, INFO_IRC))
                                 print ("Name: "+self.server.server_name)
                                 try:
                                     print ("URL: "+self.server.heartbeat.url)

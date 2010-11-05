@@ -45,7 +45,7 @@ import os,shutil
 try:
     from reqs.twisted.internet import reactor
 except:
-    print ("NOTICE: You forgot to place the 'reqs/' folder (from requirements.zip) in to the root folder.")
+    print ("NOTICE: Something went wrong with your reqs folder!")
     try:
         raw_input("Press Enter to exit.")
         raise EOFError
@@ -53,13 +53,13 @@ except:
         sys.exit(1);
 from logging.handlers import SMTPHandler
 from core.constants import *
-from core.server import MyneFactory
+from core.server import CoreFactory
 from core.controller import ControllerFactory
 from ConfigParser import RawConfigParser as ConfigParser
 
-print ("Now starting up iCraft %s (with setup).." % VERSION)
+print ("Now starting up iCraft %s (with setup).." % INFO_FULLVERSION)
 print ("- Please don't forget to check for updates.")
-print ("- Do you need help with iCraft? Feel free to stop by; http://hlmc.net/ | irc.esper.net #iCraft")
+print ("- Do you need help with iCraft? Feel free to stop by; %s | %s" % (INFO_WEBSITE, INFO_IRC))
 
 if not os.path.exists("logs/"):
     os.mkdir("logs/")
@@ -107,7 +107,7 @@ else:
     )
     logging.log(logging.INFO, "Console Logs aren't being used in favor of nohup.out")
 
-factory = MyneFactory()
+factory = CoreFactory()
 factory.makefile("logs/chat.log")
 factory.makefile("logs/server.log")
 factory.makefile("logs/staff.log")
@@ -115,7 +115,7 @@ factory.makefile("logs/whisper.log")
 factory.makefile("logs/world.log")
 factory.makefile("config/data/")
 factory.makefile("core/plugins/isoimage/images/")
-factory.makefile("worlds/.archives/")
+factory.makefile("core/archives/")
 factory.makedatfile("config/data/balances.dat")
 factory.makedatfile("config/data/inbox.dat")
 factory.makedatfile("config/data/jail.dat")

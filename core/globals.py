@@ -54,8 +54,9 @@ def Rank(self, parts, byuser, overriderank,server=None):
                 return "You must provide a world"
         #Make builder
         if not server:
-            if not (self.client.username.lower() in world.ops or self.client.isMod() or self.client.isWorldOwner()) or overriderank:
-                return ("You are not high enough rank!")
+            if not overriderank:
+                if not (self.client.username.lower() in world.ops or self.client.isMod() or self.client.isWorldOwner()):
+                    return ("You are not high enough rank!")
         else:
             if not parts[-1] == "console":
                 if not ((parts[-1]) in world.ops) and not factory.isMod(parts[-1]):
@@ -78,8 +79,9 @@ def Rank(self, parts, byuser, overriderank,server=None):
             else:
                 return "You must provide a world"
         if not server:
-            if self.client.isWorldOwner()==False and not overriderank:
-                return ("You are not high enough rank!")
+            if not overriderank:
+                if self.client.isWorldOwner()==False:
+                    return ("You are not high enough rank!")
         else:
             if not parts[-1] == "console":
                 if not factory.isMod(parts[-1]):
@@ -357,5 +359,5 @@ def Credits(self, server=None):
     Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason, eugo (Knossus), gdude2002, goober, gothfox, NotMeh, ntfwc,")
     Temp.append ("PixelEater, revenant, Saanix, sk8rjwd, tehcid, Varriount, willempiee")
     Temp.append ("Others: 099, 2k10 (_2k10), Aexis_Rai, Akai, Antoligy, Aquaskys, Bidoof_King, Bioniclegenius (Red_Link), BlueProtoman,")
-    Temp.append ("fragmer, Kelraider, MAup, MystX, PyroPyro, Rils, Roadcrosser, Roujo, setveen, TkTech, Uninspired, ...")
+    Temp.append ("fragmer, iMak, Injex, Kelraider, MAup, MystX, PyroPyro, Rils, Roadcrosser, Roujo, setveen, TkTech, Uninspired, ...")
     return Temp

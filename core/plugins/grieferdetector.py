@@ -61,15 +61,15 @@ class GreiferDetectorPlugin(ProtocolPlugin):
                 worldname = world.id
                 username = self.client.username
                 def griefcheck():
-                    if self.var_blockchcount >= 35:
-                        self.client.factory.queue.put((self.client, TASK_STAFFMESSAGE, ("#%s%s: %s%s" % (COLOUR_DARKGREEN, 'SERVER', COLOUR_DARKRED, "ALERT! Possible Griefer behavior detected in",False))))
-                        self.client.factory.queue.put((self.client, TASK_STAFFMESSAGE, ("#%s%s: %s%s" % (COLOUR_DARKGREEN, 'SERVER', COLOUR_DARKRED, "'" + worldname + "'! Username: " + username,False))))
+                    if self.var_blockchcount >= self.client.factory.grief_blocks:
+                        self.client.factory.queue.put((self.client, TASK_STAFFMESSAGE, ("#%s%s: %s%s" % (COLOUR_DARKGREEN, 'Console ALERT', COLOUR_DARKRED, "Possible grief behavior was detected;", False))))
+                        self.client.factory.queue.put((self.client, TASK_STAFFMESSAGE, ("#%s%s: %s%s" % (COLOUR_DARKGREEN, 'Console ALERT', COLOUR_DARKRED, "World: "+worldname+" | User: "+username, False))))
                         self.client.log(username + " was detected as a possible griefer in '" + worldname + "'")
-                        self.client.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | #"+username + " was detected as a possible griefer in '" + worldname + "'" + "\n")
+                        self.client.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | #Console ALERT: Possible grief behavior was detected; World: "+worldname+" | User: "+username+"+"\n")
                         self.client.adlog.flush()
                     self.var_blockchcount = 0
                 if self.var_blockchcount == 0:
-                    reactor.callLater(5, griefcheck)
+                    reactor.callLater(self.client.factory.grief_time, griefcheck)
                 self.var_blockchcount += 1
                 
     def newWorld(self, world):

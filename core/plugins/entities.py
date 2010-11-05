@@ -151,10 +151,10 @@ class EntityPlugin(ProtocolPlugin):
                         self.client.sendServerMessage("%s was created." % self.var_entityselected)
                         return
                     else:
-                        self.client.sendServerMessage("There can only be one epic entity on a map.")
+                        self.client.sendServerMessage("There can only be one epic entity on a world.")
                         return
                 if len(entitylist) >= maxentitiespermap:
-                    self.client.sendServerMessage("Max entities per map exceeded.")
+                    self.client.sendServerMessage("Max entities per world exceeded.")
                     return
                 if self.var_entityselected in entitycreatedict:
                     exec entitycreatedict[self.var_entityselected]
@@ -253,9 +253,9 @@ class EntityPlugin(ProtocolPlugin):
                         else:
                             world.entities_epicentity = []
                     except:
-                        self.client.sendWorldMessage("Internal Server Error")
-                        exc_type, exc_value, exc_traceback = sys.exc_info()
-                        traceback.print_exception(exc_type, exc_value, exc_traceback)
+                        self.client.sendWorldMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
+                        self.client.sendWorldMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")
+                        self.client.log(traceback.format_exc(), level=logging.ERROR)
                         world.entities_epicentity = []
                         return
             var_num = len(entitylist)
@@ -306,9 +306,9 @@ class EntityPlugin(ProtocolPlugin):
                             else:
                                 self.client.sendWorldMessage("UNKOWN ENTITY IN WORLD - FIX THIS!")
                     except:
-                        self.client.sendWorldMessage("Internal Server Error")
-                        exc_type, exc_value, exc_traceback = sys.exc_info()
-                        traceback.print_exception(exc_type, exc_value, exc_traceback)
+                        self.client.sendWorldMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
+                        self.client.sendWorldMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")
+                        self.client.log(traceback.format_exc(), level=logging.ERROR)
                         world.entitylist = []
                         return
                 entity[1] = var_position
@@ -358,14 +358,14 @@ class EntityPlugin(ProtocolPlugin):
 
     @op_only
     def commandNumentities(self, parts, byuser, overriderank):
-        "/numentities - Op\nAliases: numitems, nummobs\nTells you the number of entities in the map."
+        "/numentities - Op\nAliases: numitems, nummobs\nTells you the number of entities in the world."
         world = self.client.world
         entitylist = world.entitylist
         self.client.sendServerMessage(str(len(entitylist)))
         
     @op_only
     def commandEntityclear(self, parts, byuser, overriderank):
-        "/entityclear - Op\nAliases: itemclear, mobclear\nClears the entities from the map."
+        "/entityclear - Op\nAliases: itemclear, mobclear\nClears the entities from the world."
         world = self.client.world
         for entity in self.client.world.entitylist:
             var_id = entity[0]

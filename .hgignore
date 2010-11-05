@@ -1,8 +1,18 @@
 syntax: glob
-*.pyc
 *.log
+*.pyc
 *.wpr
-*.dat
-*.meta
-*.gz
-*.jar
+config/data/*
+config/archiver.conf
+config/email.conf
+config/irc.conf
+config/main.conf
+config/options.conf
+config/ploptions.conf
+config/plugins.conf
+config/wordfilter.conf
+core/archives/*
+extras/*.jar
+extras/*.meta
+extras/*.gz
+worlds/*

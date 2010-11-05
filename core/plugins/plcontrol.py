@@ -48,14 +48,13 @@ class CorePlugin(ProtocolPlugin):
         "plr": "commandPluginreload",
     }
     
-    @admin_only
+    @director_only
     @only_string_command("plugin name")
     def commandPluginreload(self, plugin_name, byuser, overriderank):
-        "/plr plugin - Admin\nReloads the plugin."
         try:
             self.client.factory.unloadPlugin(plugin_name)
             self.client.factory.loadPlugin(plugin_name)
-        except:
+        except IOError:
             self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
         else:
             self.client.sendServerMessage("Plugin '%s' reloaded." % plugin_name)
@@ -63,10 +62,9 @@ class CorePlugin(ProtocolPlugin):
     @director_only
     @only_string_command("plugin name")
     def commandPluginload(self, plugin_name, byuser, overriderank):
-        "/pll plugin - Director\nLoads the plugin."
         try:
             self.client.factory.loadPlugin(plugin_name)
-        except:
+        except IOError:
             self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
         else:
             self.client.sendServerMessage("Plugin '%s' loaded." % plugin_name)
@@ -74,10 +72,9 @@ class CorePlugin(ProtocolPlugin):
     @director_only
     @only_string_command("plugin name")
     def commandPluginunload(self, plugin_name, byuser, overriderank):
-        "/plu plugin - Director\nUnloads the plugin."
         try:
             self.client.factory.unloadPlugin(plugin_name)
-        except:
+        except IOError:
             self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
         else:
             self.client.sendServerMessage("Plugin '%s' unloaded." % plugin_name)

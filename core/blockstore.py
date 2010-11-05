@@ -50,7 +50,7 @@ from reqs.twisted.internet import reactor
 
 class BlockStore(Thread):
     """
-    A class which deals with storing the block maps, flushing them, etc.
+    A class which deals with storing the block worlds, flushing them, etc.
     """
     
     def __init__(self, blocks_path,  sx, sy, sz):
@@ -248,7 +248,7 @@ class BlockStore(Thread):
                 os.rename(self.blocks_path + ".new", self.blocks_path)
                 self.queued_blocks = {}
             except:
-                logging.log(logging.ERROR, "Problem saving map %s" %self.blocks_path)
+                logging.log(logging.ERROR, "Problem saving world %s" %self.blocks_path)
                 self.saving = True
                 reactor.callLater(3, self.flush)
         else:

@@ -513,13 +513,13 @@ class CommandPlugin(ProtocolPlugin):
                     return
                 if getattr(func, "mod_only", False) and not (self.client.isMod() or self.client.isAdmin()):
                     return
-                if getattr(func, "op_only", False) and not (self.client.isOp() or self.isWorldOwner() or self.client.isMod()):
-                    return
                 if getattr(func, "worldowner_only", False) and not (self.client.isWorldOwner() or self.client.isMod()):
                     return
-                if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+                if getattr(func, "op_only", False) and not (self.client.isOp() or self.isWorldOwner() or self.client.isMod()):
                     return
                 if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+                    return
+                if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
                     return
             for x in parts:
                    commandtext = commandtext + " " + str(x)
@@ -652,17 +652,17 @@ class CommandPlugin(ProtocolPlugin):
                 if getattr(func, "mod_only", False) and not (self.client.isMod() or self.client.isAdmin()):
                     self.client.sendServerMessage("'%s' is a Mod-only command!" % command)
                     return
-                if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-                    self.client.sendServerMessage("'%s' is an Op-only command!" % command)
-                    return
                 if getattr(func, "worldowner_only", False) and not (self.client.isWorldOwner() or self.client.isMod()):
                     self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
                     return
-                if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isMod()):
-                    self.client.sendServerMessage("'%s' is a Member-only command!" % command)
+                if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+                    self.client.sendServerMessage("'%s' is an Op-only command!" % command)
                     return
                 if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
                     self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
+                    return
+                if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isMod()):
+                    self.client.sendServerMessage("'%s' is a Member-only command!" % command)
                     return
             for x in parts:
                    commandtext = commandtext + " " + str(x)
@@ -814,7 +814,7 @@ class CommandPlugin(ProtocolPlugin):
             myranknum = 6
         elif self.client.isMember():
             myrank = "member"
-            myranknum = 3
+            myranknum = 2
         elif self.client.isOp():
             myrank = "op"
             myranknum = 4
@@ -823,7 +823,7 @@ class CommandPlugin(ProtocolPlugin):
             myranknum = 5
         elif self.client.isWriter():
             myrank = "builder"
-            myranknum = 2
+            myranknum = 3
         rx = self.client.x >> 5
         ry = self.client.y >> 5
         rz = self.client.z >> 5
@@ -1011,17 +1011,17 @@ class CommandPlugin(ProtocolPlugin):
                 if getattr(func, "mod_only", False) and not (self.client.isMod() or self.client.isAdmin()):
                     self.client.sendServerMessage("'%s' is a Mod-only command!" % command)
                     runcmd = False
-                if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isMod()):
-                    self.client.sendServerMessage("'%s' is an Op-only command!" % command)
-                    runcmd = False
                 if getattr(func, "worldowner_only", False) and not (self.client.isWorldOwner() or self.client.isMod()):
                     self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
                     runcmd = False
-                if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-                    self.client.sendServerMessage("'%s' is a Member-only command!" % command)
+                if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isMod()):
+                    self.client.sendServerMessage("'%s' is an Op-only command!" % command)
                     runcmd = False
                 if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
                     self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
+                    runcmd = False
+                if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+                    self.client.sendServerMessage("'%s' is a Member-only command!" % command)
                     runcmd = False
             try:
                 try:

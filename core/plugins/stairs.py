@@ -50,8 +50,7 @@ class StairsPlugin(ProtocolPlugin):
     @build_list
     @writer_only
     def commandStairs(self, parts, byuser, overriderank):
-        "/stairs blockname height (c) [x y z x2 y2 z2] - Builder\nBuilds a spiral staircase."
-        
+        "/stairs blockname height [c] [x y z x2 y2 z2] - Builder\nc = counter-clockwise\nBuilds a spiral staircase."
         if len(parts) < 9 and len(parts) != 3 and len(parts) != 4:
             self.client.sendServerMessage("Please enter a blocktype height (c (for counter-clockwise)")
             self.client.sendServerMessage("(and possibly two coord triples)")
@@ -74,7 +73,6 @@ class StairsPlugin(ProtocolPlugin):
             except ValueError:
                 self.client.sendServerMessage("The height must be an integer")
                 return
-                
             # Try getting the block as a direct integer type.
             try:
                 block = chr(int(parts[1]))
@@ -85,7 +83,6 @@ class StairsPlugin(ProtocolPlugin):
                 except KeyError:
                     self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
                     return
-            
             # Check the block is valid
             if ord(block) > 49:
                 self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
@@ -94,7 +91,6 @@ class StairsPlugin(ProtocolPlugin):
             if ord(block) in op_blocks and not self.client.isOp():
                 self.client.sendServerMessage("Sorry, but you can't use that block.")
                 return
-                    
             # If they only provided the type argument, use the last two block places
             if len(parts) == 3 or len(parts) == 4:
                 try:
@@ -126,24 +122,20 @@ class StairsPlugin(ProtocolPlugin):
                     except ValueError:
                         self.client.sendServerMessage("All parameters must be integers")
                         return
-                    
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
-            elif self.client.isMember():
-                limit = 110592
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 21952
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             # Stop them doing silly things
             if height * 4 > limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to make stairs.")
                 return
-            
             # Draw all the blocks on, I guess
             # We use a generator so we can slowly release the blocks
             # We also keep world as a local so they can't change worlds and affect the new one
@@ -213,7 +205,6 @@ class StairsPlugin(ProtocolPlugin):
                         self.client.queueTask(TASK_BLOCKSET, (i, j, k, stepblock), world=world)
                         self.client.sendBlock(i, j, k, stepblock)
                         yield
-            
             # Now, set up a loop delayed by the reactor
             block_iter = iter(generate_changes())
             def do_step():

@@ -41,9 +41,9 @@ for var_index in range(len(entitylist)):
     if identity != "forcefield":
         rx,ry,rz = var_entity[1]
         xd = rx-x
-	yd = ry-y
-	zd = rz-z
-	distance = math.sqrt((xd*xd + yd*yd + zd*zd))
+        yd = ry-y
+        zd = rz-z
+        distance = math.sqrt((xd*xd + yd*yd + zd*zd))
         if distance <= 10:
             var_dellist.append(var_index)
             block = 0

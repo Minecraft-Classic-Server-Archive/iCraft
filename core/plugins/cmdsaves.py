@@ -62,7 +62,11 @@ class DynamitePlugin(ProtocolPlugin):
     @info_list
     def commandBack(self, parts, byuser, rankoverride):
         message = self.lastcommand
-        parts = [x.strip() for x in message.split() if x.strip()]
+        try:
+            parts = [x.strip() for x in message.split() if x.strip()]
+        except:
+            self.client.sendServerMessage("You haven't used a command yet.")
+            return
         command = parts[0].strip("/")
         self.client.log("%s just used: %s" % (self.client.username," ".join(parts)), level=logging.INFO)
         # See if we can handle it internally
@@ -91,21 +95,21 @@ class DynamitePlugin(ProtocolPlugin):
             if byuser:
                 self.client.sendServerMessage("'%s' is a Mod-only command!" % command)
                 return
-        if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
-            if byuser:
-                self.client.sendServerMessage("'%s' is an Op-only command!" % command)
-                return
         if getattr(func, "worldowner_only", False) and not (self.client.isWorldOwner() or self.client.isMod()):
             if byuser:
                 self.client.sendServerMessage("'%s' is an WorldOwner-only command!" % command)
                 return
-        if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+        if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
             if byuser:
-                self.client.sendServerMessage("'%s' is a Member-only command!" % command)
+                self.client.sendServerMessage("'%s' is an Op-only command!" % command)
                 return
         if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
             if byuser:
                 self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
+                return
+        if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+            if byuser:
+                self.client.sendServerMessage("'%s' is a Member-only command!" % command)
                 return
         try:
             func(parts, True, False) #byuser is true, overriderank is false

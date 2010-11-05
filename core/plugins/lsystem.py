@@ -242,7 +242,6 @@ class LinePlugin(ProtocolPlugin):
                 except ValueError:
                     self.client.sendServerMessage("All parameters must be integers")
                     return
-
             finalsequence = axiom
             for i in range(level):
                 for key in production:
@@ -255,25 +254,20 @@ class LinePlugin(ProtocolPlugin):
                             finalsequence = finalsequence[:index+numproductionsadded*lengthofproduction] + productionchoice + finalsequence[index+numproductionsadded*lengthofproduction+1:]
                             numproductionsadded += 1
                     axiom = finalsequence
-
             num_movements = 0
             for item in finalsequence:
                 if item == "F" or item == "B":
                     num_movements += 1
-                    
-                    
-            if self.client.isOwner():
-                limit = 1000000000
-            elif self.client.isSuperAdmin():
-                limit = 7077888
+            if self.client.isDirector() or overriderank:
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 21952
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             # Stop them doing silly things
             if num_movements*standarddistance > limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to use an lsystem on.")
@@ -290,7 +284,6 @@ class LinePlugin(ProtocolPlugin):
                     except KeyError:
                         self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
                         return
-                
                 # Check the block is valid
                 if ord(block) > 49:
                     self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
@@ -306,7 +299,6 @@ class LinePlugin(ProtocolPlugin):
                         var_x,var_y,var_z = drawer_location
                         var_x2,var_y2,var_z2 = targetlocation
                         drawer_location = targetlocation
-
                         var_x = int(round(var_x))
                         var_y = int(round(var_y))
                         var_z = int(round(var_z))
@@ -318,7 +310,6 @@ class LinePlugin(ProtocolPlugin):
                             mx = float(var_x2-var_x)/steps
                             my = float(var_y2-var_y)/steps
                             mz = float(var_z2-var_z)/steps
-
                             coordinatelist1 = []
                             for t in range(steps+1):
                                 coordinatelist1.append((int(round(mx*t+var_x)),int(round(my*t+var_y)),int(round(mz*t+var_z))))
@@ -328,7 +319,6 @@ class LinePlugin(ProtocolPlugin):
                                     coordinatelist2.append(coordtuple)
                         except:
                             coordinatelist2 = []
-                        
                         for coordtuple in coordinatelist2:
                             i,j,k = coordtuple
                             try:
@@ -347,7 +337,6 @@ class LinePlugin(ProtocolPlugin):
                                 self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
                                 self.client.sendBlock(i, j, k, block)
                             yield
-
                     elif item == "A":
                         targetlocation = (drawer_location[0]+drawer_orientationvector[0]*standarddistance,drawer_location[1]+drawer_orientationvector[1]*standarddistance,drawer_location[2]+drawer_orientationvector[2]*standarddistance)
                         var_x,var_y,var_z = drawer_location
@@ -360,13 +349,11 @@ class LinePlugin(ProtocolPlugin):
                         var_x2 = int(round(var_x2))
                         var_y2 = int(round(var_y2))
                         var_z2 = int(round(var_z2))
-                        
                         try:
                             steps = int(((var_x2-var_x)**2+(var_y2-var_y)**2+(var_z2-var_z)**2)**0.5)
                             mx = float(var_x2-var_x)/steps
                             my = float(var_y2-var_y)/steps
                             mz = float(var_z2-var_z)/steps
-
                             coordinatelist1 = []
                             for t in range(steps+1):
                                 coordinatelist1.append((int(round(mx*t+var_x)),int(round(my*t+var_y)),int(round(mz*t+var_z))))
@@ -376,7 +363,6 @@ class LinePlugin(ProtocolPlugin):
                                     coordinatelist2.append(coordtuple)
                         except:
                             coordinatelist2 = []
-                        
                         for coordtuple in coordinatelist2:
                             i,j,k = coordtuple
                             try:
@@ -395,26 +381,22 @@ class LinePlugin(ProtocolPlugin):
                                 self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
                                 self.client.sendBlock(i, j, k, block)
                             yield
-                            
                     elif item == "B":
                         targetlocation = (drawer_location[0]-drawer_orientationvector[0]*standarddistance,drawer_location[1]-drawer_orientationvector[1]*standarddistance,drawer_location[2]-drawer_orientationvector[2]*standarddistance)
                         var_x,var_y,var_z = drawer_location
                         var_x2,var_y2,var_z2 = targetlocation
                         drawer_location = targetlocation
-
                         var_x = int(round(var_x))
                         var_y = int(round(var_y))
                         var_z = int(round(var_z))
                         var_x2 = int(round(var_x2))
                         var_y2 = int(round(var_y2))
                         var_z2 = int(round(var_z2))
-                        
                         try:
                             steps = int(((var_x2-var_x)**2+(var_y2-var_y)**2+(var_z2-var_z)**2)**0.5)
                             mx = float(var_x2-var_x)/steps
                             my = float(var_y2-var_y)/steps
                             mz = float(var_z2-var_z)/steps
-
                             coordinatelist1 = []
                             for t in range(steps+1):
                                 coordinatelist1.append((int(round(mx*t+var_x)),int(round(my*t+var_y)),int(round(mz*t+var_z))))
@@ -424,7 +406,6 @@ class LinePlugin(ProtocolPlugin):
                                     coordinatelist2.append(coordtuple)
                         except:
                             coordinatelist2 = []
-                        
                         for coordtuple in coordinatelist2:
                             i,j,k = coordtuple
                             try:
@@ -443,32 +424,24 @@ class LinePlugin(ProtocolPlugin):
                                 self.client.queueTask(TASK_BLOCKSET, (i, j, k, block), world=world)
                                 self.client.sendBlock(i, j, k, block)
                             yield
-                    
                     elif item == "G":
                         drawer_location = (drawer_location[0]+drawer_orientationvector[0]*standarddistance,drawer_location[1]+drawer_orientationvector[1]*standarddistance,drawer_location[2]+drawer_orientationvector[2]*standarddistance)
-
                     elif item == "V":
                         drawer_location = (drawer_location[0]-drawer_orientationvector[0]*standarddistance,drawer_location[1]-drawer_orientationvector[1]*standarddistance,drawer_location[2]-drawer_orientationvector[2]*standarddistance)
-
                     elif item == "+":
                         rad_rotation = math.radians(zxrotation)
                         drawer_orientationvector = (drawer_orientationvector[0]*math.cos(rad_rotation) - drawer_orientationvector[2]*math.sin(rad_rotation),drawer_orientationvector[1],drawer_orientationvector[0]*math.sin(rad_rotation) + drawer_orientationvector[2]*math.cos(rad_rotation))
-
                     elif item == "-":
                         rad_rotation = math.radians(-zxrotation)
                         drawer_orientationvector = (drawer_orientationvector[0]*math.cos(rad_rotation) - drawer_orientationvector[2]*math.sin(rad_rotation),drawer_orientationvector[1],drawer_orientationvector[0]*math.sin(rad_rotation) + drawer_orientationvector[2]*math.cos(rad_rotation))
-
                     elif item == ">":
                         rad_rotation = math.radians(yzrotation)
                         drawer_orientationvector = (drawer_orientationvector[0],drawer_orientationvector[1]*math.cos(rad_rotation) - drawer_orientationvector[2]*math.sin(rad_rotation),drawer_orientationvector[1]*math.sin(rad_rotation) + drawer_orientationvector[2]*math.cos(rad_rotation))
-                        
                     elif item == "<":
                         rad_rotation = math.radians(-yzrotation)
                         drawer_orientationvector = (drawer_orientationvector[0],drawer_orientationvector[1]*math.cos(rad_rotation) - drawer_orientationvector[2]*math.sin(rad_rotation),drawer_orientationvector[1]*math.sin(rad_rotation) + drawer_orientationvector[2]*math.cos(rad_rotation))
-
                     elif item == "[":
                         savedlocations.append((drawer_location,drawer_orientationvector,block))
-                        
                     elif item == "]":
                         try:
                             drawer_location,drawer_orientationvector,block = savedlocations.pop()

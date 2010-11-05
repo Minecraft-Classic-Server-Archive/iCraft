@@ -49,7 +49,7 @@ from core.plugins import protocol_plugins
 from core.decorators import *
 from core.irc_client import ChatBotFactory
 
-class MyneServerProtocol(Protocol):
+class CoreServerProtocol(Protocol):
     """
     Main protocol class for communicating with clients.
     Commands are mainly provided by plugins (protocol plugins).
@@ -184,7 +184,7 @@ class MyneServerProtocol(Protocol):
         if self.username:
             if self.isMod():
                 return
-        self.idleCB = reactor.callLater(60*10,self.onIdleKick)
+        self.idleCB = reactor.callLater(60*self.factory.away_time, self.onIdleKick)
 
     def onIdleKick(self):
         self.sendError("You were away too long.");
@@ -267,10 +267,10 @@ class MyneServerProtocol(Protocol):
         return self.factory.isMod(self.username.lower()) or self.isAdmin() or self.isDirector() or self.isOwner()
 
     def isWriter(self):
-        return (self.username.lower() in self.world.writers) or self.isMember() or (self.username.lower() in self.world.ops) or self.isOp() or self.isWorldOwner()
+        return (self.username.lower() in self.world.writers) or (self.username.lower() in self.world.ops) or self.isOp() or self.isWorldOwner()
 
     def isMember(self):
-        return self.factory.isMember(self.username.lower()) or (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
+        return self.factory.isMember(self.username.lower()) or (self.username.lower() in self.world.writers) or (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
     def isSpectator(self):
         return self.factory.isSpectator(self.username.lower())
@@ -367,7 +367,7 @@ class MyneServerProtocol(Protocol):
                 # If we're read-only, reverse the change
                     if self.isSpectator():
                          self.sendBlock(x, y, z)
-                         self.sendServerMessage("Specs cannot edit maps.")
+                         self.sendServerMessage("Specs cannot edit worlds.")
                          return
                     allowbuild = self.runHook("blockclick", x, y, z, block, True)
                     if allowbuild is False:
@@ -554,14 +554,14 @@ class MyneServerProtocol(Protocol):
                     if getattr(func, "worldowner_only", False) and not (self.isMod() or self.isAdmin()):
                         self.sendServerMessage("'%s' is a WorldOwner-only command!" % command)
                         return
-                    if getattr(func, "member_only", False) and not (self.isMember() or self.isOp() or self.isMod()):
-                        self.sendServerMessage("'%s' is a Member-only command!" % command)
-                        return
                     if getattr(func, "op_only", False) and not (self.isOp() or self.isMod()):
                         self.sendServerMessage("'%s' is an Op-only command!" % command)
                         return
                     if getattr(func, "writer_only", False) and not (self.isWriter() or self.isOp() or self.isMod()):
                         self.sendServerMessage("'%s' is a Builder-only command!" % command)
+                        return
+                    if getattr(func, "member_only", False) and not (self.isMember() or self.isWriter() or self.isOp() or self.isMod()):
+                        self.sendServerMessage("'%s' is a Member-only command!" % command)
                         return
                     try:
                         func(parts, True, False) #byuser is true, overriderank is false
@@ -658,26 +658,29 @@ class MyneServerProtocol(Protocol):
                     self.log("Unhandleable type %s" % type, logging.WARN)
 
     def userColour(self):
-        if self.isSpectator():
-            color = COLOUR_BLACK
-        elif self.isOwner():
-            color = COLOUR_DARKGREEN
-        elif self.isDirector():
-            color = COLOUR_GREEN
-        elif self.isAdmin():
-            color = COLOUR_RED
-        elif self.isMod():
-            color = COLOUR_BLUE
-        elif self.username.lower() == "notch" or self.username.lower() == "ez" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "kingjames" or self.username.lower() == "jameskirslis" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro" or self.username.lower() == "tehcid" or self.username.lower() == "099" or self.username.lower() == "setveen" or self.username.lower() == "aquaskys" or self.username.lower() == "kelraider" or self.username.lower() == "uninspired" or self.username.lower() == "saanix" or self.username.lower() == "roujo" or self.username.lower() == "maup" or self.username.lower() == "mystx" or self.username.lower() == "akai" or self.username.lower() == "roadcrosser" or self.username.lower() == "antoligy" or self.username.lower() == "bioniclegenius" or self.username.lower() == "red_link" or self.username.lower() == "sk8rjwd" or self.username.lower() == "ntfwc" or self.username.lower() == "blueprotoman" or self.username.lower() == "blue_protoman" or self.username.lower() == "eugo" or self.username.lower() == "knossus" or self.username.lower() == "2k10" or self.username.lower() == "_2k10" or self.username.lower() == "aexis_rai":
-            color = COLOUR_YELLOW
-        elif self.isWorldOwner():
-            color = COLOUR_DARKYELLOW
-        elif self.isOp():
-            color = COLOUR_DARKCYAN
-        elif self.isMember():
-            color = COLOUR_GREY
-        elif self.isWriter():
-            color = COLOUR_CYAN
+        if self.factory.colors:
+            if self.isSpectator():
+                color = COLOUR_BLACK
+            elif self.isOwner():
+                color = COLOUR_DARKGREEN
+            elif self.isDirector():
+                color = COLOUR_GREEN
+            elif self.isAdmin():
+                color = COLOUR_RED
+            elif self.isMod():
+                color = COLOUR_BLUE
+            elif self.username.lower() == "notch" or self.username.lower() == "ez" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "kingjames" or self.username.lower() == "jameskirslis" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro" or self.username.lower() == "tehcid" or self.username.lower() == "099" or self.username.lower() == "setveen" or self.username.lower() == "aquaskys" or self.username.lower() == "kelraider" or self.username.lower() == "uninspired" or self.username.lower() == "saanix" or self.username.lower() == "roujo" or self.username.lower() == "maup" or self.username.lower() == "mystx" or self.username.lower() == "akai" or self.username.lower() == "roadcrosser" or self.username.lower() == "antoligy" or self.username.lower() == "bioniclegenius" or self.username.lower() == "red_link" or self.username.lower() == "sk8rjwd" or self.username.lower() == "ntfwc" or self.username.lower() == "blueprotoman" or self.username.lower() == "blue_protoman" or self.username.lower() == "eugo" or self.username.lower() == "knossus" or self.username.lower() == "2k10" or self.username.lower() == "_2k10" or self.username.lower() == "aexis_rai" or self.username.lower() == "imak" or self.username.lower() == "injex":
+                color = COLOUR_YELLOW
+            elif self.isWorldOwner():
+                color = COLOUR_DARKYELLOW
+            elif self.isOp():
+                color = COLOUR_DARKCYAN
+            elif self.isWriter():
+                color = COLOUR_CYAN
+            elif self.isMember():
+                color = COLOUR_GREY
+            else:
+                color = COLOUR_WHITE
         else:
             color = COLOUR_WHITE
         return color
@@ -931,7 +934,7 @@ class MyneServerProtocol(Protocol):
             reactor.callLater(1, self.sendKeepAlive)
 
     def sendOverload(self):
-        "Sends an overload - a fake map designed to use as much memory as it can."
+        "Sends an overload - a fake world designed to use as much memory as it can."
         self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world" % self.factory.default_name, 0)
         self.sendPacked(TYPE_PRECHUNK)
         reactor.callLater(0.001, self.sendOverloadChunk)
@@ -1140,7 +1143,7 @@ class MyneServerProtocol(Protocol):
             return True
         if self.world.all_write:
             return True
-        self.sendServerMessage("This map is locked. You must be Builder/Op or Mod+ to build here.")
+        self.sendServerMessage("This world is locked. You must be Builder/Op or Mod+ to build here.")
         return False
 
     def GetBlockValue(self, value):

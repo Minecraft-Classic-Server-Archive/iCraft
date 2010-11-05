@@ -110,9 +110,9 @@ class ToolsPlugin(ProtocolPlugin):
             self.client.sendServerMessage("You are no longer building trees.")
     
     @build_list
-    @member_only
+    @op_only
     def commandDune(self, parts, byuser, overriderank):
-        "/dune - Member\nCreates a sand dune between the two blocks you touched last."
+        "/dune - Op\nCreates a sand dune between the two blocks you touched last."
         # Use the last two block places
         try:
             x, y, z = self.client.last_block_changes[0]
@@ -165,9 +165,9 @@ class ToolsPlugin(ProtocolPlugin):
         do_step()
 
     @build_list
-    @member_only
+    @op_only
     def commandHill(self, parts, byuser, overriderank):
-        "/hill - Member\nCreates a hill between the two blocks you touched last."
+        "/hill - Op\nCreates a hill between the two blocks you touched last."
         # Use the last two block places
         try:
             x, y, z = self.client.last_block_changes[0]
@@ -220,9 +220,9 @@ class ToolsPlugin(ProtocolPlugin):
         do_step()
 
     @build_list
-    @member_only
+    @op_only
     def commandHole(self, parts, byuser, overriderank):
-        "/hole - Member\ncreates a hole between two blocks"
+        "/hole - Op\ncreates a hole between two blocks"
         #Use the last two block places
         try:
             x1, y1, z1 = self.client.last_block_changes[0]
@@ -274,9 +274,9 @@ class ToolsPlugin(ProtocolPlugin):
         do_step()
 
     @build_list
-    @member_only
+    @op_only
     def commandLake(self, parts, byuser, overriderank):
-        "/lake - Member\ncreates a lake between two blocks"
+        "/lake - Op\ncreates a lake between two blocks"
         #Use the last two block places
         try:
             x1, y1, z1 = self.client.last_block_changes[0]
@@ -326,9 +326,9 @@ class ToolsPlugin(ProtocolPlugin):
         do_step()
 
     @build_list
-    @member_only
+    @op_only
     def commandMountain(self, parts, byuser, overriderank):
-        "/mountain blockname - Member\nCreates a mountain between the two blocks you touched last."
+        "/mountain blockname - Op\nCreates a mountain between the two blocks you touched last."
         if len(parts) < 8 and len(parts) != 2:
             self.client.sendServerMessage("Please enter a type.")
             return
@@ -399,9 +399,9 @@ class ToolsPlugin(ProtocolPlugin):
         do_step()
 
     @build_list
-    @member_only
+    @op_only
     def commandPit(self, parts, byuser, overriderank):
-        "/pit - Member\ncreates a lava pit between two blocks"
+        "/pit - Op\ncreates a lava pit between two blocks"
         #Use the last two block places
         try:
             x1, y1, z1 = self.client.last_block_changes[0]

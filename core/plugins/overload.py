@@ -52,7 +52,7 @@ class OverloadPlugin(ProtocolPlugin):
     @admin_only
     @username_command
     def commandOverload(self, client, byuser, overriderank):
-        "/overload username - Admin\nSends the users client a massive fake map."
+        "/overload username - Admin\nSends the users client a massive fake world."
         client.sendOverload()
         self.client.sendServerMessage("Overload sent to %s" % client.username)
 

@@ -88,17 +88,15 @@ class ShapesPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("All parameters must be integers")
                     return
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             if (radius*2)**3>limit:
                 return
             # Draw all the blocks on, I guess
@@ -166,17 +164,15 @@ class ShapesPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("All parameters must be integers")
                     return
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             if (radius*2)**3>limit:
                 return
             # Draw all the blocks on, I guess
@@ -213,9 +209,9 @@ class ShapesPlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @member_only
+    @writer_only
     def commandCurve(self, parts, byuser, overriderank):
-        "/curve blockname [x y z x2 y2 z2 x3 y3 z3] - Member\nSets a line of blocks along three points to block."
+        "/curve blockname [x y z x2 y2 z2 x3 y3 z3] - Builder\nSets a line of blocks along three points to block."
         if len(parts) < 11 and len(parts) != 2:
             self.client.sendServerMessage("Please enter a type (and possibly three coord triples)")
         else:
@@ -261,17 +257,15 @@ class ShapesPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("All parameters must be integers")
                     return
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             # Stop them doing silly things
             if 2*((x-x2)**2+(y-y2)**2+(z-z2)**2)**0.5+2*((x2-x3)**2+(y2-y3)**2+(z2-z3)**2)**0.5 > limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to curve.")
@@ -322,9 +316,9 @@ class ShapesPlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @member_only
+    @op_only
     def commandPyramid(self, parts, byuser, overriderank):
-        "/pyramid blockname height [x y z] - Member\nSets all blocks in this area to be a pyramid."
+        "/pyramid blockname height [x y z] - Op\nSets all blocks in this area to be a pyramid."
         if len(parts) < 7 and len(parts) != 4:
             self.client.sendServerMessage("Please enter a block type height and fill?")
         else:
@@ -384,17 +378,15 @@ class ShapesPlugin(ProtocolPlugin):
                     point2 = [x+i, y+height+i+1,z+i]
                 pointlist = pointlist+[(point1,point2)]
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             # Stop them doing silly things
             if (x) * (y) * (z)/2 > limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to pyramid.")
@@ -436,9 +428,9 @@ class ShapesPlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @writer_only
+    @member_only
     def commandLine(self, parts, byuser, overriderank):
-        "/line blockname [x y z x2 y2 z2] - Builder\nSets all blocks between two points to be a line."
+        "/line blockname [x y z x2 y2 z2] - Member\nSets all blocks between two points to be a line."
         if len(parts) < 8 and len(parts) != 2:
             self.client.sendServerMessage("Please enter a type (and possibly two coord triples)")
         else:
@@ -480,26 +472,27 @@ class ShapesPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("All parameters must be integers")
                     return
             steps = int(((x2-x)**2+(y2-y)**2+(z2-z)**2)**0.5)
-            mx = float(x2-x)/steps
-            my = float(y2-y)/steps
-            mz = float(z2-z)/steps
+            try:
+                mx = float(x2-x)/steps
+                my = float(y2-y)/steps
+                mz = float(z2-z)/steps
+            except ZeroDivisionError:
+                self.client.sendServerMessage("Float Division Error: what went wrong?")
             coordinatelist1 = []
             for t in range(steps+1):
                 coordinatelist1.append((int(round(mx*t+x)),int(round(my*t+y)),int(round(mz*t+z))))
             coordinatelist2 = []
             coordinatelist2 = [coordtuple for coordtuple in coordinatelist1 if coordtuple not in coordinatelist2]
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             # Stop them doing silly things
             if len(coordinatelist2) > limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to line.")
@@ -594,17 +587,15 @@ class ShapesPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("All parameters must be integers")
                     return
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             if (radius*2)**3>limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to csphere.")
                 return
@@ -704,17 +695,15 @@ class ShapesPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("All parameters must be integers")
                     return
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             if 2*3.14*(radius)**2>limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to circle.")
                 return
@@ -812,17 +801,15 @@ class ShapesPlugin(ProtocolPlugin):
                     return
             absradius = abs(radius)
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             if (radius*2)**3/2>limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to dome.")
                 return
@@ -907,17 +894,15 @@ class ShapesPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("All parameters must be integers")
                     return
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             radius = int(round(endradius*2 + ((x2-x)**2+(y2-y)**2+(z2-z)**2)**0.5)/2 + 1)
             var_x = int(round(float(x+x2)/2))
             var_y = int(round(float(y+y2)/2))
@@ -962,7 +947,7 @@ class ShapesPlugin(ProtocolPlugin):
     @build_list
     @op_only
     def commandPolytri(self, parts, byuser, overriderank):
-        "/Polytri blockname [x y z x2 y2 z2 x3 y3 z3] - Op\nSets all blocks between three points to block."
+        "/polytri blockname [x y z x2 y2 z2 x3 y3 z3] - Op\nSets all blocks between three points to block."
         if len(parts) < 11 and len(parts) != 2:
             self.client.sendServerMessage("Please enter a type (and possibly three coord triples)")
         else:
@@ -1056,17 +1041,15 @@ class ShapesPlugin(ProtocolPlugin):
                 elif point1 not in finalcoordinatelist:
                     finalcoordinatelist.append(point1)
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             # Stop them doing silly things
             if ((x-x2)**2+(y-y2)**2+(z-z2)**2)**0.5*((x-x3)**2+(y-y3)**2+(z-z3)**2)**0.5 > limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to polytri.")

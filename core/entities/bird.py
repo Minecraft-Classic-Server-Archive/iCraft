@@ -96,7 +96,7 @@ if distance != 0 and distance > 2:
             try:
                 world[x, y, z] = block
             except:
-												world[x, y, z] = block
+                world[x, y, z] = block
             self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
             self.client.sendBlock(x, y, z, block)
             var_position = target
@@ -105,6 +105,6 @@ if distance != 0 and distance > 2:
             try:
                 world[x, y, z] = block
             except:
-												world[x, y, z] = block
+                world[x, y, z] = block
             self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
             self.client.sendBlock(x, y, z, block)

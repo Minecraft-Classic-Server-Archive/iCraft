@@ -36,6 +36,7 @@
 #    Suite 300, San Francisco, California, 94105, USA.
 
 import random
+import os
 from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
@@ -81,13 +82,21 @@ class helpPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("Orange blocks make Lavafalls, darkblue blocks make Waterfalls.")
                     self.client.sendServerMessage("Spouts need fwater to be on in order to work.")
                     self.client.sendServerMessage("Sand will fall, grass will grow, sponges will absorb.")
-                    self.client.sendServerMessage("Use unflood to move all water, lava, and spouts from the map.")
+                    self.client.sendServerMessage("Use unflood to move all water, lava, and spouts from the world.")
                 elif parts[1].lower() == "ranks":
-                    self.client.sendNormalMessage(COLOUR_YELLOW+"Help: Server Ranks - "+COLOUR_DARKGREEN+"Owner/Console (9) "+COLOUR_GREEN+"Director (8) "+COLOUR_RED+"Admin (7) "+COLOUR_BLUE+"Mod (6) "+COLOUR_PURPLE+"IRC "+COLOUR_DARKYELLOW+"World Owner (5) "+COLOUR_DARKCYAN+"Op (4) "+COLOUR_GREY+"Member (3) "+COLOUR_CYAN+"Builder (2) "+COLOUR_WHITE+"Guest (1) "+COLOUR_BLACK+"Spec (0)")
+                    self.client.sendNormalMessage(COLOUR_YELLOW+"Help: Server Ranks - "+COLOUR_DARKGREEN+"Owner/Console (9) "+COLOUR_GREEN+"Director (8) "+COLOUR_RED+"Admin (7) "+COLOUR_BLUE+"Mod (6) "+COLOUR_PURPLE+"IRC "+COLOUR_DARKYELLOW+"World Owner (5) "+COLOUR_DARKCYAN+"Op (4) "+COLOUR_CYAN+"Builder (3) "+COLOUR_GREY+"Member (2) "+COLOUR_WHITE+"Guest (1) "+COLOUR_BLACK+"Spec (0)")
                 elif parts[1].lower() == "cc":
                     self.client.sendServerMessage("Help; Color Codes")
                     self.client.sendNormalMessage("&a%a &b%b &c%c &d%d &e%e &f%f")
                     self.client.sendNormalMessage("&0%0 &1%1 &2%2 &3%3 &4%4 &5%5 &6%6 &7%7 &8%8 &9%9")
+                elif parts[1].lower() == "guide":
+                    self.client.sendServerMessage("Help; The Guide")
+                    self.client.sendServerMessage("/command required [optional]")
+                    self.client.sendServerMessage("command - the command you're using (like /help)")
+                    self.client.sendServerMessage("required - this stuff is required after the command")
+                    self.client.sendServerMessage("optional - this stuff isn't needed, like blb coords")
+                    self.client.sendServerMessage("Example: /help [document/command]")
+                    self.client.sendServerMessage("You can do /help only or optionally input more.")
                 else:
                     self.client.sendServerMessage("Unknown command '%s'" % parts[1])
             else:
@@ -98,7 +107,7 @@ class helpPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("There's no help for that command.")
         else:
             self.client.sendServerMessage("The Central Help Hub")
-            self.client.sendServerMessage("Documents: /help [basics|chat|ranks|physic|cc]")
+            self.client.sendServerMessage("Documents: /help [basics|cc|chat|guide|physic|ranks]")
             self.client.sendServerMessage("Commands: /cmdlist - Lookup: /help command")
             self.client.sendServerMessage("About: /about | Credits: /credits")
 
@@ -123,7 +132,7 @@ class helpPlugin(ProtocolPlugin):
                 self.client.sendServerMessage("Unknown cmdlist '%s'" % parts[1])
         else:
             self.client.sendServerMessage("Command List - Use: /cmdlist category")
-            self.client.sendServerMessage("Categories: all build world player info other")
+            self.client.sendServerMessage("Categories: build world player info other")
 
     def ListCommands(self,list):
         self.client.sendServerMessage("%s Commands:"%list.title())
@@ -183,12 +192,12 @@ class helpPlugin(ProtocolPlugin):
     @info_list
     def commandAbout(self, parts, byuser, overriderank):
         "/about - Guest\nAliases: info\nAbout the server and software."
-        self.client.sendSplitServerMessage("About The Server, powered by iCraft %s" % VERSION)
-        self.client.sendSplitServerMessage("http://hlmc.net/ - Credits: /credits")
+        self.client.sendSplitServerMessage("About The Server, powered by iCraft %s" % INFO_VERSION)
+        self.client.sendSplitServerMessage("%s - Credits: /credits" % INFO_WEBSITE)
         self.client.sendSplitServerMessage("Name: "+self.client.factory.server_name+"; owned by "+self.client.factory.owner)
         self.client.sendSplitServerMessage(self.client.factory.server_message)
         self.client.sendServerMessage("URL: "+self.client.factory.info_url)
-        if self.client.factory.irc_config.getboolean("irc", "use_irc"):
+        if self.client.factory.use_irc:
             if self.client.factory.irc_config.get("irc", "server") == "bots.esper.net":
                 self.client.sendServerMessage("IRC: irc.esper.net "+self.client.factory.irc_channel)
             else:

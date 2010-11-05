@@ -325,7 +325,7 @@ class Physics(Thread):
                 try:
                     below = self.blockstore.get_offset(x, y-1, z)
                 except AssertionError:
-                    pass # At bottom of map
+                    pass # At bottom of world
                 else:
                     if self.blockstore.raw_blocks[below] is CHR_AIR:
                         if block is CHR_SPOUT:
@@ -339,7 +339,7 @@ class Physics(Thread):
         try:
             below = self.blockstore.get_offset(x, y-1, z)
         except AssertionError:
-            pass # At bottom of map
+            pass # At bottom of world
         else:
             if self.blockstore.finite_water:
                 if self.blockstore.raw_blocks[below] is CHR_AIR:
@@ -429,7 +429,7 @@ class Physics(Thread):
             try:
                 below = self.blockstore.get_offset(x, y-1, z)
             except AssertionError:
-                pass # At bottom of map
+                pass # At bottom of world
             else:
                 if self.blockstore.raw_blocks[below] is CHR_AIR:
                     if block is CHR_SAND_SPOUT:
@@ -441,7 +441,7 @@ class Physics(Thread):
         try:
             below = self.blockstore.get_offset(x, y-1, z)
         except AssertionError:
-            pass # At bottom of map
+            pass # At bottom of world
         else:
             if self.blockstore.raw_blocks[below] is CHR_AIR:
                 yield (x, y-1, z, ord(block))

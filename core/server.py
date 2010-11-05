@@ -56,7 +56,7 @@ from Queue import Queue, Empty
 from reqs.twisted.internet.protocol import Factory
 from reqs.twisted.internet import reactor
 from ConfigParser import RawConfigParser as ConfigParser
-from core.protocol import MyneServerProtocol
+from core.protocol import CoreServerProtocol
 from core.world import World
 from core.irc_client import ChatBotFactory
 from core.constants import *
@@ -105,11 +105,11 @@ The Salt is also used to help verify users' identities.
         finally:
             reactor.callLater(60, self.get_url)
 
-class MyneFactory(Factory):
+class CoreFactory(Factory):
     """
     Factory that deals with the general world actions and cross-user comms.
     """
-    protocol = MyneServerProtocol
+    protocol = CoreServerProtocol
     
     def reloadIrcBot(self):
         if(self.irc_relay):
@@ -129,7 +129,45 @@ class MyneFactory(Factory):
             except:
                 return False
         return False
-            
+
+    def reloadConfig(self):
+        try:
+            #TODO: Figure out which of these would work dynamically, otherwise delete them from this area.
+            #self.max_clients = self.config.getint("main", "max_clients")
+            #self.server_name = self.config.get("main", "name")
+            #self.server_message = self.config.get("main", "description")
+            #self.public = self.config.getboolean("main", "public")
+            #self.controller_port = self.config.get("network", "controller_port")
+            #self.controller_password = self.config.get("network", "controller_password")
+            self.initial_greeting = self.config.get("main", "greeting").replace("\\n", "\n")
+            self.owner = self.config.get("main", "owner").lower()
+            self.duplicate_logins = self.options_config.getboolean("options", "duplicate_logins")
+            self.console_delay = self.options_config.getint("options", "console_delay")
+            self.info_url = self.options_config.get("options", "info_url")
+            self.away_kick = self.options_config.getboolean("options", "away_kick")
+            self.away_time = self.options_config.getint("options", "away_time")
+            self.colors = self.options_config.getboolean("options", "colors")
+            self.physics_limit = self.options_config.getint("worlds", "physics_limit")
+            self.default_backup = self.options_config.get("worlds", "default_backup")
+            self.asd_delay = self.options_config.getint("worlds", "asd_delay")
+            self.asd_gchat = self.options_config.getboolean("worlds", "gchat")
+            self.grief_blocks = self.ploptions_config.getint("antigrief", "blocks")
+            self.grief_time = self.ploptions_config.getint("antigrief", "time")
+            self.backup_freq = self.ploptions_config.getint("backups", "backup_freq")
+            self.backup_default = self.ploptions_config.getboolean("backups", "backup_default")
+            self.backup_max = self.ploptions_config.getint("backups", "backup_max")
+            self.backup_auto = self.ploptions_config.getboolean("backups", "backup_auto")
+            self.enable_archives = self.ploptions_config.getboolean("archiver", "enable_archiver")
+            self.currency = self.ploptions_config.get("bank", "currency")
+            self.build_director = self.ploptions_config.get("build", "director")
+            self.build_admin = self.ploptions_config.get("build", "admin")
+            self.build_mod = self.ploptions_config.get("build", "mod")
+            self.build_op = self.ploptions_config.get("build", "op")
+            self.build_other = self.ploptions_config.get("build", "other")
+            if self.backup_auto:
+                reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
+        except:
+            return False
 
     def __init__(self):
         self.ServerVars = dict()
@@ -174,20 +212,30 @@ class MyneFactory(Factory):
             self.console_delay = self.options_config.getint("options", "console_delay")
             self.info_url = self.options_config.get("options", "info_url")
             self.away_kick = self.options_config.getboolean("options", "away_kick")
+            self.away_time = self.options_config.getint("options", "away_time")
+            self.colors = self.options_config.getboolean("options", "colors")
             self.physics_limit = self.options_config.getint("worlds", "physics_limit")
             self.default_name = self.options_config.get("worlds", "default_name")
             self.default_backup = self.options_config.get("worlds", "default_backup")
             self.asd_delay = self.options_config.getint("worlds", "asd_delay")
+            self.gchat = self.options_config.getboolean("worlds", "gchat")
         except:
             logging.log(logging.ERROR, "You don't have a options.conf file! You need to rename options.example.conf to options.conf")
             self.exit()
         try:
+            self.grief_blocks = self.ploptions_config.getint("antigrief", "blocks")
+            self.grief_time = self.ploptions_config.getint("antigrief", "time")
             self.backup_freq = self.ploptions_config.getint("backups", "backup_freq")
             self.backup_default = self.ploptions_config.getboolean("backups", "backup_default")
             self.backup_max = self.ploptions_config.getint("backups", "backup_max")
             self.backup_auto = self.ploptions_config.getboolean("backups", "backup_auto")
             self.enable_archives = self.ploptions_config.getboolean("archiver", "enable_archiver")
             self.currency = self.ploptions_config.get("bank", "currency")
+            self.build_director = self.ploptions_config.get("build", "director")
+            self.build_admin = self.ploptions_config.get("build", "admin")
+            self.build_mod = self.ploptions_config.get("build", "mod")
+            self.build_op = self.ploptions_config.get("build", "op")
+            self.build_other = self.ploptions_config.get("build", "other")
             if self.backup_auto:
                 reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
         except:
@@ -411,7 +459,7 @@ class MyneFactory(Factory):
             i += 1
         world_id = "a-%i" % i
         # Copy and boot
-        self.newWorld(world_id, "../worlds/.archives/%s" % filename)
+        self.newWorld(world_id, "../core/archives/%s" % filename)
         self.loadWorld("worlds/%s" % world_id, world_id)
         world = self.worlds[world_id]
         world.is_archive = True
@@ -663,7 +711,7 @@ class MyneFactory(Factory):
                         for client in world.clients:
                             if client != source_client:
                                 client.sendNewPlayer(*data)
-                            client.sendServerMessage("%s has joined the map." % source_client.username)
+                            client.sendServerMessage("%s has joined the world." % source_client.username)
                     # Someone left!
                     elif task is TASK_PLAYERLEAVE:
                         # Only run it for clients who weren't the source.
@@ -770,7 +818,7 @@ class MyneFactory(Factory):
         # Find the template files, copy them to the new location
         for filename in ["blocks.gz", "world.meta"]:
             try:
-                shutil.copyfile("worlds/.templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
+                shutil.copyfile("core/templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
             except:
                 client.sendServerMessage("That template doesn't exist.")
 
@@ -801,7 +849,7 @@ class MyneFactory(Factory):
         return username.lower() in self.mods or self.isAdmin(username)
 
     def isMember(self, username):
-        #print "here" needs to check for op level also.
+        #TODO: Needs to check for builder/op level also.
         return username.lower() in self.members or self.isMod(username)
 
     def isSpectator(self, username):
@@ -883,9 +931,9 @@ class MyneFactory(Factory):
     
     def loadArchives(self):
         self.archives = {}
-        for name in os.listdir("worlds/.archives/"):
-            if os.path.isdir(os.path.join("worlds/.archives", name)):
-                for subfilename in os.listdir(os.path.join("worlds/.archives", name)):
+        for name in os.listdir("core/archives/"):
+            if os.path.isdir(os.path.join("core/archives", name)):
+                for subfilename in os.listdir(os.path.join("core/archives", name)):
                     match = re.match(r'^(\d\d\d\d\-\d\d\-\d\d_\d?\d\_\d\d)$', subfilename)
                     if match:
                         when = match.groups()[0]

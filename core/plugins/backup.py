@@ -53,7 +53,7 @@ class BackupPlugin(ProtocolPlugin):
     @world_list
     @op_only
     def commandBackup(self, parts, byuser, overriderank):
-        "/backup worldname - Op\nMakes a backup copy of the map of the map."
+        "/backup worldname - Op\nMakes a backup copy of the world."
         if len(parts) == 1:
             parts.append(self.client.world.basename.lstrip("worlds"))
         world_id = parts[1]
@@ -95,7 +95,7 @@ class BackupPlugin(ProtocolPlugin):
     @world_list
     @op_only
     def commandRestore(self, parts, byuser, overriderank):
-        "/restore worldname number - Op\nRestore map to indicated number."
+        "/restore worldname number - Op\nRestore world to indicated number."
         if len(parts) < 2:
             self.client.sendServerMessage("Please specify at least a world ID!")
         else:
@@ -132,7 +132,7 @@ class BackupPlugin(ProtocolPlugin):
     @world_list
     @op_only
     def commandBackups(self, parts, byuser, overriderank):
-        "/backups - Op\nLists all backups this map has."
+        "/backups - Op\nLists all backups this world has."
         try:
             world_dir = ("worlds/%s/" % self.client.world.id)
             folders = os.listdir(world_dir+"backup/")

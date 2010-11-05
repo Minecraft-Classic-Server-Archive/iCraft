@@ -94,9 +94,9 @@ class MsgblockPlugin(ProtocolPlugin):
             pass
         self.last_block_position = (rx, ry, rz)
     
-    @member_only
+    @op_only
     def commandMsgblock(self, parts, byuser, overriderank):
-        "/mb message - Member\nAliases: mbox\nMakes the next block you place a message block."
+        "/mb message - Op\nAliases: mbox\nMakes the next block you place a message block."
         msg_part = (" ".join(parts[1:])).strip()
         if not msg_part:
             self.client.sendServerMessage("Please enter a message.")
@@ -116,28 +116,28 @@ class MsgblockPlugin(ProtocolPlugin):
         elif not new_message:
             self.client.sendServerMessage("Message extended; you've used %i characters." % len(self.msgblock_message))
     
-    @member_only
+    @op_only
     def commandMsgblockend(self, parts, byuser, overriderank):
-        "/mbend - Member\nStops placing message blocks."
+        "/mbend - Op\nStops placing message blocks."
         self.msgblock_message = None
         self.client.sendServerMessage("You are no longer placing message blocks.")
     
-    @member_only
+    @op_only
     def commandShowmsgblocks(self, parts, byuser, overriderank):
-        "/mbshow - Member\nShows all message blocks as green, only to you."
+        "/mbshow - Op\nShows all message blocks as green, only to you."
         for offset in self.client.world.messages.keys():
             x, y, z = self.client.world.get_coords(offset)
             self.client.sendPacked(TYPE_BLOCKSET, x, y, z, BLOCK_GREEN)
         self.client.sendServerMessage("All messages appearing green temporarily.")
     
-    @member_only
+    @op_only
     def commandMsgblockdel(self, parts, byuser, overriderank):
-        "/mbdel - Member\nAliases: mdel\nEnables msgblock-deleting mode"
+        "/mbdel - Op\nAliases: mdel\nEnables msgblock-deleting mode"
         self.client.sendServerMessage("You are now able to delete msgblocks. /mbdelend to stop")
         self.msgblock_remove = True
     
-    @member_only
+    @op_only
     def commandMsgblockdelend(self, parts, byuser, overriderank):
-        "/mbdelend - Member\nDisables msgblock-deleting mode"
+        "/mbdelend - Op\nDisables msgblock-deleting mode"
         self.client.sendServerMessage("Msgblock deletion mode ended.")
         self.msgblock_remove = False

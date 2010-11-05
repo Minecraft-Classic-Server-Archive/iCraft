@@ -165,7 +165,7 @@ class PortalPlugin(ProtocolPlugin):
     
     @op_only
     def commandClearportals(self, parts, byuser, overriderank):
-        "/pclear - Op\nRemoves all portals from the map."
+        "/pclear - Op\nRemoves all portals from the world."
         self.client.world.clear_teleports()
         self.client.sendServerMessage("All portals in this world removed.")
     

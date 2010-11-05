@@ -156,17 +156,15 @@ class ImagedrawPlugin(ProtocolPlugin):
             if z > z2:
                 z, z2 = z2, z
             if self.client.isDirector() or overriderank:
-                limit = 1073741824
+                limit = self.client.factory.build_director
             elif self.client.isAdmin():
-                limit = 2097152
+                limit = self.client.factory.build_admin
             elif self.client.isMod():
-                limit = 262144
+                limit = self.client.factory.build_mod
             elif self.client.isOp():
-                limit = 110592
-            elif self.client.isMember():
-                limit = 55296
+                limit = self.client.factory.build_op
             else:
-                limit = 4062
+                limit = self.client.factory.build_other
             # Stop them doing silly things
             if height*width > limit:
                 self.client.sendServerMessage("Sorry, that area is too big for you to imagedraw.")

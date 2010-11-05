@@ -83,7 +83,7 @@ class MoneyPlugin(ProtocolPlugin):
     def commandSetAccount(self, parts, byuser, overriderank):
         "/setbank username amount - Director\nEdits Bank Account"
         if len(parts) != 3:
-            self.client.sendServerMessage("Syntax: /set <target> <amount>")    
+            self.client.sendServerMessage("Syntax: /setbank target amount")    
             return False
         bank = self.loadBank()
         target = parts[1]
@@ -105,7 +105,7 @@ class MoneyPlugin(ProtocolPlugin):
     def commandPay(self, parts, byuser, overriderank):
         "/pay username amount - Guest\nThis lets you send money to other people."
         if len(parts) != 3:
-            self.client.sendServerMessage("/pay <target> <amount>")
+            self.client.sendServerMessage("/pay target amount")
             return False
         user = self.client.username.lower()
         target = parts[1].lower()
@@ -141,7 +141,7 @@ class MoneyPlugin(ProtocolPlugin):
     def commandRemoveAccount(self, parts, byuser, overriderank):
         "/removebank username - Director\nRemoves Bank Account"
         if len(parts) != 2:
-            self.client.sendServerMessage("Syntax: /remove <target>")    
+            self.client.sendServerMessage("Syntax: /removebank target")    
             return False
         bank = self.loadBank()
         target = parts[1]

@@ -128,10 +128,10 @@ class PlayersPlugin(ProtocolPlugin):
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKYELLOW+parts[1])
                 elif username in self.client.world.ops:
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKCYAN+parts[1])
-                elif username in self.client.factory.members:
-                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_GREY+parts[1])
                 elif username in self.client.world.writers:
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_CYAN+parts[1])
+                elif username in self.client.factory.members:
+                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_GREY+parts[1])
                 else:
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_WHITE+parts[1])
                 if username not in self.client.factory.lastseen:

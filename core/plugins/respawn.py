@@ -41,14 +41,14 @@ from core.constants import *
 
 class FetchPlugin(ProtocolPlugin):
     
-	commands = {
-		"respawn": "commandRespawn",
-	}
+    commands = {
+        "respawn": "commandRespawn",
+    }
     
-	@player_list
-	@mod_only
-	@only_username_command
-	def commandRespawn(self, username, byuser, rankoverride):
+    @player_list
+    @mod_only
+    @only_username_command
+    def commandRespawn(self, username, byuser, rankoverride):
            "/respawn username - Respawns user."
            if username in self.client.factory.usernames:
                self.client.factory.usernames[username].respawn()

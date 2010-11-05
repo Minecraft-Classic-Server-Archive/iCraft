@@ -75,7 +75,7 @@ class ZonesPlugin(ProtocolPlugin):
 
     @op_only
     def commandNewZone(self, parts, byuser, overriderank):
-        "/znew zonename user|rank [creator/rankname] - Op\nAliases: rbox\nCreates a new zone with the name you gave.\nUsers are added with /zone name user1 user2 ...\nRank Example: '/znew GuestArea rank all'\nUser Example: '/znew hotel1 user'. then '/zone hotel1 add <user1> <user2>'"
+        "/znew zonename user|rank [creator/rankname] - Op\nAliases: rbox\nCreates a new zone with the name you gave.\nUsers are added with /zone name user1 user2 ...\nRank Example: '/znew GuestArea rank all'\nUser Example: '/znew hotel user'. then '/zone hotel add user1 [user2]'"
         if len(parts) < 3:
             self.client.sendServerMessage("Info missing. Usage - /znew name user|rank [rank]")
             return
@@ -245,7 +245,7 @@ class ZonesPlugin(ProtocolPlugin):
             self.client.sendServerMessage("You must provide a zone name.")
 
     def commandListZones(self, parts, byuser, overriderank):
-        "/zlist - Guest\nLists all the zones on this map."
+        "/zlist - Guest\nLists all the zones on this world."
         self.client.sendServerList(["User Zones:"] + [zone[0] for id, zone in self.client.world.userzones.items()])
         self.client.sendServerList(["Rank Zones:"] + [zone[0] for id, zone in self.client.world.rankzones.items()])
 
@@ -316,7 +316,7 @@ class ZonesPlugin(ProtocolPlugin):
                     self.client.sendPacked(TYPE_BLOCKSET, x2, y, k, block)
                     self.client.sendPacked(TYPE_BLOCKSET, x, y2, k, block)
                     self.client.sendPacked(TYPE_BLOCKSET, x2, y2, k, block)
-            self.client.sendServerMessage("all zones in this map are showen temporarily by a water border.")
+            self.client.sendServerMessage("All zones in this world are shown temporarily by a water border.")
         else:
             match = False
             user = parts[1].lower()
@@ -490,7 +490,7 @@ class ZonesPlugin(ProtocolPlugin):
 
     @op_only
     def commandZdelall(self, parts, byuser, overriderank):
-        "/zdelall - Op\nRemoves all zones in a map (if you can delete them)"
+        "/zdelall - Op\nRemoves all zones in a world (if you can delete them)"
         match = False
         for id, zone in self.client.world.userzones.items():
             if self.client.username in zone[6:] or self.client.isAdmin() or self.client.world.owner == self.client.username:
