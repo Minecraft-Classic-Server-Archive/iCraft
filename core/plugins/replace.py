@@ -52,7 +52,7 @@ class BrepPlugin(ProtocolPlugin):
     }
     
     @build_list
-    @writer_only
+    @builder_only
     def commandBrep(self, parts, byuser, overriderank):
         "/replace blockA blockB [x y z x2 y2 z2] - Builder\nAliases: brep\nReplaces all blocks of blockA in this area to blockB."
         if len(parts) < 9 and len(parts) != 3:

@@ -79,7 +79,7 @@ class DynamitePlugin(ProtocolPlugin):
             except KeyError:
                 self.client.sendServerMessage("Unknown command '%s'" % command)
                 return
-        if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "member_only", False) or getattr(func, "writer_only", False))):
+        if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "member_only", False) or getattr(func, "builder_only", False))):
             if byuser:
                 self.client.sendServerMessage("'%s' is not available to specs." % command)
                 return
@@ -103,11 +103,11 @@ class DynamitePlugin(ProtocolPlugin):
             if byuser:
                 self.client.sendServerMessage("'%s' is an Op-only command!" % command)
                 return
-        if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+        if getattr(func, "builder_only", False) and not (self.client.isBuilder() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
             if byuser:
                 self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
                 return
-        if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+        if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isBuilder() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
             if byuser:
                 self.client.sendServerMessage("'%s' is a Member-only command!" % command)
                 return

@@ -35,7 +35,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-if len(entitylist) <= maxentitiespermap:
+if len(entitylist) <= maxentitiesperworld:
     x,y,z = var_position
     randnum = randint(1,6)
     if randnum < 4:

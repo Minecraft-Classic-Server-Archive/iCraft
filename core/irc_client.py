@@ -125,8 +125,11 @@ class ChatBot(irc.IRCClient):
                     self.msg(user, "07StaffChat: Use '#message'")
                 elif command[1] == ("cmdlist"):
                     self.msg(user, "07Here are your Admin Commands:")
-                    self.msg(user, "07ban banned banreason boot derank kick rank shutdown spec")
+                    self.msg(user, "07ban banned banreason boot derank kick rank rehash shutdown spec")
                     self.msg(user, "07Use 'command arguments' to do it.")
+                elif command[1] == ("rehash"):
+                    self.factory.reloadConfig()
+                    self.msg(user, "07Reloaded the Server Configuration.")
                 elif command[1] == ("banreason"):
                     if len(command) == 3:
                         username = command[2]

@@ -58,7 +58,7 @@ class BlbPlugin(ProtocolPlugin):
     }
     
     @build_list
-    @writer_only
+    @builder_only
     def commandBlb(self, parts, byuser, overriderank):
         "/blb blockname [x y z x2 y2 z2] - Builder\nAliases: box, cub, cuboid, draw\nSets all blocks in this area to block.\nClick 2 corners then do the command."
         if len(parts) < 8 and len(parts) != 2:
@@ -140,7 +140,7 @@ class BlbPlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @writer_only
+    @builder_only
     def commandHBlb(self, parts, byuser, overriderank):
         "/bhb blockname [x y z x2 y2 z2] - Builder\nAliases: hbox\nSets all blocks in this area to block, hollow."
         if len(parts) < 8 and len(parts) != 2:
@@ -223,7 +223,7 @@ class BlbPlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @writer_only
+    @builder_only
     def commandWBlb(self, parts, byuser, overriderank):
         "/bwb blockname [x y z x2 y2 z2] - Builder\nBuilds four walls between the two areas.\nHollow, with no roof or floor."
         if len(parts) < 8 and len(parts) != 2:
@@ -306,7 +306,7 @@ class BlbPlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @writer_only
+    @builder_only
     def commandBcb(self, parts, byuser, overriderank):
         "/bcb blockname blockname2 [x y z x2 y2 z2] - Builder\nSets all blocks in this area to block, checkered."
         if len(parts) < 9 and len(parts) != 3:
@@ -447,7 +447,7 @@ class BlbPlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @writer_only
+    @builder_only
     def commandBhcb(self, parts, byuser, overriderank):
         "/bhcb blockname blockname2 [x y z x2 y2 z2] - Builder\nSets all blocks in this area to blocks, checkered hollow."
         if len(parts) < 9 and len(parts) != 3:
@@ -567,7 +567,7 @@ class BlbPlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @writer_only
+    @builder_only
     def commandFBlb(self, parts, byuser, overriderank):
         "/bfb blockname [x y z x2 y2 z2] - Builder\nSets all blocks in this area to block, wireframe."
         if len(parts) < 8 and len(parts) != 2:

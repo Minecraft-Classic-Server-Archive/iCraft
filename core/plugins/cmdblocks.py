@@ -287,7 +287,7 @@ class CommandPlugin(ProtocolPlugin):
 
     def newWorld(self, world):
         "Hook to reset Command abilities in new worlds if not op."
-        if not self.client.isWriter():
+        if not self.client.isBuilder():
             self.command_cmd = None
             self.command_remove = False
             
@@ -312,7 +312,7 @@ class CommandPlugin(ProtocolPlugin):
         self.last_block_position = (rx, ry, rz)
 
     @info_list
-    @writer_only
+    @builder_only
     def commandCmdHelp(self, parts, byuser, overriderank):
         "/cmdhelp category [subcategory] - Builder\ncmdblocks help, learn what you can do in them."
         if len(parts) > 1:
@@ -410,7 +410,7 @@ class CommandPlugin(ProtocolPlugin):
             self.client.sendServerMessage("cmdblocks Help - Use: /cmdhelp category [subcategory]")
             self.client.sendSplitServerMessage("Categories: types functions variables")
 
-    @writer_only
+    @builder_only
     def commandCommand(self, parts, byuser, permissionoverride):
         "/cmd command [arguments] - Builder\nStarts creating a command block, or adds a command to the command block.\nThe command can be any server command.\nAfter you have entered all commands, type /cmd again to begin placing.\nOnce placed, the blocks will run the command when clicked\nas if the one clicking had typed the commands."
         if len(parts) < 2:
@@ -505,7 +505,7 @@ class CommandPlugin(ProtocolPlugin):
                 else:
                     self.client.sendServerMessage("Unknown command '%s'" % command)
                     return
-                if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
+                if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "builder_only", False))):
                     return
                 if getattr(func, "director_only", False) and not self.client.isDirector():
                     return
@@ -517,9 +517,9 @@ class CommandPlugin(ProtocolPlugin):
                     return
                 if getattr(func, "op_only", False) and not (self.client.isOp() or self.isWorldOwner() or self.client.isMod()):
                     return
-                if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+                if getattr(func, "builder_only", False) and not (self.client.isBuilder() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
                     return
-                if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+                if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isBuilder() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
                     return
             for x in parts:
                    commandtext = commandtext + " " + str(x)
@@ -546,7 +546,7 @@ class CommandPlugin(ProtocolPlugin):
                         self.client.sendServerMessage("Type /gcmd with no args to start placing the block.")
                         self.client.sendServerMessage("Command %s added." % var_string)
                         
-    @writer_only
+    @builder_only
     def commandSensorCommand(self, parts, byuser, permissionoverride):
         "/scmd command [arguments] - Builder\nStarts creating a command block, or adds a command to the command block.\nThe command can be any server command.\nAfter you have entered all commands, type /cmd again to begin placing.\nOnce placed, the blocks will run the command when clicked\nas if the one clicking had typed the commands."
         if len(parts) < 2:
@@ -640,7 +640,7 @@ class CommandPlugin(ProtocolPlugin):
                 else:
                     self.client.sendServerMessage("Unknown command '%s'" % command)
                     return
-                if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
+                if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "builder_only", False))):
                     self.client.sendServerMessage("'%s' is not available to specs." % command)
                     return
                 if getattr(func, "director_only", False) and not self.client.isDirector():
@@ -658,7 +658,7 @@ class CommandPlugin(ProtocolPlugin):
                 if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
                     self.client.sendServerMessage("'%s' is an Op-only command!" % command)
                     return
-                if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+                if getattr(func, "builder_only", False) and not (self.client.isBuilder() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
                     self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
                     return
                 if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isMod()):
@@ -689,7 +689,7 @@ class CommandPlugin(ProtocolPlugin):
                         self.client.sendServerMessage("Type /gscmd with no args to start placing the block.")
                         self.client.sendServerMessage("Command %s added." % var_string)
 
-    @writer_only
+    @builder_only
     def commandCommandend(self, parts, byuser, permissionoverride):
         "/cmdend [save]- Builder\nStops placing command blocks (type save to save your commands)."
         if len(parts) == 2:
@@ -705,13 +705,13 @@ class CommandPlugin(ProtocolPlugin):
         self.client.sendServerMessage("Note: you can type '/cmdend save' to keep the block you are")
         self.client.sendServerMessage("making and it's commands.")
 
-    @writer_only
+    @builder_only
     def commandCommanddel(self, parts, byuser, permissionoverride):
         "/cmddel - Builder\nEnables Command-deleting mode"
         self.client.sendServerMessage("You are now able to delete command blocks. /cmddelend to stop")
         self.command_remove = True
 
-    @writer_only
+    @builder_only
     def commandcmddelcmd(self, parts, byuser, permissionoverride):
         "/cmddel - Builder\nDeletes the previous command for the block."
         if len(self.command_cmd) > 0:
@@ -720,13 +720,13 @@ class CommandPlugin(ProtocolPlugin):
         else:
             self.client.sendServerMessage("There is no block command to delete")
 
-    @writer_only
+    @builder_only
     def commandCommanddelend(self, parts, byuser, permissionoverride):
         "/cmddelend - Builder\nDisables Command-deleting mode"
         self.client.sendServerMessage("Command deletion mode ended.")
         self.command_remove = False
 
-    @writer_only
+    @builder_only
     def commandShowcmdblocks(self, parts, byuser, permissionoverride):
        "/cmdshow - Builder\nShows all command blocks as yellow, only to you."
        for offset in self.client.world.commands.keys():
@@ -734,7 +734,7 @@ class CommandPlugin(ProtocolPlugin):
            self.client.sendPacked(TYPE_BLOCKSET, x, y, z, BLOCK_YELLOW)
        self.client.sendServerMessage("All commands appearing yellow temporarily.")
 
-    @writer_only
+    @builder_only
     @on_off_command
     def commandcmdinfo(self, onoff, byuser, permissionoverride):
        "/cmdinfo - Builder\nTells you the commands in a cmdblock"
@@ -812,18 +812,18 @@ class CommandPlugin(ProtocolPlugin):
         elif self.client.isMod():
             myrank = "mod"
             myranknum = 6
-        elif self.client.isMember():
-            myrank = "member"
-            myranknum = 2
-        elif self.client.isOp():
-            myrank = "op"
-            myranknum = 4
         elif self.client.isWorldOwner():
             myrank = "worldowner"
             myranknum = 5
-        elif self.client.isWriter():
+        elif self.client.isOp():
+            myrank = "op"
+            myranknum = 4
+        elif self.client.isBuilder():
             myrank = "builder"
             myranknum = 3
+        elif self.client.isMember():
+            myrank = "member"
+            myranknum = 2
         rx = self.client.x >> 5
         ry = self.client.y >> 5
         rz = self.client.z >> 5
@@ -999,7 +999,7 @@ class CommandPlugin(ProtocolPlugin):
                 runcmd = False
         if runcmd is True:
             if guest is False:
-                if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
+                if (self.client.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "builder_only", False))):
                     self.client.sendServerMessage("'%s' is not available to specs." % command)
                     runcmd = False
                 if getattr(func, "director_only", False) and not self.client.isDirector():
@@ -1017,10 +1017,10 @@ class CommandPlugin(ProtocolPlugin):
                 if getattr(func, "op_only", False) and not (self.client.isOp() or self.client.isMod()):
                     self.client.sendServerMessage("'%s' is an Op-only command!" % command)
                     runcmd = False
-                if getattr(func, "writer_only", False) and not (self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+                if getattr(func, "builder_only", False) and not (self.client.isBuilder() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
                     self.client.sendServerMessage("'%s' is a Builder-only command!" % command)
                     runcmd = False
-                if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isWriter() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
+                if getattr(func, "member_only", False) and not (self.client.isMember() or self.client.isBuilder() or self.client.isOp() or self.client.isWorldOwner() or self.client.isMod()):
                     self.client.sendServerMessage("'%s' is a Member-only command!" % command)
                     runcmd = False
             try:

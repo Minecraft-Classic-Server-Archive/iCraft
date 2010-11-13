@@ -48,6 +48,10 @@ class BindPlugin(ProtocolPlugin):
         "air": "commandAir",
         "stand": "commandAir",
         "place": "commandAir",
+        "water": "commandBuild",
+        "stillwater": "commandBuild",
+        "lava": "commandBuild",
+        "stilllava": "commandBuild",
     }
     
     hooks = {
@@ -117,3 +121,9 @@ class BindPlugin(ProtocolPlugin):
     def commandAir(self, params, byuser, overriderank):
         "/air - Guest\nAliases: place, stand\nPuts a block under you for easier building in the air."
         self.client.sendPacked(TYPE_BLOCKSET, self.client.x>>5, (self.client.y>>5)-3, (self.client.z>>5), BLOCK_WHITE)
+
+    @build_list
+    def commandBuild(self, params, byuser, overriderank):
+        "/water - Guest\nAliases: lava, stilllava, stillwater\nReminder for old Myne users."
+        self.client.sendServerMessage("Please use /bind instead. Example: /bind blue stillwater")
+        self.client.sendServerMessage("(makes blue blocks turn to stillwater)")

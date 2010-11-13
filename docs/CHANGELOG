@@ -1,5 +1,28 @@
 =========================
 
+v3.0.2:
+NOTE: There was also a code cleanup.
+Fixes a security exploit (3.0 did also)
+
+ADDED:
+- DSC reload command to the irc bot
+- Global Builder (Same Commands and Color as World Builder)
+- Option to configure how many entities per world
+
+FIXED:
+- Crashes with entities
+- Error with grieferdetector
+- Error with making the isoimage folder
+- Method of exiting/quitting the server
+- start.bat in extras
+- A few bugs with jail
+- The rare reqs folder problems
+- Command override for 'reload'
+- Problem with lines that are too short
+- pl* commands not working
+
+=========================
+
 v3.0.1:
 NOTE: This does not list all the changes, some were minor or in the back end.
 

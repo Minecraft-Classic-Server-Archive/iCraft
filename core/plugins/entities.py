@@ -40,7 +40,9 @@ from core.decorators import *
 from core.constants import *
 from reqs.twisted.internet import reactor
 from random import randint
-import os,sys, traceback
+import os,sys
+import traceback
+import logging
 from time import time
 import math
 
@@ -52,6 +54,8 @@ entitycodedict = {}
 entityselectdict = {}
 entitycreatedict = {}
 validentities = []
+maxentitiesperworld = 40
+#maxentitiesperworld = self.factory.elimit
 
 def loadentities():
     global validentities
@@ -102,8 +106,6 @@ class EntityPlugin(ProtocolPlugin):
         "itemclear": "commandEntityclear",
         "numitems": "commandNumentities",
         "items": "commandEntities",
-        "epicentity": "commandEpicEntity",
-        "epicmob": "commandEpicEntity",
     }
 
     hooks = {
@@ -145,15 +147,7 @@ class EntityPlugin(ProtocolPlugin):
             self.client.sendServerMessage("The entity is now deleted.")
         if block != 0:
             if self.var_entityselected != "None":
-                if self.var_entityselected == "Superbomb":
-                    if world.entities_epicentity == []:
-                        world.entities_epicentity = ["Superbomb",(x,y,z),2,2,True,0,80]
-                        self.client.sendServerMessage("%s was created." % self.var_entityselected)
-                        return
-                    else:
-                        self.client.sendServerMessage("There can only be one epic entity on a world.")
-                        return
-                if len(entitylist) >= maxentitiespermap:
+                if len(entitylist) >= maxentitiesperworld:
                     self.client.sendServerMessage("Max entities per world exceeded.")
                     return
                 if self.var_entityselected in entitycreatedict:
@@ -188,76 +182,6 @@ class EntityPlugin(ProtocolPlugin):
             userpositionlist = []
             for user in clients:
                 userpositionlist.append((user,(self.client.x >> 5,self.client.y >> 5,self.client.z >> 5)))
-            epicentity = world.entities_epicentity
-            if epicentity != []:
-                var_epicId = epicentity[0]
-                x,y,z = epicentity[1]
-                var_delete = False
-                epicentity[2] -= 1
-                if epicentity[2] < 0:
-                    epicentity[2] = epicentity[3]
-                    try:
-                        if not (0 <= x < world.x and 0 <= y < world.y and 0 <= z < world.z):
-                            var_delete = True
-                        if not var_delete:
-                            if var_epicId == "Superbomb":
-                                epicentity[6] -= 1
-                                if epicentity[6] <= 0:
-                                    var_check = epicentity[4]
-                                    epicentity[5] += 1
-                                    radius = epicentity[5]
-                                    var_userkillist = []
-                                    var_userkillist2 = []
-                                    for user in clients:
-                                        tx,ty,tz = (user.x >> 5,user.y >> 5,user.z >> 5)
-                                        distance = ((tx-x)**2+(ty-y)**2+(tz-z)**2)**0.5
-                                        if var_check and distance <= radius:
-                                            var_userkillist.append(user)
-                                    for user in var_userkillist:
-                                        if user not in var_userkillist2:
-                                            var_userkillist2.append(user)
-                                    for user in var_userkillist2:
-                                        sx,sy,sz,sh = world.spawn
-                                        user.teleportTo(sx,sy,sz,sh)
-                                        self.client.sendWorldMessage("%s has been vaporized." % user.username)
-                                    for index in range(len(entitylist)):
-                                        rx,ry,rz = entitylist[index][1]
-                                        distance = ((rx-x)**2+(ry-y)**2+(rz-z)**2)**0.5
-                                        if distance <= radius:
-                                            var_dellist.append(index)
-                                    if var_check:
-                                        block = '\x17'
-                                    else:
-                                        block = '\x00'
-                                    for i,j,k in var_superbombtuple[radius]:
-                                        try:
-                                            world[x+i, y+j, z+k] = block
-                                            self.client.queueTask(TASK_BLOCKSET, (x+i, y+j, z+k, block), world=world)
-                                            self.client.sendBlock(x+i, y+j, z+k, block)
-                                        except:
-                                            pass
-                                    if radius >= 10:
-                                        if var_check:
-                                            epicentity[4] = False
-                                            block = '\x00'
-                                            world[x, y, z] = block
-                                            self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
-                                            self.client.sendBlock(x, y, z, block)
-                                            epicentity[5] = 0
-                                        else:
-                                            var_delete = True
-                            if var_delete:
-                                world.entities_epicentity = []
-                            else:
-                                epicentity[1] = (x,y,z)
-                        else:
-                            world.entities_epicentity = []
-                    except:
-                        self.client.sendWorldMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
-                        self.client.sendWorldMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")
-                        self.client.log(traceback.format_exc(), level=logging.ERROR)
-                        world.entities_epicentity = []
-                        return
             var_num = len(entitylist)
             if var_num > maxentitiystepsatonetime:
                 var_num = maxentitiystepsatonetime
@@ -417,24 +341,3 @@ class EntityPlugin(ProtocolPlugin):
         varsorted_validentities = validentities[:]
         varsorted_validentities.sort()
         self.client.sendServerList(["Available entities:"] + varsorted_validentities)
-        self.client.sendServerList(["Epic entities: "] + ["superbomb"])
-
-    @mod_only
-    def commandEpicEntity(self, parts, byuser, overriderank):
-        "/epicentity entityname - Op\nAliases: epicmob\nCreates the specified entity"
-        if len(parts) < 2:
-            if self.var_entityselected == "None":
-                self.client.sendServerMessage("Please enter an epicentity name (type /entities for a list)")
-            else:
-                self.var_entityselected = "None"
-                self.client.sendServerMessage("The epicentitity has been deselected.")
-        else:
-            world = self.client.world
-            entity = parts[1]
-            if entity == "Superbomb":
-                self.var_entityselected = "Superbomb"
-            else:
-                self.client.sendServerMessage("%s is not a valid epic entity." % entity)
-                return
-            self.client.sendServerMessage("The epicentity %s has been selected." % entity)
-            self.client.sendServerMessage("To deselect just type /epicentity")

@@ -128,7 +128,7 @@ class PlayersPlugin(ProtocolPlugin):
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKYELLOW+parts[1])
                 elif username in self.client.world.ops:
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKCYAN+parts[1])
-                elif username in self.client.world.writers:
+                elif username in self.client.world.writers or self.client.factory.globalbuilders:
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_CYAN+parts[1])
                 elif username in self.client.factory.members:
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_GREY+parts[1])

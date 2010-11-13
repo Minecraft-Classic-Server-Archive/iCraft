@@ -62,19 +62,19 @@ class IsoImage(ProtocolPlugin):
         world = self.client.world
         pathname = os.getcwd()
         savepath = pathname + "/core/isoimage/images/"
-        mapname = world.basename.split("/")[1]
-        mappath = pathname + "/worlds/" + mapname
+        worldname = world.basename.split("/")[1]
+        worldpath = pathname + "/worlds/" + worldname
         try:
             os.chdir(pathname + "/core/isoimage/")
             if self.checkos == "Windows":
-                os.system('java -Xms512M -Xmx1024M -cp minecraft-server.jar; OrigFormat save "%s" server_level.dat'%mappath)
+                os.system('java -Xms512M -Xmx1024M -cp minecraft-server.jar; OrigFormat save "%s" server_level.dat'%worldpath)
                 os.system('java -Xms128M -Xmx1024M -cp minecraft-server.jar;IsoCraft++.jar isocraft server_level.dat tileset.png output.png %s -1 -1 -1 -1 -1 -1 visible'%str(angle))
             else:
-                os.system('java -Xms512M -Xmx1024M -cp minecraft-server.jar: OrigFormat save "%s" server_level.dat'%mappath)
+                os.system('java -Xms512M -Xmx1024M -cp minecraft-server.jar: OrigFormat save "%s" server_level.dat'%worldpath)
                 os.system('java -Xms128M -Xmx1024M -cp minecraft-server.jar:IsoCraft++.jar isocraft server_level.dat tileset.png output.png %s -1 -1 -1 -1 -1 -1 visible'%str(angle))
-            shutil.move("output.png", "images/%s%s.png"%(mapname,str(angle)))
+            shutil.move("output.png", "images/%s%s.png"%(worldname,str(angle)))
             os.chdir(pathname)
-            self.client.sendServerMessage('Isoimage %s has been created.' %(mapname + str(angle) + ".png"))
+            self.client.sendServerMessage('Isoimage %s has been created.' %(worldname + str(angle) + ".png"))
         except:
             #self.client.log(traceback.format_exc(), level=logging.ERROR)
             #print traceback.format_exc()

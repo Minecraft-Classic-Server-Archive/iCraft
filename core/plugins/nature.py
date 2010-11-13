@@ -66,7 +66,7 @@ class ToolsPlugin(ProtocolPlugin):
     
     def newWorld(self, world):
         "Hook to reset dynamiting abilities in new worlds if not op."
-        if not self.client.isWriter():
+        if not self.client.isBuilder():
             self.build_trees = False
     
     def blockChanged(self, x, y, z, block, selected_block, byuser):

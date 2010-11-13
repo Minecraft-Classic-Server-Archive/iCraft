@@ -78,6 +78,87 @@ class ControllerProtocol(LineReceiver):
                     self.sendJson({"error": "%s" % e})
                     traceback.print_exc()
 
+    def commandName(self, data):
+        self.sendJson({"name": self.factory.server_name})
+
+    def commandMOTD(self, data):
+        self.sendJson({"motd": self.factory.server_message})
+
+    def commandGreeting(self, data):
+        self.sendJson({"greeting": self.factory.initial_greeting})
+
+    def commandPublic(self, data):
+        self.sendJson({"public": self.factory.public})
+
+    def commandLimit(self, data):
+        self.sendJson({"limit": self.factory.max_clients})
+
+    def commandDuplicates(self, data):
+        self.sendJson({"duplicates": self.factory.duplicate_logins})
+
+    def commandPhLimits(self, data):
+        self.sendJson({"phlimits": self.factory.physics_limit})
+
+    def commandAwayTime(self, data):
+        self.sendJson({"awaytime": self.factory.away_time})
+
+    def commandDefault(self, data):
+        self.sendJson({"default": self.factory.default_name})
+
+    def commandDeBackup(self, data):
+        self.sendJson({"debackup": self.factory.default_backup})
+
+    def commandASD(self, data):
+        self.sendJson({"asd": self.factory.asd_delay})
+
+    def commandGChat(self, data):
+        self.sendJson({"gchat": self.factory.gchat})
+
+    def commandBUFreq(self, data):
+        if self.factory.backup_auto:
+            self.sendJson({"bufreq": self.factory.backup_freq})
+        else:
+            self.sendJson({"bufreq": "N/A"})
+
+    def commandBUMax(self, data):
+        if self.factory.backup_auto:
+            self.sendJson({"bumax": self.factory.backup_max})
+        else:
+            self.sendJson({"bumax": "N/A"})
+
+    def commandCurrency(self, data):
+        self.sendJson({"currency": self.factory.currency})
+
+    def commandBDLimit(self, data):
+        self.sendJson({"bdlimit": self.factory.build_director})
+
+    def commandBALimit(self, data):
+        self.sendJson({"balimit": self.factory.build_admin})
+
+    def commandBMLimit(self, data):
+        self.sendJson({"bmlimit": self.factory.build_mod})
+
+    def commandBOPLimit(self, data):
+        self.sendJson({"boplimit": self.factory.build_op})
+
+    def commandBOLimit(self, data):
+        self.sendJson({"bolimit": self.factory.build_other})
+
+    def commandIRCServer(self, data):
+        if self.factory.use_irc:
+            if self.factory.irc_config.get("irc", "server") == "bots.esper.net":
+                self.sendJson({"ircserver": "irc.esper.net"})
+            else:
+                self.sendJson({"ircserver": self.factory.irc_config.get("irc", "server")})
+        else:
+            self.sendJson({"ircserver": "N/A"})
+
+    def commandIRCChannel(self, data):
+        if self.factory.use_irc:
+            self.sendJson({"ircchannel": self.factory.irc_channel})
+        else:
+            self.sendJson({"ircchannel": "N/A"})
+
     def commandUsers(self, data):
         self.sendJson({"users": [client.username for client in self.factory.clients.values() if client.username]})
 
@@ -93,6 +174,9 @@ class ControllerProtocol(LineReceiver):
     def commandMods(self, data):
         self.sendJson({"mods": list(self.factory.mods)})
 
+    def commandGlobalBuilders(self, data):
+        self.sendJson({"globalbuilders": list(self.factory.members)})
+
     def commandMembers(self, data):
         self.sendJson({"members": list(self.factory.members)})
 
@@ -107,7 +191,7 @@ class ControllerProtocol(LineReceiver):
             (world.id, [client.username for client in world.clients if client.username], {
                 "id": world.id,
                 "ops": list(world.ops),
-                "writers": list(world.writers),
+                "builders": list(world.writers),
                 "private": world.private,
                 "archive": world.is_archive,
                 "locked": not world.all_write,
@@ -130,7 +214,7 @@ class ControllerProtocol(LineReceiver):
         self.sendJson({
             "id": world.id,
             "ops": list(world.ops),
-            "writers": list(world.writers),
+            "builders": list(world.writers),
             "private": world.private,
             "archive": world.is_archive,
             "locked": not world.all_write,

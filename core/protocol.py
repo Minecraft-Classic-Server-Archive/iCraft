@@ -266,8 +266,8 @@ class CoreServerProtocol(Protocol):
     def isMod(self):
         return self.factory.isMod(self.username.lower()) or self.isAdmin() or self.isDirector() or self.isOwner()
 
-    def isWriter(self):
-        return (self.username.lower() in self.world.writers) or (self.username.lower() in self.world.ops) or self.isOp() or self.isWorldOwner()
+    def isBuilder(self):
+        return (self.username.lower() in self.world.writers or self.factory.globalbuilders) or (self.username.lower() in self.world.ops) or self.isOp() or self.isWorldOwner()
 
     def isMember(self):
         return self.factory.isMember(self.username.lower()) or (self.username.lower() in self.world.writers) or (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
@@ -279,7 +279,7 @@ class CoreServerProtocol(Protocol):
         if not world.private and (self.username.lower() not in world.worldbans):
             return True
         else:
-            return (self.username.lower() in world.writers) or (self.username.lower() in world.ops) or self.isWorldOwner() or self.isMember() or self.isMod() or self.isAdmin() or self.isDirector()
+            return (self.username.lower() in world.writers) (self.username.lower() in world.ops) or self.isWorldOwner() or self.isMember() or self.isMod() or self.isAdmin() or self.isDirector()
 
     def dataReceived(self, data):
         # First, add the data we got onto our internal buffer
@@ -311,7 +311,7 @@ class CoreServerProtocol(Protocol):
                 correct_pass = hashlib.md5(self.factory.salt + self.username).hexdigest()[-32:].strip("0")
                 mppass = mppass.strip("0")
                 if not self.transport.getHost().host.split(".")[0:2] == self.transport.getPeer().host.split(".")[0:2]:
-                    if self.factory.verify_names and mppass != correct_pass:
+                    if mppass != correct_pass:
                         self.log("Kicked '%s'; invalid password (%s, %s)" % (self.username, mppass, correct_pass))
                         self.sendError("Incorrect authentication. (try again in 60s?)")
                         return
@@ -536,7 +536,7 @@ class CoreServerProtocol(Protocol):
                         except KeyError:
                             self.sendServerMessage("Unknown command '%s'" % command)
                             return
-                    if (self.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "writer_only", False))):
+                    if (self.isSpectator() and (getattr(func, "admin_only", False) or getattr(func, "mod_only", False) or getattr(func, "op_only", False) or getattr(func, "member_only", False) or getattr(func, "worldowner_only", False) or getattr(func, "builder_only", False))):
                         self.sendServerMessage("'%s' is not available to specs." % command)
                         return
                     if getattr(func, "owner_only", False) and not self.isOwner():
@@ -557,10 +557,10 @@ class CoreServerProtocol(Protocol):
                     if getattr(func, "op_only", False) and not (self.isOp() or self.isMod()):
                         self.sendServerMessage("'%s' is an Op-only command!" % command)
                         return
-                    if getattr(func, "writer_only", False) and not (self.isWriter() or self.isOp() or self.isMod()):
+                    if getattr(func, "builer_only", False) and not (self.isBuilder() or self.isOp() or self.isMod()):
                         self.sendServerMessage("'%s' is a Builder-only command!" % command)
                         return
-                    if getattr(func, "member_only", False) and not (self.isMember() or self.isWriter() or self.isOp() or self.isMod()):
+                    if getattr(func, "member_only", False) and not (self.isMember() or self.isBuilder() or self.isOp() or self.isMod()):
                         self.sendServerMessage("'%s' is a Member-only command!" % command)
                         return
                     try:
@@ -675,7 +675,7 @@ class CoreServerProtocol(Protocol):
                 color = COLOUR_DARKYELLOW
             elif self.isOp():
                 color = COLOUR_DARKCYAN
-            elif self.isWriter():
+            elif self.isBuilder():
                 color = COLOUR_CYAN
             elif self.isMember():
                 color = COLOUR_GREY
@@ -764,6 +764,15 @@ class CoreServerProtocol(Protocol):
         self.runHook("rankchange")
         self.respawn()
 
+    def sendGlobalBuilderUpdate(self):
+        "Sends the global builder message"
+        if self.isBuilder():
+            self.sendServerMessage("You are now a Global Builder.")
+        else:
+            self.sendServerMessage("You are no longer a Global Builder.")
+        self.runHook("rankchange")
+        self.respawn()
+
     def sendMemberUpdate(self):
         "Sends the member message"
         if self.isMember():
@@ -782,9 +791,9 @@ class CoreServerProtocol(Protocol):
         self.runHook("rankchange")
         self.respawn()
 
-    def sendWriterUpdate(self):
+    def sendBuilderUpdate(self):
         "Sends a message."
-        if self.isWriter():
+        if self.isBuilder():
             self.sendServerMessage("You are now a Builder in this world.")
         else:
             self.sendServerMessage("You are no longer a Builder in this world.")
@@ -1060,7 +1069,7 @@ class CoreServerProtocol(Protocol):
                     if x1 < x < x2:
                         if y1 < y < y2:
                             if z1 < z < z2:
-                                if self.isWriter():
+                                if self.isBuilder():
                                     return True
                                 else:
                                     self.sendServerMessage("You must be " + zone[7] + "to build here.")
@@ -1139,7 +1148,7 @@ class CoreServerProtocol(Protocol):
             self.sendBlock(x, y, z)
             self.sendServerMessage("Only Builder/Op and Mod+ may edit '%s'." % self.factory.default_name)
             return
-        if not self.world.all_write and self.isWriter() or self.isOp():
+        if not self.world.all_write and self.isBuilder() or self.isOp():
             return True
         if self.world.all_write:
             return True

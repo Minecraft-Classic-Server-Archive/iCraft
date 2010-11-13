@@ -37,8 +37,8 @@
 
 import os
 
-INFO_VERSION = "3.0.1"
-INFO_FULLVERSION = "3.0.1 Final"
+INFO_VERSION = "3.0.2"
+INFO_FULLVERSION = "3.0.2 (with setup)"
 INFO_WEBSITE = "http://hlmc.net/"
 INFO_IRC = "irc.esper.net \#iCraft"
 

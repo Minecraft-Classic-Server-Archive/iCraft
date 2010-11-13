@@ -48,7 +48,7 @@ class StairsPlugin(ProtocolPlugin):
     }
     
     @build_list
-    @writer_only
+    @builder_only
     def commandStairs(self, parts, byuser, overriderank):
         "/stairs blockname height [c] [x y z x2 y2 z2] - Builder\nc = counter-clockwise\nBuilds a spiral staircase."
         if len(parts) < 9 and len(parts) != 3 and len(parts) != 4:

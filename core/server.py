@@ -164,6 +164,7 @@ class CoreFactory(Factory):
             self.build_mod = self.ploptions_config.get("build", "mod")
             self.build_op = self.ploptions_config.get("build", "op")
             self.build_other = self.ploptions_config.get("build", "other")
+            self.elimit = self.ploptions_config.getint("entities", "limit")
             if self.backup_auto:
                 reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
         except:
@@ -194,7 +195,6 @@ class CoreFactory(Factory):
             self.email_config = ConfigParser()
             self.email_config.read("config/email.conf")
         self.saving = False
-        self.verify_names = True #DON'T TURN THIS OFF UNLESS YOU KNOW WHAT YOU'RE DOING. THIS VERIFIES THE NAMES ON THE SERVER TO SEE IF THEY ARE WHO THEY SAY THEY ARE, TURNING IT OFF CAN BE DANGEROUS AND A BIG SECURITY RISK. YOU WILL NOT BE SUPPORTED BY THE ICRAFT TEAM IF THIS IS TURNED OFF.
         try:
             self.max_clients = self.config.getint("main", "max_clients")
             self.server_name = self.config.get("main", "name")
@@ -236,6 +236,7 @@ class CoreFactory(Factory):
             self.build_mod = self.ploptions_config.get("build", "mod")
             self.build_op = self.ploptions_config.get("build", "op")
             self.build_other = self.ploptions_config.get("build", "other")
+            self.elimit = self.ploptions_config.get("entities", "limit")
             if self.backup_auto:
                 reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
         except:
@@ -293,6 +294,7 @@ class CoreFactory(Factory):
         self.directors = set()
         self.admins = set()
         self.mods = set()
+        self.globalbuilders = set()
         self.members = set()
         self.spectators = set()
         self.silenced = set()
@@ -348,6 +350,9 @@ class CoreFactory(Factory):
         if config.has_section("mods"):
             for name in config.options("mods"):
                 self.mods.add(name)
+        if config.has_section("globalbuilders"):
+            for name in config.options("globalbuilders"):
+                self.globalbuilders.add(name)
         if config.has_section("members"):
             for name in config.options("members"):
                 self.members.add(name)
@@ -397,6 +402,7 @@ class CoreFactory(Factory):
         config.add_section("directors")
         config.add_section("admins")
         config.add_section("mods")
+        config.add_section("globalbuilders")
         config.add_section("members")
         config.add_section("silenced")
         bans.add_section("banned")
@@ -410,6 +416,8 @@ class CoreFactory(Factory):
             config.set("admins", admin, "true")
         for mod in self.mods:
             config.set("mods", mod, "true")
+        for globalbuilder in self.globalbuilders:
+            config.set("globalbuilders", globalbuilder, "true")
         for member in self.members:
             config.set("members", member, "true")
         for ban, reason in self.banned.items():
@@ -977,7 +985,6 @@ class CoreFactory(Factory):
 
     def exit(self):
         try:
-            raw_input("Press Enter to exit.")
             raise EOFError
         except EOFError:
             sys.exit(1);

@@ -65,7 +65,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
         if username in factory.usernames:
             user = factory.usernames[username]
             if user.world == world:
-                user.sendWriterUpdate()
+                user.sendBuilderUpdate()
         return ("%s is now a Builder" % username)
     elif parts[1] == "op":
         if len(parts) > 3:
@@ -107,8 +107,21 @@ def Rank(self, parts, byuser, overriderank,server=None):
             if not parts[-1] == "console":
                 return ("You are not high enough rank!")
         self.client.world.owner = (username)
-        return ("%s is now a world owner." % username)
-        #make world owner    
+        return ("%s is now a World Owner." % username)
+        #make world owner
+    elif parts[1] == "globalbuilder":
+        #make them a global builder
+        if not server:
+            if not self.client.isMod():
+                return ("You are not high enough rank!")
+        else:
+            if not parts[-1] == "console":
+                if not factory.isMod(parts[-1]):
+                    return ("You are not high enough rank!")
+        factory.globalbuilders.add(username)
+        if username in factory.usernames:
+            factory.usernames[username].sendGlobalBuilderUpdate()
+        return ("%s is now a Global Builder." % username)
     elif parts[1] == "member":
         #make them a member
         if not server:
@@ -196,7 +209,7 @@ def DeRank(self, parts, byuser, overriderank, server=None):
         if username in factory.usernames:
             user = factory.usernames[username]
             if user.world == world:
-                user.sendWriterUpdate()
+                user.sendBuilderUpdate()
         return ("Removed %s as Builder" % username)
     elif parts[1] == "op":
         if len(parts) > 3:
@@ -252,8 +265,24 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             user = factory.usernames[username]
             if user.world == world:
                 user.sendOpUpdate()
-        return ("%s is no longer the world owner." % username)
+        return ("%s is no longer the World Owner." % username)
         #make worldowner
+    elif parts[1] == "member":
+        #make them a global builder
+        if not server:
+            if not self.client.isMod():
+                return ("You are not high enough rank!")
+        else:
+            if not parts[-1] == "console":
+                if not factory.isMod(parts[-1]):
+                    return ("You are not high enough rank!")
+        if username in factory.globalbuilders:
+            factory.members.remove(username)
+        else:
+            return ("No such Global Builder \"%s\"" % username.lower())
+        if username in factory.usernames:
+            factory.usernames[username].sendGlobalBuilderUpdate()
+        return ("%s is no longer a Global Builder." % username.lower())
     elif parts[1] == "member":
         #make them a member
         if not server:

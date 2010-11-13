@@ -74,9 +74,9 @@ def op_only(func):
     func.op_only = True
     return func
 
-def writer_only(func):
+def builder_only(func):
     "Decorator for builder-only command methods."
-    func.writer_only = True
+    func.builder_only = True
     return func
 
 def build_list(func):

@@ -57,7 +57,7 @@ class ShapesPlugin(ProtocolPlugin):
     }
     
     @build_list
-    @writer_only
+    @builder_only
     def commandSphere(self, parts, byuser, overriderank):
         "/sphere blocktype [x y z] radius - Builder\nPlace/delete a block and /sphere block radius"
         if len(parts) < 6 and len(parts) != 3:
@@ -133,7 +133,7 @@ class ShapesPlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @writer_only
+    @builder_only
     def commandHSphere(self, parts, byuser, overriderank):
         "/hsphere blocktype [x y z] radius - Builder\nPlace/delete a block, makes a hollow /sphere"
         if len(parts) < 6 and len(parts) != 3:
@@ -209,7 +209,7 @@ class ShapesPlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @writer_only
+    @builder_only
     def commandCurve(self, parts, byuser, overriderank):
         "/curve blockname [x y z x2 y2 z2 x3 y3 z3] - Builder\nSets a line of blocks along three points to block."
         if len(parts) < 11 and len(parts) != 2:
@@ -472,12 +472,12 @@ class ShapesPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("All parameters must be integers")
                     return
             steps = int(((x2-x)**2+(y2-y)**2+(z2-z)**2)**0.5)
-            try:
-                mx = float(x2-x)/steps
-                my = float(y2-y)/steps
-                mz = float(z2-z)/steps
-            except ZeroDivisionError:
-                self.client.sendServerMessage("Float Division Error: what went wrong?")
+            if steps == 0:
+                self.client.sendServerMessage("Your lines need to be longer.")
+                return
+            mx = float(x2-x)/steps
+            my = float(y2-y)/steps
+            mz = float(z2-z)/steps
             coordinatelist1 = []
             for t in range(steps+1):
                 coordinatelist1.append((int(round(mx*t+x)),int(round(my*t+y)),int(round(mz*t+z))))

@@ -42,22 +42,14 @@ import sys
 import time
 import logging
 import os,shutil
-try:
-    from reqs.twisted.internet import reactor
-except:
-    print ("NOTICE: Something went wrong with your reqs folder!")
-    try:
-        raw_input("Press Enter to exit.")
-        raise EOFError
-    except EOFError:
-        sys.exit(1);
+from reqs.twisted.internet import reactor
 from logging.handlers import SMTPHandler
 from core.constants import *
 from core.server import CoreFactory
 from core.controller import ControllerFactory
 from ConfigParser import RawConfigParser as ConfigParser
 
-print ("Now starting up iCraft %s (with setup).." % INFO_FULLVERSION)
+print ("Now starting up iCraft %s .." % INFO_FULLVERSION)
 print ("- Please don't forget to check for updates.")
 print ("- Do you need help with iCraft? Feel free to stop by; %s | %s" % (INFO_WEBSITE, INFO_IRC))
 
@@ -114,7 +106,7 @@ factory.makefile("logs/staff.log")
 factory.makefile("logs/whisper.log")
 factory.makefile("logs/world.log")
 factory.makefile("config/data/")
-factory.makefile("core/plugins/isoimage/images/")
+factory.makefile("core/isoimage/images/")
 factory.makefile("core/archives/")
 factory.makedatfile("config/data/balances.dat")
 factory.makedatfile("config/data/inbox.dat")

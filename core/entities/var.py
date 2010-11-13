@@ -73,7 +73,6 @@ if movementbehavior == "follow":
                     closestdistance = distance
                     closestclient = client
                     closestposition = (var_pos[0],var_pos[2])
-                    
         if nearbehavior == "kill":
             if closestdistance < 2:
                 sx,sy,sz,sh = world.spawn

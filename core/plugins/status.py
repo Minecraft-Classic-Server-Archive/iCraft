@@ -50,8 +50,8 @@ class WorldUtilPlugin(ProtocolPlugin):
         "worldowner": "commandSetOwner",
         "where": "commandWhere",
         "ops": "commandOps",
-        "writers": "commandWriters",
-        "builders": "commandWriters",
+        "writers": "commandBuilders",
+        "builders": "commandBuilders",
     }
 
     @player_list
@@ -73,7 +73,7 @@ class WorldUtilPlugin(ProtocolPlugin):
             self.client.sendServerList(["Ops for %s:" % self.client.world.id] + list(self.client.world.ops))
 
     @info_list
-    def commandWriters(self, parts, byuser, overriderank):
+    def commandBuilders(self, parts, byuser, overriderank):
         "/writers - Guest\nAliases: builders\nLists this world's writers"
         if not self.client.world.writers:
             self.client.sendServerMessage("This world has no Builders.")

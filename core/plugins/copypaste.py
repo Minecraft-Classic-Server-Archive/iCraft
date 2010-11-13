@@ -51,7 +51,7 @@ class BsavePlugin(ProtocolPlugin):
     }
     
     @build_list
-    @writer_only
+    @builder_only
     def commandLoad(self, parts, byuser, overriderank):
         "/paste [x y z] - Builder\nRestore blocks saved earlier using /copy"
         if len(parts) < 4 and len(parts) != 1:
@@ -112,7 +112,7 @@ class BsavePlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @writer_only
+    @builder_only
     def commandSave(self, parts, byuser, overriderank):
         "/copy [x y z x2 y2 z2] - Builder\nCopy blocks using specified offsets."
         if len(parts) < 7 and len(parts) != 1:
@@ -187,7 +187,7 @@ class BsavePlugin(ProtocolPlugin):
             do_step()
 
     @build_list
-    @writer_only
+    @builder_only
     def commandRotate(self, parts, byuser, overriderank):
         "/rotate angle - Builder\nAllows you to rotate what you copied."
         if len(parts)<2:

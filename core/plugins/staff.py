@@ -43,6 +43,7 @@ class ModsPlugin(ProtocolPlugin):
     
     commands = {
         "staff": "commandStaff",
+        "globalbuilders": "commandGlobalBuilders",
         "members": "commandMembers",
         "directors": "commandDirectors",
         "admins": "commandAdmins",
@@ -58,25 +59,41 @@ class ModsPlugin(ProtocolPlugin):
             self.client.sendServerList(each)
 
     @info_list
+    def commandGlobalBuilders(self, parts, byuser, overriderank):
+        "/globalbuilders - Guest\nLists all Global Builders."
+        if len(self.client.factory.globalbuilders):
+            self.client.sendServerList(["Global Builders:"] + list(self.client.factory.globalbuilders))
+        else:
+            self.client.sendServerList(["Global Builders:"] + list("N/A"))
+
+    @info_list
     def commandMembers(self, parts, byuser, overriderank):
         "/members - Guest\nLists all Members."
         if len(self.client.factory.members):
             self.client.sendServerList(["Members:"] + list(self.client.factory.members))
+        else:
+            self.client.sendServerList(["Members:"] + list("N/A"))
 
     @info_list
     def commandDirectors(self, parts, byuser, overriderank):
         "/directors - Guest\nLists all Directors."
         if len(self.client.factory.directors):
             self.client.sendServerList(["Directors:"] + list(self.client.factory.directors))
+        else:
+            self.client.sendServerList(["Directors:"] + list("N/A"))
 
     @info_list
     def commandAdmins(self, parts, byuser, overriderank):
         "/admins - Guest\nLists all Admins."
         if len(self.client.factory.admins):
             self.client.sendServerList(["Admins:"] + list(self.client.factory.admins))
+        else:
+            self.client.sendServerList(["Admins:"] + list("N/A"))
 
     @info_list
     def commandMods(self, parts, byuser, overriderank):
         "/mods - Guest\nLists all Mods."
         if len(self.client.factory.mods):
             self.client.sendServerList(["Mods:"] + list(self.client.factory.mods))
+        else:
+            self.client.sendServerList(["Mods:"] + list("N/A"))
