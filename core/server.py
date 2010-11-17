@@ -118,7 +118,7 @@ class CoreFactory(Factory):
                 global ChatBotFactory
                 del ChatBotFactory
                 from core.irc_client import ChatBotFactory
-                if  self.use_irc:
+                if self.ircbot and self.use_irc:
                     self.irc_nick = self.irc_config.get("irc", "nick")
                     self.irc_pass = self.irc_config.get("irc", "password")
                     self.irc_channel = self.irc_config.get("irc", "channel")
@@ -150,7 +150,7 @@ class CoreFactory(Factory):
             self.physics_limit = self.options_config.getint("worlds", "physics_limit")
             self.default_backup = self.options_config.get("worlds", "default_backup")
             self.asd_delay = self.options_config.getint("worlds", "asd_delay")
-            self.asd_gchat = self.options_config.getboolean("worlds", "gchat")
+            self.gchat = self.options_config.getboolean("worlds", "gchat")
             self.grief_blocks = self.ploptions_config.getint("antigrief", "blocks")
             self.grief_time = self.ploptions_config.getint("antigrief", "time")
             self.backup_freq = self.ploptions_config.getint("backups", "backup_freq")
@@ -165,6 +165,7 @@ class CoreFactory(Factory):
             self.build_op = self.ploptions_config.get("build", "op")
             self.build_other = self.ploptions_config.get("build", "other")
             self.elimit = self.ploptions_config.getint("entities", "limit")
+            self.staffchat = self.options_config.getboolean("options", "staffchat")
             if self.backup_auto:
                 reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
         except:
@@ -219,6 +220,7 @@ class CoreFactory(Factory):
             self.default_backup = self.options_config.get("worlds", "default_backup")
             self.asd_delay = self.options_config.getint("worlds", "asd_delay")
             self.gchat = self.options_config.getboolean("worlds", "gchat")
+            self.staffchat = self.options_config.getboolean("options", "staffchat")
         except:
             logging.log(logging.ERROR, "You don't have a options.conf file! You need to rename options.example.conf to options.conf")
             self.exit()
@@ -242,13 +244,15 @@ class CoreFactory(Factory):
         except:
             logging.log(logging.ERROR, "You don't have a ploptions.conf file! You need to rename ploptions.example.conf to ploptions.conf")
             self.exit()
-        if  self.use_irc:
+        if self.use_irc:
             self.irc_nick = self.irc_config.get("irc", "nick")
             self.irc_pass = self.irc_config.get("irc", "password")
             self.irc_channel = self.irc_config.get("irc", "channel")
             self.irc_cmdlogs = self.irc_config.getboolean("irc", "cmdlogs")
+            self.ircbot = self.irc_config.getboolean("irc", "ircbot")
             self.irc_relay = ChatBotFactory(self)
-            reactor.connectTCP(self.irc_config.get("irc", "server"), self.irc_config.getint("irc", "port"), self.irc_relay)
+            if self.ircbot:
+                reactor.connectTCP(self.irc_config.get("irc", "server"), self.irc_config.getint("irc", "port"), self.irc_relay)
         else:
             self.irc_relay = None
         self.default_loaded = False
@@ -584,7 +588,7 @@ class CoreFactory(Factory):
         """
         for client in list(list(self.worlds[world_id].clients))[:]:
             if world_id == self.default_name:
-                client.changeToWorld(self.factory.default_backup)
+                client.changeToWorld(self.default_backup)
             else:
                 client.changeToWorld(self.default_name)
             client.sendServerMessage("%s has been Rebooted" % world_id)
@@ -750,7 +754,7 @@ class CoreFactory(Factory):
                         for user, client in self.usernames.items():
                             if self.isMod(user):
                                 client.sendMessage(100, COLOUR_YELLOW+"#"+colour, username, message, False, False)
-                        if self.irc_relay and len(data)>3:
+                        if self.factory.staffchat and self.irc_relay and len(data)>3:
                             self.irc_relay.sendServerMessage("#"+username+": "+text,True,username,IRC)
                         logging.log(logging.INFO,"#"+username+": "+text)
                         self.adlog = open("logs/server.log", "a")
@@ -828,7 +832,7 @@ class CoreFactory(Factory):
             try:
                 shutil.copyfile("core/templates/%s/%s" % (template, filename), "worlds/%s/%s" % (new_name, filename))
             except:
-                client.sendServerMessage("That template doesn't exist.")
+                self.client.sendServerMessage("That template doesn't exist.")
 
     def renameWorld(self, old_worldid, new_worldid):
         "Renames a world."

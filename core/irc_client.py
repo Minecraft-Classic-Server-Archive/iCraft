@@ -104,7 +104,7 @@ class ChatBot(irc.IRCClient):
         try:
             user = command[0]
             if user in self.ops:
-                if command[1].startswith("#"):
+                if self.factory.staffchat and command[1].startswith("#"):
                     #It's an staff-only message.
                     if len(command[1]) == 1:
                         self.msg(user, "07Please include a message to send.")
@@ -122,7 +122,8 @@ class ChatBot(irc.IRCClient):
                 elif command[1] == ("help"):
                     self.msg(user, "07Admin Help")
                     self.msg(user, "07Commands: Use 'cmdlist'")
-                    self.msg(user, "07StaffChat: Use '#message'")
+                    if self.factory.staffchat:
+                        self.msg(user, "07StaffChat: Use '#message'")
                 elif command[1] == ("cmdlist"):
                     self.msg(user, "07Here are your Admin Commands:")
                     self.msg(user, "07ban banned banreason boot derank kick rank rehash shutdown spec")
@@ -189,11 +190,11 @@ class ChatBot(irc.IRCClient):
                 else:
                     self.msg(user, "07Sorry, "+command[1]+" is not a command!")
             else:
-                if command[1].startswith("#"):
+                if self.factory.staffchat and command[1].startswith("#"):
                     self.msg(user, "07You must be an op to use StaffChat")
                 else:
                     self.msg(user, "07You must be an op to use %s." %command[1])
-            if not command[1].startswith("#"):
+            if self.factory.staffchat and not command[1].startswith("#"):
                 logging.log(logging.INFO,"%s just used: %s" %(user," ".join(command[1:])))
         except:
             logging.log(logging.ERROR,traceback.format_exc())
@@ -252,7 +253,7 @@ class ChatBot(irc.IRCClient):
                             self.msg(self.factory.irc_channel, "07Use '$"+self.nickname+" command arguments' to do it.")
                             self.msg(self.factory.irc_channel, "07NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
                         elif msg_command[1] == ("about"):
-                            self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft %s %s - Credits: Use '$%s credits'" % (INFO_VERSION, INFO_WEBSITE, self.nickname))
+                            self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft %s; http://hlmc.net/ - Credits: Use '$%s credits'" % (INFO_VERSION, self.nickname))
                             self.msg(self.factory.irc_channel, "07Name: "+self.factory.server_name+"; owned by "+self.factory.owner)
                             try:
                                 self.msg(self.factory.irc_channel, "07URL: "+self.factory.heartbeat.url)

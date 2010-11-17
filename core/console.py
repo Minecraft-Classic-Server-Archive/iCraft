@@ -232,7 +232,7 @@ class StdinPlugin(threading.Thread):
                                 print ("about boot ban cmdlist cpr derank help ircrehash kick me new pll plr plu rank rehash say shutdown spec srb srs u")
                             elif message[0] == ("about"):
                                 print ("About The Server")
-                                print ("Powered by iCraft %s; %s | %s" % (INFO_VERSION, INFO_WEBSITE, INFO_IRC))
+                                print ("Powered by iCraft %s; http://hlmc.net/ | irc.esper.net #icraft" % (INFO_VERSION))
                                 print ("Name: "+self.server.server_name)
                                 try:
                                     print ("URL: "+self.server.heartbeat.url)

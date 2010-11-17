@@ -1,5 +1,21 @@
 =========================
 
+v3.0.3:
+
+ADDED:
+- Method to turn off StaffChat's IRC Relay (gets spammy, fast!)
+- IRC Server/Channel Display (turn off the IRC Bot!)
+
+FIXED:
+- Attempt at fixing pets/pfields
+- Problem loading various maps
+- Reloading default
+- ipbans not working if specifying a offline username
+- solids on/off not working
+- Creating new worlds, a error didn't display right
+
+=========================
+
 v3.0.2:
 NOTE: There was also a code cleanup.
 Fixes a security exploit (3.0 did also)

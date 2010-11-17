@@ -62,7 +62,7 @@ if var_cango:
     self.client.sendBlock(x, y, z, block)
 else:
     ownerclient = entity[4]
-    ownername = ownerclient.username
+    ownername = self.client.username
     if ownername in worldusernamelist:
         i,j,k = (ownerclient.x >> 5,ownerclient.y >> 5,ownerclient.z >> 5)
         distance = ((i-x)**2+(k-z)**2)**0.5

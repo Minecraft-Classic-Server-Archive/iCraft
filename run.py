@@ -51,13 +51,20 @@ from ConfigParser import RawConfigParser as ConfigParser
 
 print ("Now starting up iCraft %s .." % INFO_FULLVERSION)
 print ("- Please don't forget to check for updates.")
-print ("- Do you need help with iCraft? Feel free to stop by; %s | %s" % (INFO_WEBSITE, INFO_IRC))
+print ("- Do you need help with iCraft? Feel free to stop by either way; http://hlmc.net/ | irc.esper.net #icraft")
+
+useConsoleLog = True
+#Disable file logging if using nohup
+if os.name == "posix" and os.path.exists("nohup.out"):
+    if "_" in os.environ.keys():
+        if os.environ["_"] == "/usr/bin/nohup":
+            useConsoleLog = False
 
 if not os.path.exists("logs/"):
     os.mkdir("logs/")
-if not os.path.exists("logs/console/"):
+if not useConsoleLog and not os.path.exists("logs/console/"):
     os.mkdir("logs/console/")
-if not os.path.exists("logs/console/console.log"):
+if not useConsoleLog and not os.path.exists("logs/console/console.log"):
     file = open("logs/console/console.log", "w")
     file.write("")
     file.close()
@@ -68,13 +75,6 @@ def LogTimestamp():
         f=open("logs/console/console.log",'w')
         f.close()
     reactor.callLater(6*60*60, LogTimestamp)#24hours*60minutes*60seconds
-
-useConsoleLog = True
-#Disable file logging if using nohup
-if os.name == "posix" and os.path.exists("nohup.out"):
-    if "_" in os.environ.keys():
-        if os.environ["_"] == "/usr/bin/nohup":
-            useConsoleLog = False
 
 if useConsoleLog:            
     logging.basicConfig(

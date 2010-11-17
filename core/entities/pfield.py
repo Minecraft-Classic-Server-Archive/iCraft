@@ -39,7 +39,7 @@ for var_index in range(len(entitylist)):
     var_entity = entitylist[var_index]
     identity = var_entity[0]
     ownername = entity[4]
-    ownerclient = self.client.factory.usernames[ownername]
+    ownerclient = self.client.username
     if ownername in worldusernamelist:
         x, y, z = (ownerclient.x >> 5,ownerclient.y >> 5,ownerclient.z >> 5)
         if identity != "pfield" or "forcefield":

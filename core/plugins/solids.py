@@ -87,13 +87,13 @@ class AdminBlocksPlugin(ProtocolPlugin):
         if onoff == "on":
             self.client.world.admin_blocks = True
             self.client.sendWorldMessage("Admin blocks are now enabled here.")
-            self.client.sendServerMessage("Admin Blocks on in %s" % self.client.world.id)
+            self.client.sendServerMessage("Admin blocks on in %s" % self.client.world.id)
         else:
             self.client.world.admin_blocks = False
             self.client.sendWorldMessage("Admin blocks are now disabled here.")
-            self.client.sendServerMessage("Admin Blocks off in %s" % self.client.world.id)
-        for client in self.client.world.clients:
-            client.sendAdminBlockUpdate()
+            self.client.sendServerMessage("Admin blocks off in %s" % self.client.world.id)
+        #for client in self.client.world.clients:
+        #    self.client.sendAdminBlockUpdate()
     
     @build_list
     @op_only

@@ -37,10 +37,8 @@
 
 import os
 
-INFO_VERSION = "3.0.2"
-INFO_FULLVERSION = "3.0.2 (with setup)"
-INFO_WEBSITE = "http://hlmc.net/"
-INFO_IRC = "irc.esper.net \#iCraft"
+INFO_VERSION = "v3.0.3"
+INFO_FULLVERSION = "v3.0.3 (with setup)"
 
 FORMAT_LENGTHS = {
     "b": 1,

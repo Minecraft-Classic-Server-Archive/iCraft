@@ -119,17 +119,20 @@ class KickBanPlugin(ProtocolPlugin):
     @only_username_command
     def commandIpban(self, username, byuser, overriderank, params=[]):
         "/ipban username reason - Director\nBan a user's IP from this server."
-        ip = self.client.factory.usernames[username].transport.getPeer().host
-        if self.client.factory.isIpBanned(ip):
-            self.client.sendServerMessage("%s is already IPBanned." % ip)
-        else:
-            if not params:
-                self.client.sendServerMessage("Please give a reason.")
+        try:
+            ip = self.client.factory.usernames[username].transport.getPeer().host
+            if self.client.factory.isIpBanned(ip):
+                self.client.sendServerMessage("%s is already IPBanned." % ip)
             else:
-                self.client.factory.addIpBan(ip, " ".join(params))
-                if username in self.client.factory.usernames:
-                    self.client.factory.usernames[username].sendError("You got Banned!")
-                self.client.sendServerMessage("%s has been IPBanned." % ip)
+                if not params:
+                    self.client.sendServerMessage("Please give a reason.")
+                else:
+                    self.client.factory.addIpBan(ip, " ".join(params))
+                    if username in self.client.factory.usernames:
+                        self.client.factory.usernames[username].sendError("You got Banned!")
+                    self.client.sendServerMessage("%s has been IPBanned." % ip)
+        except:
+            self.client.sendServerMessage("Sorry, that username is not online.")
     
     @player_list
     @admin_only
