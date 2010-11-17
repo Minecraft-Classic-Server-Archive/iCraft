@@ -47,7 +47,6 @@ class PhysicsControlPlugin(ProtocolPlugin):
         "unflood": "commandUnflood",
         "deflood": "commandUnflood",
         "fwater": "commandFwater",
-        "asd":"commandASD",
     }
     
     @world_list
@@ -89,18 +88,6 @@ class PhysicsControlPlugin(ProtocolPlugin):
         else:
             self.client.world.finite_water = False
             self.client.sendWorldMessage("This world now has finite water disabled.")
-    
-    @world_list
-    @admin_only
-    @on_off_command
-    def commandASD(self, onoff, byuser, overriderank):
-        "/asd on|off - Admin\nEnables or disables whether the world shuts down if no one is on it."
-        if onoff == "on":
-            self.client.world.autoshutdown = True
-            self.client.sendWorldMessage("This world now automaticaly shuts down.")
-        else:
-            self.client.world.autoshutdown = False
-            self.client.sendWorldMessage("This world now shuts down manualy.")
 
     # Needs updating for new physics engine separation
     #@admin_only
