@@ -1,5 +1,22 @@
 =========================
 
+v3.0.4:
+
+ADDED:
+- Various IRC Bot checks for configurationn
+
+FIXED:
+- Problem with not being able to demote Global Builders
+- Where guests were like Global Builders (security exploit!)
+- Error while shutting down default
+- Status Script breaking
+- Server Exit
+
+CHANGED:
+- Backend for VIPs (yellow namers)
+
+=========================
+
 v3.0.3:
 
 ADDED:

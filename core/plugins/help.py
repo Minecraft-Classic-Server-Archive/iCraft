@@ -192,8 +192,7 @@ class helpPlugin(ProtocolPlugin):
     @info_list
     def commandAbout(self, parts, byuser, overriderank):
         "/about - Guest\nAliases: info\nAbout the server and software."
-        self.client.sendSplitServerMessage("About The Server, powered by iCraft %s" % INFO_VERSION)
-        self.client.sendSplitServerMessage("%s - Credits: /credits" % INFO_WEBSITE)
+        self.client.sendSplitServerMessage("About The Server, powered by iCraft %s; http://hlmc.net/ - irc.esper.net #icraft | Credits: /credits" % INFO_VERSION)
         self.client.sendSplitServerMessage("Name: "+self.client.factory.server_name+"; owned by "+self.client.factory.owner)
         self.client.sendSplitServerMessage(self.client.factory.server_message)
         self.client.sendServerMessage("URL: "+self.client.factory.info_url)

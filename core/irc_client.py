@@ -104,21 +104,22 @@ class ChatBot(irc.IRCClient):
         try:
             user = command[0]
             if user in self.ops:
-                if self.factory.staffchat and command[1].startswith("#"):
-                    #It's an staff-only message.
-                    if len(command[1]) == 1:
-                        self.msg(user, "07Please include a message to send.")
-                    else:
-                        try:
-                            text = " ".join(command[1:])[1:]
-                        except ValueError:
-                            self.factory.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN,"Console", message)))
+                if command[1].startswith("#"):
+                    if self.factory.staffchat:
+                        #It's an staff-only message.
+                        if len(command[1]) == 1:
+                            self.msg(user, "07Please include a message to send.")
                         else:
-                            self.factory.queue.put((self, TASK_STAFFMESSAGE, (0, COLOUR_PURPLE,command[0],text,True)))
-                            self.adlog = open("logs/server.log", "a")
-                            self.adlog = open("logs/world.log", "a")
-                            self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | #" + command[0] + ": "+text+"\n")
-                            self.adlog.flush()
+                            try:
+                                text = " ".join(command[1:])[1:]
+                            except ValueError:
+                                self.factory.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN,"Console", message)))
+                            else:
+                                self.factory.queue.put((self, TASK_STAFFMESSAGE, (0, COLOUR_PURPLE,command[0],text,True)))
+                                self.adlog = open("logs/server.log", "a")
+                                self.adlog = open("logs/world.log", "a")
+                                self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | #" + command[0] + ": "+text+"\n")
+                                self.adlog.flush()
                 elif command[1] == ("help"):
                     self.msg(user, "07Admin Help")
                     self.msg(user, "07Commands: Use 'cmdlist'")
@@ -190,11 +191,12 @@ class ChatBot(irc.IRCClient):
                 else:
                     self.msg(user, "07Sorry, "+command[1]+" is not a command!")
             else:
-                if self.factory.staffchat and command[1].startswith("#"):
-                    self.msg(user, "07You must be an op to use StaffChat")
+                if command[1].startswith("#"):
+                    if self.factory.staffchat:
+                        self.msg(user, "07You must be an op to use StaffChat")
                 else:
                     self.msg(user, "07You must be an op to use %s." %command[1])
-            if self.factory.staffchat and not command[1].startswith("#"):
+            if not command[1].startswith("#"):
                 logging.log(logging.INFO,"%s just used: %s" %(user," ".join(command[1:])))
         except:
             logging.log(logging.ERROR,traceback.format_exc())
@@ -253,7 +255,7 @@ class ChatBot(irc.IRCClient):
                             self.msg(self.factory.irc_channel, "07Use '$"+self.nickname+" command arguments' to do it.")
                             self.msg(self.factory.irc_channel, "07NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
                         elif msg_command[1] == ("about"):
-                            self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft %s; http://hlmc.net/ - Credits: Use '$%s credits'" % (INFO_VERSION, self.nickname))
+                            self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft %s; http://hlmc.net/ - irc.esper.net #icraft | Credits: Use '$%s credits'" % (INFO_VERSION, self.nickname))
                             self.msg(self.factory.irc_channel, "07Name: "+self.factory.server_name+"; owned by "+self.factory.owner)
                             try:
                                 self.msg(self.factory.irc_channel, "07URL: "+self.factory.heartbeat.url)

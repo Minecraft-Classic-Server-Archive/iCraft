@@ -267,7 +267,7 @@ class CoreServerProtocol(Protocol):
         return self.factory.isMod(self.username.lower()) or self.isAdmin() or self.isDirector() or self.isOwner()
 
     def isBuilder(self):
-        return (self.username.lower() in self.world.writers or self.factory.globalbuilders) or (self.username.lower() in self.world.ops) or self.isOp() or self.isWorldOwner()
+        return (self.username.lower() in self.world.writers) or (self.username.lower() in self.factory.globalbuilders) or (self.username.lower() in self.world.ops) or self.isOp() or self.isWorldOwner()
 
     def isMember(self):
         return self.factory.isMember(self.username.lower()) or (self.username.lower() in self.world.writers) or (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
@@ -279,7 +279,7 @@ class CoreServerProtocol(Protocol):
         if not world.private and (self.username.lower() not in world.worldbans):
             return True
         else:
-            return (self.username.lower() in world.writers) (self.username.lower() in world.ops) or self.isWorldOwner() or self.isMember() or self.isMod() or self.isAdmin() or self.isDirector()
+            return (self.username.lower() in world.writers) or (self.username.lower() in world.ops) or self.isWorldOwner() or self.isMember() or self.isMod() or self.isAdmin() or self.isDirector()
 
     def dataReceived(self, data):
         # First, add the data we got onto our internal buffer
@@ -669,7 +669,7 @@ class CoreServerProtocol(Protocol):
                 color = COLOUR_RED
             elif self.isMod():
                 color = COLOUR_BLUE
-            elif self.username.lower() == "notch" or self.username.lower() == "ez" or self.username.lower() == "dock" or self.username.lower() == "pixeleater" or self.username.lower() == "andrewph" or self.username.lower() == "ikjames" or self.username.lower() == "kingjames" or self.username.lower() == "jameskirslis" or self.username.lower() == "goober" or self.username.lower() == "gothfox" or self.username.lower() == "destroyerx1" or self.username.lower() == "willempiee" or self.username.lower() == "dwarfy" or self.username.lower() == "erronjason" or self.username.lower() == "adam01" or self.username.lower() == "aera" or self.username.lower() == "andrewgodwin" or self.username.lower() == "revenant" or self.username.lower() == "gdude2002" or self.username.lower() == "varriount" or self.username.lower() == "notmeh" or self.username.lower() == "bidoof_king" or self.username.lower() == "rils" or self.username.lower() == "fragmer" or self.username.lower() == "tktech" or self.username.lower() == "pyropyro" or self.username.lower() == "tehcid" or self.username.lower() == "099" or self.username.lower() == "setveen" or self.username.lower() == "aquaskys" or self.username.lower() == "kelraider" or self.username.lower() == "uninspired" or self.username.lower() == "saanix" or self.username.lower() == "roujo" or self.username.lower() == "maup" or self.username.lower() == "mystx" or self.username.lower() == "akai" or self.username.lower() == "roadcrosser" or self.username.lower() == "antoligy" or self.username.lower() == "bioniclegenius" or self.username.lower() == "red_link" or self.username.lower() == "sk8rjwd" or self.username.lower() == "ntfwc" or self.username.lower() == "blueprotoman" or self.username.lower() == "blue_protoman" or self.username.lower() == "eugo" or self.username.lower() == "knossus" or self.username.lower() == "2k10" or self.username.lower() == "_2k10" or self.username.lower() == "aexis_rai" or self.username.lower() == "imak" or self.username.lower() == "injex":
+            elif self.username.lower() in INFO_VIPLIST:
                 color = COLOUR_YELLOW
             elif self.isWorldOwner():
                 color = COLOUR_DARKYELLOW

@@ -251,8 +251,11 @@ class CoreFactory(Factory):
             self.irc_cmdlogs = self.irc_config.getboolean("irc", "cmdlogs")
             self.ircbot = self.irc_config.getboolean("irc", "ircbot")
             self.irc_relay = ChatBotFactory(self)
-            if self.ircbot:
+            if self.ircbot and not self.irc_channel == "#icraft" and not self.irc_nick == "botname":
                 reactor.connectTCP(self.irc_config.get("irc", "server"), self.irc_config.getint("irc", "port"), self.irc_relay)
+            else:
+                logging.log(logging.ERROR, "IRC Bot failed to connect, you could modify, rename or remove irc.conf")
+                logging.log(logging.ERROR, "You need to change your 'botname' and 'channel' fields to fix this error or turn the bot off by disabling 'ircbot'")
         else:
             self.irc_relay = None
         self.default_loaded = False
@@ -541,7 +544,9 @@ class CoreFactory(Factory):
             else:
                 if not self.asd_delay == 0:
                     world.ASD = ResettableTimer(self.asd_delay*60,1,world.unload)
-                    world.ASD.start()
+                else:
+                    world.ASD = ResettableTimer(30,1,world.unload)
+                world.ASD.start()
 
     def loadWorld(self, filename, world_id):
         """
@@ -571,7 +576,7 @@ class CoreFactory(Factory):
         try:
             assert world_id != self.default_name
         except:
-            client.sendServerMessage("You can't shutdown "+self.default_name+".")
+            self.client.sendServerMessage("You can't shutdown "+self.default_name+".")
         if not self.worlds[world_id].ASD == None:
             self.worlds[world_id].ASD.kill()
             self.worlds[world_id].ASD = None

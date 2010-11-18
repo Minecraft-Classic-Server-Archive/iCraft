@@ -267,7 +267,7 @@ def DeRank(self, parts, byuser, overriderank, server=None):
                 user.sendOpUpdate()
         return ("%s is no longer the World Owner." % username)
         #make worldowner
-    elif parts[1] == "member":
+    elif parts[1] == "globalbuilder":
         #make them a global builder
         if not server:
             if not self.client.isMod():
@@ -385,8 +385,7 @@ def Credits(self, server=None):
     Temp.append ("Thanks to the following people for making iCraft possible...")
     Temp.append ("Mojang Specifications (Minecraft): Notch, dock, ez, ...")
     Temp.append ("Creators: aera aka AndrewGodwin (Myne and The Archives), iKJames aka KingJames, JamesKirslis (hlmc.net, iCraft)")
-    Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason, eugo (Knossus), gdude2002, goober, gothfox, NotMeh, ntfwc,")
-    Temp.append ("PixelEater, revenant, Saanix, sk8rjwd, tehcid, Varriount, willempiee")
-    Temp.append ("Others: 099, 2k10 (_2k10), Aexis_Rai, Akai, Antoligy, Aquaskys, Bidoof_King, Bioniclegenius (Red_Link), BlueProtoman,")
-    Temp.append ("fragmer, iMak, Injex, Kelraider, MAup, MystX, PyroPyro, Rils, Roadcrosser, Roujo, setveen, TkTech, Uninspired, ...")
+    Temp.append ("Devs: Adam01, AndrewPH, eugo (Knossus), gdude2002, goober, NotMeh, Saanix, sk8rjwd, tehcid, Varriount")
+    Temp.append ("Old Devs: destroyerx1, Dwarfy, erronjason, gothfox, ntfwc, PixelEater, revenant, willempiee")
+    Temp.append ("Others: Akai, Antoligy, Bidoof_King, Bioniclegenius (Red_Link), CDRom, fragmer, iMak, Kelraider, MystX, PyroPyro, setveen, ...")
     return Temp

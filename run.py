@@ -153,7 +153,6 @@ finally:
         world.save_meta()
     print ("ATTENTION: Please don't forget to check for updates; http://hlmc.net/ | irc.esper.net #iCraft")
     try:
-        raw_input("Press Enter to exit.")
         raise EOFError
     except EOFError:
         sys.exit(1);
