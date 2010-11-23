@@ -88,7 +88,7 @@ class ArchivesPlugin(ProtocolPlugin):
             self.client.sendServerMessage("Please select an archive name first. (/aname)")
         else:
             try:
-                when = datetime.datetime.strptime(parts[1] + " " + parts[2], "%Y/%m/%d %H_%M")
+                when = datetime.datetime.strptime(parts[1] + " " + parts[2], "%Y/%m/%d %H:%M:%S")
             except ValueError:
                 self.client.sendServerMessage("Please use the format yyyy/mm/dd hh_mm")
             else:

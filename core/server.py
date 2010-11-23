@@ -132,7 +132,7 @@ class CoreFactory(Factory):
 
     def reloadConfig(self):
         try:
-            #TODO: Figure out which of these would work dynamically, otherwise delete them from this area.
+            # TODO: Figure out which of these would work dynamically, otherwise delete them from this area.
             #self.max_clients = self.config.getint("main", "max_clients")
             #self.server_name = self.config.get("main", "name")
             #self.server_message = self.config.get("main", "description")
@@ -259,7 +259,7 @@ class CoreFactory(Factory):
         else:
             self.irc_relay = None
         self.default_loaded = False
-        #WORD FILTER LOL
+        # Word Filter
         self.wordfilter.read("config/wordfilter.conf")
         self.filter = []
         try:
@@ -301,7 +301,6 @@ class CoreFactory(Factory):
         self.directors = set()
         self.admins = set()
         self.mods = set()
-        self.globalbuilders = set()
         self.members = set()
         self.spectators = set()
         self.silenced = set()
@@ -357,9 +356,6 @@ class CoreFactory(Factory):
         if config.has_section("mods"):
             for name in config.options("mods"):
                 self.mods.add(name)
-        if config.has_section("globalbuilders"):
-            for name in config.options("globalbuilders"):
-                self.globalbuilders.add(name)
         if config.has_section("members"):
             for name in config.options("members"):
                 self.members.add(name)
@@ -409,7 +405,6 @@ class CoreFactory(Factory):
         config.add_section("directors")
         config.add_section("admins")
         config.add_section("mods")
-        config.add_section("globalbuilders")
         config.add_section("members")
         config.add_section("silenced")
         bans.add_section("banned")
@@ -423,8 +418,6 @@ class CoreFactory(Factory):
             config.set("admins", admin, "true")
         for mod in self.mods:
             config.set("mods", mod, "true")
-        for globalbuilder in self.globalbuilders:
-            config.set("globalbuilders", globalbuilder, "true")
         for member in self.members:
             config.set("members", member, "true")
         for ban, reason in self.banned.items():
@@ -499,16 +492,16 @@ class CoreFactory(Factory):
             world.save_meta()
             world.flush()
             if self.console_delay == self.delay_count:
-                logging.log(logging.INFO,"World '%s' has been saved." % world_id)
+                logging.log(logging.INFO, "World '%s' has been saved." % world_id)
             if self.save_count == 5:
                 for client in list(list(self.worlds[world_id].clients))[:]:
-                    client.sendServerMessage("World '%s' has been saved." % world_id)
+                    client.sendServerMessage(datetime.time.utcnow().strftime("[%H:%M] ")+"World '%s' has been saved." % world_id)
                 self.save_count = 1
             else:
                 self.save_count += 1
             if shutdown: del self.worlds[world_id]
         except:
-            logging.log(logging.INFO,"Error saving %s" % world_id)
+            logging.log(logging.INFO, "Error saving %s" % world_id)
 
     def claimId(self, client):
         for i in range(1, self.max_clients+1):
@@ -524,9 +517,9 @@ class CoreFactory(Factory):
         "Makes the user join the given World."
         new_world = self.worlds[worldid]
         try:
-            logging.log(logging.INFO,"%s is joining world %s" %(user.username,new_world.basename))
+            logging.log(logging.INFO, "%s is joining world %s" %(user.username,new_world.basename))
         except:
-            logging.log(logging.INFO,"%s is joining world %s" %(user.transport.getPeer().host,new_world.basename))
+            logging.log(logging.INFO, "%s is joining world %s" %(user.transport.getPeer().host,new_world.basename))
         if hasattr(user, "world") and user.world:
             self.leaveWorld(user.world, user)
         user.world = new_world
@@ -679,7 +672,7 @@ class CoreFactory(Factory):
                                 client.sendPlayerDir(*data)
                     # Someone spoke!
                     elif task is TASK_MESSAGE:
-                        #LOL MOAR WORD FILTER
+                        # More Word Filter
                         id, colour, username, text = data
                         text = self.messagestrip(text)
                         data = (id,colour,username,text)
@@ -688,7 +681,7 @@ class CoreFactory(Factory):
                                 client.sendMessage(*data)
                         id, colour, username, text = data
                         logging.log(logging.INFO, "%s: %s" % (username, text))
-                        self.chatlog.write("[%s] %s: %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
+                        self.chatlog.write("[%s] %s: %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S"), username, text))
                         self.chatlog.flush()
                         if self.irc_relay and world:
                             self.irc_relay.sendMessage(username, text)
@@ -698,13 +691,13 @@ class CoreFactory(Factory):
                             client.sendMessage(*data)
                         id, colour, username, text = data
                         logging.log(logging.INFO, "<%s> %s" % (username, text))
-                        self.chatlog.write("[%s] <%s> %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
+                        self.chatlog.write("[%s] <%s> %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S"), username, text))
                         self.chatlog.flush()
                         if self.irc_relay and world:
                             self.irc_relay.sendMessage(username, text)
                     # Someone actioned!
                     elif task is TASK_ACTION:
-                        #WORD FALTER
+                        # More Word Filter
                         id, colour, username, text = data
                         text = self.messagestrip(text)
                         data = (id,colour,username,text)
@@ -712,7 +705,7 @@ class CoreFactory(Factory):
                             client.sendAction(*data)
                         id, colour, username, text = data
                         logging.log(logging.INFO, "* %s %s" % (username, text))
-                        self.chatlog.write("[%s] * %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), username, text))
+                        self.chatlog.write("[%s] * %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S"), username, text))
                         self.chatlog.flush()
                         if self.irc_relay and world:
                             self.irc_relay.sendAction(username, text)
@@ -720,8 +713,12 @@ class CoreFactory(Factory):
                     elif task is TASK_PLAYERCONNECT:
                         for client in self.usernames:
                             self.usernames[client].sendNewPlayer(*data)
+                            if self.username.lower() in INFO_VIPLIST and not self.isMod():
+                                self.usernames[client].sendNormalMessage(COLOUR_DARKRED+"iCraft Team Member spotted;")
                             self.usernames[client].sendServerMessage("%s has come online." % source_client.username)
                         if self.irc_relay and world:
+                            if self.username.lower() in INFO_VIPLIST and not self.isMod():
+                                self.irc_relay.sendServerMessage("04iCraft Team Member spotted;")
                             self.irc_relay.sendServerMessage("07%s has come online." % source_client.username)
                     # Someone joined a world!
                     elif task is TASK_NEWPLAYER:
@@ -735,8 +732,6 @@ class CoreFactory(Factory):
                         for client in self.clients.values():
                             client.sendPlayerLeave(*data)
                             if not source_client.username is None:
-                                #if not self.isBanned or self.isIpBanned:
-                                #if not (username.lower() in self.banned) or (ip in self.ipbanned):
                                 client.sendServerMessage("%s has gone offline." % source_client.username)
                             else:
                                 source_client.log("Pinged the server.")
@@ -761,9 +756,9 @@ class CoreFactory(Factory):
                                 client.sendMessage(100, COLOUR_YELLOW+"#"+colour, username, message, False, False)
                         if self.factory.staffchat and self.irc_relay and len(data)>3:
                             self.irc_relay.sendServerMessage("#"+username+": "+text,True,username,IRC)
-                        logging.log(logging.INFO,"#"+username+": "+text)
+                        logging.log(logging.INFO, "#"+username+": "+text)
                         self.adlog = open("logs/server.log", "a")
-                        self.adlog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+"] #"+username+": "+text+"\n")
+                        self.adlog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+"] #"+username+": "+text+"\n")
                         self.adlog.flush()
                     elif task == TASK_GLOBALMESSAGE:
                         # Give all world people the message
@@ -814,7 +809,7 @@ class CoreFactory(Factory):
                         for client in self.clients.values():
                             client.sendNormalMessage(COLOUR_DARKPURPLE + message)
                         logging.log(logging.INFO, "AWAY - %s" %message)
-                        self.chatlog.write("[%s] %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), "", message))
+                        self.chatlog.write("[%s] %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S"), "", message))
                         self.chatlog.flush()
                         if self.irc_relay and world:
                             self.irc_relay.sendAction("", message)
@@ -955,7 +950,7 @@ class CoreFactory(Factory):
                     if match:
                         when = match.groups()[0]
                         try:
-                            when = datetime.datetime.strptime(when, "%Y-%m-%d_%H_%M")
+                            when = datetime.datetime.strptime(when, "%Y/%m/%d %H:%M:%S")
                         except ValueError, e:
                             logging.log(logging.WARN, "Bad archive filename %s" % subfilename)
                             continue

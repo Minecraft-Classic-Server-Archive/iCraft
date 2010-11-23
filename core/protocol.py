@@ -267,10 +267,10 @@ class CoreServerProtocol(Protocol):
         return self.factory.isMod(self.username.lower()) or self.isAdmin() or self.isDirector() or self.isOwner()
 
     def isBuilder(self):
-        return (self.username.lower() in self.world.writers) or (self.username.lower() in self.factory.globalbuilders) or (self.username.lower() in self.world.ops) or self.isOp() or self.isWorldOwner()
+        return (self.username.lower() in self.world.writers) or self.isOp() or self.isWorldOwner()
 
     def isMember(self):
-        return self.factory.isMember(self.username.lower()) or (self.username.lower() in self.world.writers) or (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
+        return self.factory.isMember(self.username.lower()) or self.isBuilder or self.isOp or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
     def isSpectator(self):
         return self.factory.isSpectator(self.username.lower())
@@ -291,7 +291,7 @@ class CoreServerProtocol(Protocol):
             try:
                 format = TYPE_FORMATS[type]
             except KeyError:
-                #it's a weird data packet, probably a ping.
+                # it's a weird data packet, probably a ping.
                 reactor.callLater(0.2, self.transport.loseConnection)
                 return
             # See if we have all its data
@@ -340,9 +340,13 @@ class CoreServerProtocol(Protocol):
                 )
                 # Then... stuff
                 for client in self.factory.usernames.values():
-                    client.sendServerMessage("%s has come online." %self.username)
+                    if self.username.lower() in INFO_VIPLIST and not self.isMod():
+                        client.sendNormalMessage(COLOUR_DARKRED+"iCraft Team Member spotted;")
+                    client.sendServerMessage("%s has come online." % self.username)
                 if self.factory.irc_relay:
-                    self.factory.irc_relay.sendServerMessage("07%s has come online." %self.username)
+                    if self.username.lower() in INFO_VIPLIST and not self.isMod():
+                        self.factory.irc_relay.sendServerMessage("04iCraft Team Member spotted;")
+                    self.factory.irc_relay.sendServerMessage("07%s has come online." % self.username)
                 reactor.callLater(0.1, self.sendLevel)
                 reactor.callLater(1, self.sendKeepAlive)
                 self.resetIdleTimer()
@@ -518,11 +522,10 @@ class CoreServerProtocol(Protocol):
                     return
                 if message.startswith("/"):
                     # It's a command
-                    #message = message.lower()
                     parts = [x.strip() for x in message.split() if x.strip()]
                     command = parts[0].strip("/")
                     self.log("%s just used: %s" % (self.username," ".join(parts)), level=logging.INFO)
-                    #for command logging to IRC
+                    # for command logging to IRC
                     if self.factory.irc_relay:
                         if self.factory.irc_cmdlogs:
                             self.factory.irc_relay.sendServerMessage("07%s just used: %s" % (self.username," ".join(parts)))
@@ -564,7 +567,7 @@ class CoreServerProtocol(Protocol):
                         self.sendServerMessage("'%s' is a Member-only command!" % command)
                         return
                     try:
-                        func(parts, True, False) #byuser is true, overriderank is false
+                        func(parts, True, False) # byuser is true, overriderank is false
                     except Exception, e:
                         self.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
                         self.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")
@@ -581,12 +584,12 @@ class CoreServerProtocol(Protocol):
                             self.factory.usernames[username].sendWhisper(self.username, text)
                             self.sendWhisper(self.username, text)
                             self.log("@"+self.username+" (from "+self.username+"): "+text)
-                            self.whisperlog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+"] @"+self.username+" (from "+self.usertitlename+"): "+text+"\n")
+                            self.whisperlog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+"] @"+self.username+" (from "+self.usertitlename+"): "+text+"\n")
                             self.whisperlog.flush()
                         else:
                             self.sendServerMessage("%s is currently offline." % username)
                 elif message.startswith("!"):
-                    #It's a world message.
+                    # It's a world message.
                     if len(message) == 1:
                         self.sendServerMessage("Please include a message to send.")
                     else:
@@ -596,24 +599,18 @@ class CoreServerProtocol(Protocol):
                             self.sendServerMessage("Please include a message to send.")
                         else:
                             if self.world.global_chat:
-                                if self.world.highlight_ops:
-                                    self.sendWorldMessage ("!"+self.title+self.userColour()+self.username+":"+COLOUR_WHITE+" "+text)
-                                else:
-                                    self.sendWorldMessage ("!"+self.title+COLOUR_WHITE+self.username+":"+COLOUR_WHITE+" "+text)
+                                self.sendWorldMessage ("!"+self.title+self.userColour()+self.username+":"+COLOUR_WHITE+" "+text)
                                 self.log("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
-                                self.wclog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+"] !"+self.usertitlename+" in "+str(self.world.id)+": "+text+"\n")
+                                self.wclog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+"] !"+self.usertitlename+" in "+str(self.world.id)+": "+text+"\n")
                                 self.wclog.flush()
                                 if self.factory.irc_relay:
                                     self.factory.irc_relay.sendServerMessage(COLOUR_YELLOW+"!"+self.title+self.userColour()+self.username+COLOUR_BLACK+" in "+str(self.world.id)+": "+text)
                             else:
-                                if self.world.highlight_ops:
-                                    self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.title, self.userColour()+self.username, message)))
-                                else:
-                                    self.factory.queue.put((self, TASK_MESSAGE, (self.id, COLOUR_WHITE, self.usertitlename, message)))
+                                self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.title, self.userColour()+self.username, message)))
                                 if self.factory.irc_relay:
                                     self.factory.irc_relay.sendServerMessage(self.title+self.userColour()+self.username+": "+COLOUR_BLACK+text)
                 elif message.startswith("#"):
-                    #It's an staff-only message.
+                    # It's an staff-only message.
                     if len(message) == 1:
                         self.sendServerMessage("Please include a message to send.")
                     else:
@@ -634,12 +631,9 @@ class CoreServerProtocol(Protocol):
                     else:
                         if override is not True:
                             if not self.world.global_chat:
-                                if self.world.highlight_ops:
-                                    self.sendWorldMessage ("!"+self.title+self.userColour()+self.username+":"+COLOUR_WHITE+" "+message)
-                                else:
-                                    self.sendWorldMessage ("!"+self.title+COLOUR_WHITE+self.username+":"+COLOUR_WHITE+" "+message)
+                                self.sendWorldMessage ("!"+self.title+self.userColour()+self.username+":"+COLOUR_WHITE+" "+message)
                                 self.log("!"+self.usertitlename+" in "+str(self.world.id)+": "+message)
-                                self.wclog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+"] !"+self.usertitlename+" in "+str(self.world.id)+": "+message+"\n")
+                                self.wclog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+"] !"+self.usertitlename+" in "+str(self.world.id)+": "+message+"\n")
                                 self.wclog.flush()
                                 if self.factory.irc_relay:
                                     self.factory.irc_relay.sendServerMessage(COLOUR_YELLOW+"!"+self.title+self.userColour()+self.username+COLOUR_BLACK+" in "+str(self.world.id)+": "+message)
@@ -692,10 +686,7 @@ class CoreServerProtocol(Protocol):
         return bank_dic
 
     def colouredUsername(self):
-        if self.world.highlight_ops:
             return self.userColour() + self.username
-        else:
-            return self.username
 
     def teleportTo(self, x, y, z, h=0, p=0):
         "Teleports the client to the coordinates"
@@ -714,7 +705,7 @@ class CoreServerProtocol(Protocol):
         self.initial_position = position
         if self.world.is_archive:
             self.sendSplitServerMessage("This world is an Archive, and will cease to exist once the last person leaves.")
-            self.sendServerMessage(COLOUR_RED+"Admins: Please do not reboot this world.")
+            self.sendServerMessage(COLOUR_RED+"Staff: Please do not reboot this world.")
         breakable_admins = self.runHook("canbreakadmin")
         self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world '%s'" % world_id, 100 if breakable_admins else 0)
         self.sendLevel()
@@ -761,15 +752,6 @@ class CoreServerProtocol(Protocol):
             self.sendServerMessage("You are now a Mod.")
         else:
             self.sendServerMessage("You are no longer a Mod.")
-        self.runHook("rankchange")
-        self.respawn()
-
-    def sendGlobalBuilderUpdate(self):
-        "Sends the global builder message"
-        if self.isBuilder():
-            self.sendServerMessage("You are now a Global Builder.")
-        else:
-            self.sendServerMessage("You are no longer a Global Builder.")
         self.runHook("rankchange")
         self.respawn()
 
@@ -828,16 +810,10 @@ class CoreServerProtocol(Protocol):
         if replacement is False:
             return
         # See if we should highlight the names
-        if self.world.highlight_ops:
-            if action:
-                prefix = "%s* %s%s%s " % (COLOUR_YELLOW, colour, username, COLOUR_WHITE)
-            else:
-                prefix = "%s%s:%s " % (colour, username, COLOUR_WHITE)
+        if action:
+            prefix = "%s* %s%s%s " % (COLOUR_YELLOW, colour, username, COLOUR_WHITE)
         else:
-            if action:
-                prefix = "%s* %s%s%s " % (COLOUR_YELLOW, COLOUR_WHITE, username, COLOUR_WHITE)
-            else:
-                prefix = "%s: " % username
+            prefix = "%s%s:%s " % (colour, username, COLOUR_WHITE)
         # Send the message in more than one bit if needed
         self._sendMessage(prefix, text, id)
 
@@ -879,10 +855,7 @@ class CoreServerProtocol(Protocol):
         self.sendMessage(id, colour, username, text, action=True)
 
     def sendWhisper(self, username, text):
-        if self.world.highlight_ops:
-            self.sendNormalMessage("%s@%s%s: %s%s" % (COLOUR_YELLOW, self.userColour(), username, COLOUR_WHITE, text))
-        else:
-            self.sendNormalMessage("%s@%s%s: %s%s" % (COLOUR_YELLOW, COLOUR_WHITE, username, COLOUR_WHITE, text))
+        self.sendNormalMessage("%s@%s%s: %s%s" % (COLOUR_YELLOW, self.userColour(), username, COLOUR_WHITE, text))
 
     def sendServerMessage(self, message):
         self.sendPacked(TYPE_MESSAGE, 255, message)
@@ -1013,10 +986,7 @@ class CoreServerProtocol(Protocol):
         "Sends a 'new user' notification for each new user in the world."
         for client in self.world.clients:
             if client is not self and hasattr(client, "x"):
-                if self.world.highlight_ops:
-                    self.sendNewPlayer(client.id, client.userColour() + client.username, client.x, client.y, client.z, client.h, client.p)
-                else:
-                    self.sendNewPlayer(client.id, client.username, client.x, client.y, client.z, client.h, client.p)
+                self.sendNewPlayer(client.id, client.userColour() + client.username, client.x, client.y, client.z, client.h, client.p)
 
     def sendWelcome(self):
         if not self.sent_first_welcome:

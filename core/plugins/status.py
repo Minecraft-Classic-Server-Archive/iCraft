@@ -93,7 +93,6 @@ class WorldUtilPlugin(ProtocolPlugin):
             (self.client.world.global_chat and "&2GChat" or "&4GChat")
         )
         self.client.sendServerMessage("- " + \
-            (self.client.world.highlight_ops and "&2Colors" or "&4Colors") + "&e | " + \
             (self.client.world.physics and "&2Physics" or "&4Physics") + "&e | " + \
             (self.client.world.finite_water and "&4FWater" or "&2FWater") + "&e | " + \
             (self.client.world.admin_blocks and "&2Solids" or "&4Solids")

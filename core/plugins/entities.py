@@ -124,7 +124,7 @@ class EntityPlugin(ProtocolPlugin):
 
     def blockChanged(self, x, y, z, block, selected_block, byuser):
         if not byuser:
-            #People shouldnt be blbing mobs :P
+            # People shouldn't be blbing mobs
             return
         "Hook trigger for block changes."
         world = self.client.world
@@ -201,7 +201,7 @@ class EntityPlugin(ProtocolPlugin):
                         elif (var_type in twoblockhighentities or var_type == "spawner" or var_type in twoblockhighshootingentities) and not (0 <= x < world.x and 0 <= y+1 < world.y and 0 <= z < world.z):
                             var_dellist.append(index)
                         elif var_type == "cannon":
-                            #these variables also used later
+                            # these variables also used later
                             var_orientation = entity[5]
                             x,y,z = var_position
                             if var_orientation == 0:
@@ -230,8 +230,8 @@ class EntityPlugin(ProtocolPlugin):
                             else:
                                 self.client.sendWorldMessage("UNKOWN ENTITY IN WORLD - FIX THIS!")
                     except:
-                        self.client.sendWorldMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
-                        self.client.sendWorldMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")
+                        self.client.sendPlainWorldMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
+                        self.client.sendPlainWorldMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")
                         self.client.log(traceback.format_exc(), level=logging.ERROR)
                         world.entitylist = []
                         return

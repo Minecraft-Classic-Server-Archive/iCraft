@@ -174,9 +174,6 @@ class ControllerProtocol(LineReceiver):
     def commandMods(self, data):
         self.sendJson({"mods": list(self.factory.mods)})
 
-    def commandGlobalBuilders(self, data):
-        self.sendJson({"globalbuilders": list(self.factory.members)})
-
     def commandMembers(self, data):
         self.sendJson({"members": list(self.factory.members)})
 

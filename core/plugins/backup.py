@@ -130,9 +130,8 @@ class BackupPlugin(ProtocolPlugin):
                     client.changeToWorld(world_id)
 
     @world_list
-    @op_only
     def commandBackups(self, parts, byuser, overriderank):
-        "/backups - Op\nLists all backups this world has."
+        "/backups - Guest\nLists all backups this world has."
         try:
             world_dir = ("worlds/%s/" % self.client.world.id)
             folders = os.listdir(world_dir+"backup/")

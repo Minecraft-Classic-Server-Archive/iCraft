@@ -4,7 +4,7 @@
 
 """
 L{twisted.python.hashlib} presents a subset of the interface provided by
-U{hashlib<http://docs.python.org/library/hashreqs.html>}.  The subset is the
+U{hashlib<http://docs.python.org/library/hashlibs.html>}.  The subset is the
 interface required by various parts of Twisted.  This allows application code
 to transparently use APIs which existed before C{hashlib} was introduced or to
 use C{hashlib} if it is available.
@@ -17,8 +17,8 @@ except ImportError:
     from md5 import md5
     from sha import sha as sha1
 else:
-    md5  = _hashreqs.md5
-    sha1 = _hashreqs.sha1
+    md5  = _hashlibs.md5
+    sha1 = _hashlibs.sha1
 
 
 __all__ = ["md5", "sha1"]

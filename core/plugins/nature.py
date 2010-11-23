@@ -223,7 +223,7 @@ class ToolsPlugin(ProtocolPlugin):
     @op_only
     def commandHole(self, parts, byuser, overriderank):
         "/hole - Op\ncreates a hole between two blocks"
-        #Use the last two block places
+        # Use the last two block places
         try:
             x1, y1, z1 = self.client.last_block_changes[0]
             x2, y2, z2 = self.client.last_block_changes[1]
@@ -277,7 +277,7 @@ class ToolsPlugin(ProtocolPlugin):
     @op_only
     def commandLake(self, parts, byuser, overriderank):
         "/lake - Op\ncreates a lake between two blocks"
-        #Use the last two block places
+        # Use the last two block places
         try:
             x1, y1, z1 = self.client.last_block_changes[0]
             x2, y2, z2 = self.client.last_block_changes[1]
@@ -402,7 +402,7 @@ class ToolsPlugin(ProtocolPlugin):
     @op_only
     def commandPit(self, parts, byuser, overriderank):
         "/pit - Op\ncreates a lava pit between two blocks"
-        #Use the last two block places
+        # Use the last two block places
         try:
             x1, y1, z1 = self.client.last_block_changes[0]
             x2, y2, z2 = self.client.last_block_changes[1]

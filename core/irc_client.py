@@ -82,7 +82,7 @@ class ChatBot(irc.IRCClient):
         self.sendPacked(TYPE_ERROR, error)
         reactor.callLater(0.2, self.transport.loseConnection)
 
-    def lineReceived(self, line): #use instead of priv message
+    def lineReceived(self, line): # use instead of query
         line = irc.lowDequote(line)
         try:
             prefix, command, params = irc.parsemsg(line)
@@ -98,7 +98,7 @@ class ChatBot(irc.IRCClient):
                     if name.startswith("@"):
                         self.ops.append(name[1:])
         except:
-            logging.log(logging.ERROR,traceback.format_exc())
+            logging.log(logging.ERROR, traceback.format_exc())
 
     def AdminCommand(self, command):
         try:
@@ -106,19 +106,19 @@ class ChatBot(irc.IRCClient):
             if user in self.ops:
                 if command[1].startswith("#"):
                     if self.factory.staffchat:
-                        #It's an staff-only message.
+                        # It's an staff-only message.
                         if len(command[1]) == 1:
                             self.msg(user, "07Please include a message to send.")
                         else:
                             try:
                                 text = " ".join(command[1:])[1:]
                             except ValueError:
-                                self.factory.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN,"Console", message)))
+                                self.factory.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN, "Console", message)))
                             else:
-                                self.factory.queue.put((self, TASK_STAFFMESSAGE, (0, COLOUR_PURPLE,command[0],text,True)))
+                                self.factory.queue.put((self, TASK_STAFFMESSAGE, (0, COLOUR_PURPLE, command[0],text,True)))
                                 self.adlog = open("logs/server.log", "a")
                                 self.adlog = open("logs/world.log", "a")
-                                self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | #" + command[0] + ": "+text+"\n")
+                                self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+" | #" + command[0] + ": "+text+"\n")
                                 self.adlog.flush()
                 elif command[1] == ("help"):
                     self.msg(user, "07Admin Help")
@@ -199,8 +199,8 @@ class ChatBot(irc.IRCClient):
             if not command[1].startswith("#"):
                 logging.log(logging.INFO,"%s just used: %s" %(user," ".join(command[1:])))
         except:
-            logging.log(logging.ERROR,traceback.format_exc())
-            self.msg(user,"ERROR " + traceback.format_exc())
+            logging.log(logging.ERROR, traceback.format_exc())
+            self.msg(user, "Internal Server Error (See the Console for more details)")
 
     def privmsg(self, user, channel, msg):
         """This will get called when the bot receives a message."""
@@ -268,27 +268,27 @@ class ChatBot(irc.IRCClient):
                     else:
                         self.msg(self.factory.irc_channel,"07You must provide a command to use the IRC bot.")
                 elif msg.startswith("!"):
-                    #It's a world message.
+                    # It's a world message.
                     message = msg.split(" ")
                     if len(message) == 1:
-                        self.msg(self.factory.irc_channel,"07Please include a message to send.")
+                        self.msg(self.factory.irc_channel, "07Please include a message to send.")
                     else:
                         try:
                            world = message[0][1:len(message[0])]
-                           out = " ".join(message[1:])
-                           text = COLOUR_YELLOW+"!"+COLOUR_PURPLE+user+":"+COLOUR_WHITE+" "+out
+                           out = "\n ".join(message[1:])
+                           text = COLOUR_PURPLE+"IRC: "+COLOUR_YELLOW+datetime.datetime.utcnow().strftime("[%H:%M] ")+COLOUR_WHITE+"<!"+user+">"+COLOUR_WHITE+out
                         except ValueError:
-                            self.msg(self.factory.irc_channel,"07Please include a message to send.")
+                            self.msg(self.factory.irc_channel, "07Please include a message to send.")
                         else:
                             if world in self.factory.worlds:
-                                self.factory.queue.put ((self.factory.worlds[world],TASK_WORLDMESSAGE,(255, self.factory.worlds[world], text),))
+                                self.factory.queue.put ((self.factory.worlds[world], TASK_WORLDMESSAGE, (255, self.factory.worlds[world], text),))
                                 logging.log(logging.INFO,"WORLD - "+user+" in "+str(self.factory.worlds[world].id)+": "+out)
                                 self.wclog = open("logs/server.log", "a")
-                                self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | !"+user+" in "+str(self.factory.worlds[world].id)+": "+out+"\n")
+                                self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+" | !"+user+" in "+str(self.factory.worlds[world].id)+": "+out+"\n")
                                 self.wclog.flush()
                                 self.wclog.close()
                             else:
-                                self.msg(self.factory.irc_channel,"07That world does not exist. Try !world message")
+                                self.msg(self.factory.irc_channel, "07That world does not exist. Try !world message")
                 elif self.prefix == "none":
                     allowed = True
                     goodchars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", "!", "@", "#", "$", "%", "*", "(", ")", "-", "_", "+", "=", "{", "[", "}", "]", ":", ";", "\"", "\'", "<", ",", ">", ".", "?", "/", "\\", "|"]
@@ -356,16 +356,23 @@ class ChatBot(irc.IRCClient):
                     msg = msg.replace("./", " /")
                     msg = msg.replace(".!", " !")
                     if msg[len(msg)-2] == "&":
-                        self.msg(self.factory.irc_channel,"07You can not use a color at the end of a message")
+                        self.msg(self.factory.irc_channel, "07You can not use a color at the end of a message")
                         return
                     if len(msg) > 51:
                         moddedmsg = msg[:51].replace(" ", "")
                         if moddedmsg[len(moddedmsg)-2] == "&":
                             msg = msg.replace("&", "*")
-                    self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, user, msg)))
+                    #self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, user, msg)))
+                    for client in self.factory.clients.values():
+                        if (client.world.global_chat or client.world is source_client.world):
+                            client.sendNormalMessage(COLOUR_PURPLE+"IRC: "+COLOUR_YELLOW+datetime.datetime.utcnow().strftime("[%H:%M] ")+COLOUR_WHITE+"<"+user+">")
+                            client.sendNormalMessage(msg)
+                    logging.log(logging.INFO, "<%s> %s" % (user, msg))
+                    self.factory.chatlog.write("[%s] <*%s> %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), user, msg))
+                    self.factory.chatlog.flush()
         except:
-            logging.log(logging.ERROR,traceback.format_exc())
-            self.msg(self.factory.irc_channel,"ERROR " + traceback.format_exc())
+            logging.log(logging.ERROR, traceback.format_exc())
+            self.msg(self.factory.irc_channel, "Internal Server Error (See the Console for more details)")
 
     def action(self, user, channel, msg):
         msg = msg.replace("./", " /")
@@ -373,7 +380,14 @@ class ChatBot(irc.IRCClient):
         """This will get called when the bot sees someone do an action."""
         user = user.split('!', 1)[0]
         msg = "".join([char for char in msg if ord(char) < 128 and char != "" or "0"])
-        self.factory.queue.put((self, TASK_ACTION, (127, COLOUR_PURPLE, user, msg)))
+        #self.factory.queue.put((self, TASK_ACTION, (127, COLOUR_PURPLE, user, msg)))
+        for client in self.factory.clients.values():
+            if (client.world.global_chat or client.world is source_client.world):
+                client.sendNormalMessage(COLOUR_PURPLE+"IRC: "+COLOUR_YELLOW+datetime.datetime.utcnow().strftime("[%H:%M] ")+COLOUR_WHITE+"* "+user)
+                client.sendNormalMessage(msg)
+        logging.log(logging.INFO, "* %s %s" % (username, text))
+        self.chatlog.write("[%s] * %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S"), username, text))
+        self.chatlog.flush()
 
     def sendMessage(self, username, message):
         message = message.replace("&0", "01")

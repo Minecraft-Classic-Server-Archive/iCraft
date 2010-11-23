@@ -37,7 +37,8 @@
 
 from core.plugins import ProtocolPlugin
 from core.decorators import *
-import cPickle #Now using the MUCH faster, optimized cPickle
+import cPickle
+
 class TitlePlugin(ProtocolPlugin):
     
     commands = {
@@ -45,7 +46,7 @@ class TitlePlugin(ProtocolPlugin):
         "settitle":     "commandSetTitle",
     }
     
-    #System methods, not for commands
+    # System methods, not for commands
     def loadRank(self):
         file = open('config/data/titles.dat', 'r')
         rank_dic = cPickle.load(file)

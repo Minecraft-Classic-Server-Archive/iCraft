@@ -74,7 +74,7 @@ else:
     if closestdistance < 2:
         sx,sy,sz,sh = world.spawn
         closestclient.teleportTo(sx,sy,sz,sh)
-        self.client.sendWorldMessage("%s has died" % closestclient.username)
+        self.client.sendWorldMessage("%s has died from a blob." % closestclient.username)
     if closestdistance != 0:
         i,k = closestposition
         target = [int((i-x)/(closestdistance/1.75)) + x,y,int((k-z)/(closestdistance/1.75)) + z]

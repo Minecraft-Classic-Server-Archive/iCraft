@@ -43,7 +43,7 @@ class PhysicsControlPlugin(ProtocolPlugin):
     
     commands = {
         "physics": "commandPhysics",
-        #"physflush": "commandPhysflush",
+        "physflush": "commandPhysflush",
         "unflood": "commandUnflood",
         "deflood": "commandUnflood",
         "fwater": "commandFwater",
@@ -89,9 +89,16 @@ class PhysicsControlPlugin(ProtocolPlugin):
             self.client.world.finite_water = False
             self.client.sendWorldMessage("This world now has finite water disabled.")
 
-    # Needs updating for new physics engine separation
-    #@admin_only
-    #def commandPhysflush(self,):
-    #    "/physflush - Tells the physics engine to rescan the world."
-    #    self.client.world.physics_engine.was_physics = False
-    #    self.sendServerMessage("Physics flush running.")
+    @world_list
+    @admin_only
+    def commandPhysflush(self, parts, byuser, overriderank):
+        "/physflush - Admin\nTells the physics engine to rescan the world."
+        if self.client.world.physics:
+            if self.client.factory.numberWithPhysics() >= self.client.factory.physics_limit:
+                self.client.sendWorldMessage("There are already %s worlds with physics on (the max)." % self.client.factory.physics_limit)
+            else:
+                self.client.world.physics = False
+                self.client.world.physics = True
+                self.client.sendWorldMessage("This world now has a physics flush running.")
+        else:
+            self.client.sendServerMessage("This world does not have physics on.")

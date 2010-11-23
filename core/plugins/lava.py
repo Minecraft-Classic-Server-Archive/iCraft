@@ -68,7 +68,7 @@ class LavaPlugin(ProtocolPlugin):
             else:
                 if block == chr(BLOCK_LAVA) or blockbelow == chr(BLOCK_LAVA):
                 #or block == chr(BLOCK_STILLLAVA) or blockbelow == chr(BLOCK_STILLLAVA):
-                    #Ok, so they touched lava. Warp them to the spawn, timer to stop spam.
+                    # Ok, so they touched lava. Warp them to the spawn, timer to stop spam.
                     if self.died is False:
                         self.died = True
                         self.client.teleportTo(self.client.world.spawn[0], self.client.world.spawn[1], self.client.world.spawn[2], self.client.world.spawn[3])

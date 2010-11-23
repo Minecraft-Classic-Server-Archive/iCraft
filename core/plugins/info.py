@@ -109,7 +109,7 @@ class InfoPlugin(ProtocolPlugin):
     }
     
     def gotClient(self):
-        self.binfo = 0
+        self.binfo = False
     
     def blockChanged(self, x, y, z, block, selected_block, byuser):
         if self.binfo == 1:
@@ -123,17 +123,21 @@ class InfoPlugin(ProtocolPlugin):
                 self.client.sendServerMessage("Block Info: %s (%s)" % (self.BlockList[block2], block2))
                 self.client.sendServerMessage("x: %s y: %s z: %s" % (x, y, z))
                 return block2
-    @build_list
-    def commandInfo(self,parts,byuser,overriderank):
-        "/binfo - Guest\nStarts getting information on blocks."
-        self.binfo = 1
-        self.client.sendServerMessage("You are now getting info about blocks.")
-        self.client.sendServerMessage("Use '/infoend' to stop.")
 
     @build_list
-    def commandInfoEnd(self,parts,byuser,overriderank):
+    def commandInfo(self, parts, byuser, overriderank):
+        "/binfo - Guest\nStarts getting information on blocks. Toggle."
+        if not self.binfo:
+            self.binfo = True
+            self.client.sendServerMessage("You are now getting info about blocks.")
+        else:
+            self.binfo = False
+            self.client.sendServerMessage("You are no longer getting info about blocks.")
+
+    @build_list
+    def commandInfoEnd(self, parts, byuser, overriderank):
         "/binfoend - Guest\nEnds getting information on blocks."
-        self.binfo = 0
+        self.binfo = False
         self.client.sendServerMessage("You are no longer getting info about blocks.")
 
     @build_list

@@ -99,7 +99,7 @@ class RipClient(CoreServerProtocol):
                 print ("Level size (%s, %s, %s)" % (self.sx, self.sy, self.sz))
             elif type == TYPE_SPAWNPOINT and self.name:
                 naff, nick, x, y, z, h, nafftoo = parts
-                basename = "core/archives/"+"/".join([self.name, datetime.datetime.utcnow().strftime("%Y-%m-%d_%H_%M")])
+                basename = "core/archives/"+"/".join([self.name, datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")])
                 basename = basename.replace("/", "\\")
                 try:
                     os.makedirs(basename)

@@ -90,14 +90,14 @@ class ImagedrawPlugin(ProtocolPlugin):
                     return
             else:
                 rotation = 0
-            #try to get flip?
+            # try to get flip?
             flip = parts[1]
             if flip=='true' or flip=='false':
                 pass
             else:
                 self.client.sendServerMessage("flip must be true or false")
                 return
-            #try to get url
+            # try to get url
             try:
                 imageurl = self.client.url
             except:
@@ -300,9 +300,9 @@ class ImagedrawPlugin(ProtocolPlugin):
             def do_step():
                 # Do 10 blocks
                 try:
-                    for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+                    for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
                         block_iter.next()
-                    reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+                    reactor.callLater(0.01, do_step) # This is how long (in seconds) it waits to run another 10 blocks
                 except StopIteration:
                     if byuser:
                         self.client.sendServerMessage("Your imagedraw just completed.")

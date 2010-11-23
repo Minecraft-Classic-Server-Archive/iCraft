@@ -46,9 +46,7 @@ urls=(
     '/(.*).css', 'css'
 )
 render = web.template.render('templates/')
-
 app = web.application(urls, globals())
-
 BACKEND_HOST = config.host
 BACKEND_PORT = config.port
 BACKEND_PASSWORD = config.password
@@ -56,7 +54,6 @@ BACKEND_PASSWORD = config.password
 class BackendSocket(object):
     
     def __init__(self, host, port, password):
-        #print "Connecting to %s:%s" % (host,port)
         self.skt = socket.socket()
         self.skt.connect((host, port))
         self.password = password
@@ -97,6 +94,7 @@ class status:
         members = bs.query("Members")['members']
         return render.status(directors, admins, mods, members, users, worlds)
 
+
 class css:
      def GET(self, css):
         styling = open(css+".css", 'rb')
@@ -104,4 +102,3 @@ class css:
         styling.close()
 
 if __name__ == "__main__": app.run()
-

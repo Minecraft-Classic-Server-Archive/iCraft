@@ -275,7 +275,7 @@ class ShapesPlugin(ProtocolPlugin):
             # We also keep world as a local so they can't change worlds and affect the new one
             world = self.client.world
             def generate_changes():                
-                #curve list
+                # curve list
                 steps1 = float(2*((x3-x)**2+(y3-y)**2+(z3-z)**2)**0.5)
                 steps2 = float(2*((x2-x3)**2+(y2-y3)**2+(z2-z3)**2)**0.5) + steps1
                 coordinatelist = []
@@ -306,9 +306,9 @@ class ShapesPlugin(ProtocolPlugin):
             def do_step():
                 # Do 10 blocks
                 try:
-                    for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+                    for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
                         block_iter.next()
-                    reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+                    reactor.callLater(0.01, do_step) # This is how long (in seconds) it waits to run another 10 blocks
                 except StopIteration:
                     if byuser:
                         self.client.sendServerMessage("Your curve just completed.")
@@ -418,9 +418,9 @@ class ShapesPlugin(ProtocolPlugin):
             def do_step():
                 # Do 10 blocks
                 try:
-                    for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+                    for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
                         block_iter.next()
-                    reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+                    reactor.callLater(0.01, do_step) # This is how long (in seconds) it waits to run another 10 blocks
                 except StopIteration:
                     if byuser:
                         self.client.sendServerMessage("Your pyramid just completed.")
@@ -521,9 +521,9 @@ class ShapesPlugin(ProtocolPlugin):
             def do_step():
                 # Do 10 blocks
                 try:
-                    for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+                    for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
                         block_iter.next()
-                    reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+                    reactor.callLater(0.01, do_step) # This is how long (in seconds) it waits to run another 10 blocks
                 except StopIteration:
                     if byuser:
                         self.client.sendServerMessage("Your line just completed.")
@@ -649,7 +649,7 @@ class ShapesPlugin(ProtocolPlugin):
     @op_only
     def commandCircle(self, parts, byuser, overriderank):
         "/circle blocktype x y z radius axis - Op\nPlace/delete a block and /circle block radius axis"
-        if len(parts) < 7 and len(parts) != 4: #bugfix 5/22/10
+        if len(parts) < 7 and len(parts) != 4:
             self.client.sendServerMessage("Please enter a type, radius, axis(and possibly a coord triple)")
         else:
             # Try getting the normal axis
@@ -716,7 +716,7 @@ class ShapesPlugin(ProtocolPlugin):
                     for j in range(-radius-1, radius):
                         for k in range(-radius-1, radius):
                             if (i**2 + j**2 + k**2)**0.5 + 0.604 < radius:
-                                #Test for axis
+                                # Test for axis
                                 var_placeblock = 1
                                 if i != 0 and normalAxis == 'x':
                                     var_placeblock = 0
@@ -918,7 +918,7 @@ class ShapesPlugin(ProtocolPlugin):
                 for i in range(-radius-2, radius+1):
                     for j in range(-radius-2, radius+1):
                         for k in range(-radius-2, radius+1):
-                            if (((i+var_x-x)**2 + (j+var_y-y)**2 + (k+var_z-z)**2)**0.5 + ((i+var_x-x2)**2 + (j+var_y-y2)**2 + (k+var_z-z2)**2)**0.5)/2 + 0.691 < radius: #bugfix by Nick Tolrud: offset was omitted
+                            if (((i+var_x-x)**2 + (j+var_y-y)**2 + (k+var_z-z)**2)**0.5 + ((i+var_x-x2)**2 + (j+var_y-y2)**2 + (k+var_z-z2)**2)**0.5)/2 + 0.691 < radius:
                                 if not self.client.AllowedToBuild(x+i, y+j, z+k) and not overriderank:
                                     self.client.sendServerMessage("You do not have permision to build here.")
                                     return
@@ -992,7 +992,7 @@ class ShapesPlugin(ProtocolPlugin):
                 except ValueError:
                     self.client.sendServerMessage("All parameters must be integers")
                     return
-            #line 1 list
+            # line 1 list
             steps = int(((x2-x)**2+(y2-y)**2+(z2-z)**2)**0.5/0.75)
             mx = float(x2-x)/steps
             my = float(y2-y)/steps
@@ -1000,7 +1000,7 @@ class ShapesPlugin(ProtocolPlugin):
             coordinatelist2 = []
             for t in range(steps+1):
                 coordinatelist2.append((mx*t+x,my*t+y,mz*t+z))
-            #line 2 list
+            # line 2 list
             steps = int(((x3-x)**2+(y3-y)**2+(z3-z)**2)**0.5/0.75)
             mx = float(x3-x)/steps
             my = float(y3-y)/steps
@@ -1008,7 +1008,7 @@ class ShapesPlugin(ProtocolPlugin):
             coordinatelist3 = []
             for t in range(steps+1):
                 coordinatelist3.append((mx*t+x,my*t+y,mz*t+z))
-            #final coordinate list
+            # final coordinate list
             if len(coordinatelist2) > len(coordinatelist3):
                 coordinatelistA = coordinatelist2
                 coordinatelistB = coordinatelist3
@@ -1079,9 +1079,9 @@ class ShapesPlugin(ProtocolPlugin):
             def do_step():
                 # Do 10 blocks
                 try:
-                    for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+                    for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
                         block_iter.next()
-                    reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+                    reactor.callLater(0.01, do_step) # This is how long (in seconds) it waits to run another 10 blocks
                 except StopIteration:
                     if byuser:
                         self.client.sendServerMessage("Your polytri just completed.")

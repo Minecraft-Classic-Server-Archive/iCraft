@@ -73,7 +73,7 @@ if bombintialdelay <= 0:
         for user in var_userkillist2:
             sx,sy,sz,sh = world.spawn
             user.teleportTo(sx,sy,sz,sh)
-            self.client.sendWorldMessage("%s has died" % user.username)
+            self.client.sendWorldMessage("%s has died from TNT." % user.username)
     if bombfinaldelay <=0:
         var_dellist.append(index)
         block = '\x00'

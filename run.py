@@ -54,7 +54,7 @@ print ("- Please don't forget to check for updates.")
 print ("- Do you need help with iCraft? Feel free to stop by either way; http://hlmc.net/ | irc.esper.net #icraft")
 
 useConsoleLog = True
-#Disable file logging if using nohup
+# Disable file logging if using nohup.out
 if os.name == "posix" and os.path.exists("nohup.out"):
     if "_" in os.environ.keys():
         if os.environ["_"] == "/usr/bin/nohup":
@@ -74,7 +74,7 @@ def LogTimestamp():
         shutil.copy("logs/console/console.log", "logs/console/console." +time.strftime("%m-%d-%Y_%H",time.localtime(time.time())) +".log")
         f=open("logs/console/console.log",'w')
         f.close()
-    reactor.callLater(6*60*60, LogTimestamp)#24hours*60minutes*60seconds
+    reactor.callLater(6*60*60, LogTimestamp) # 24hours*60minutes*60seconds
 
 if useConsoleLog:            
     logging.basicConfig(
@@ -137,7 +137,7 @@ money_logger = logging.getLogger('TransactionLogger')
 fh = logging.FileHandler('logs/server.log')
 formatter = logging.Formatter("%(asctime)s: %(message)s")
 fh.setFormatter(formatter)
-#Add the handler
+# Add the handler
 money_logger.addHandler(fh)
 
 try:

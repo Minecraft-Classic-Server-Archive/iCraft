@@ -112,7 +112,7 @@ class DynamitePlugin(ProtocolPlugin):
                 self.client.sendServerMessage("'%s' is a Member-only command!" % command)
                 return
         try:
-            func(parts, True, False) #byuser is true, overriderank is false
+            func(parts, True, False) # byuser is true, overriderank is false
         except Exception, e:
             self.client.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
             self.client.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")

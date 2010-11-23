@@ -43,7 +43,6 @@ class ModsPlugin(ProtocolPlugin):
     
     commands = {
         "staff": "commandStaff",
-        "globalbuilders": "commandGlobalBuilders",
         "members": "commandMembers",
         "directors": "commandDirectors",
         "admins": "commandAdmins",
@@ -57,14 +56,6 @@ class ModsPlugin(ProtocolPlugin):
         list = Staff(self)
         for each in list:
             self.client.sendServerList(each)
-
-    @info_list
-    def commandGlobalBuilders(self, parts, byuser, overriderank):
-        "/globalbuilders - Guest\nLists all Global Builders."
-        if len(self.client.factory.globalbuilders):
-            self.client.sendServerList(["Global Builders:"] + list(self.client.factory.globalbuilders))
-        else:
-            self.client.sendServerList(["Global Builders:"] + list("N/A"))
 
     @info_list
     def commandMembers(self, parts, byuser, overriderank):

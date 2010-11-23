@@ -114,7 +114,7 @@ def username_command(func):
             if len(names)==1:
                 user = names[0]
             if not user in self.client.factory.usernames:
-                self.client.sendServerMessage("No such user '%s'" % user)
+                self.client.sendServerMessage("No such user '%s' (3+ chars needed)" % user)
             else:
                 if len(parts) > 2:
                     try:

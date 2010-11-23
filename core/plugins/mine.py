@@ -54,7 +54,7 @@ class DynamitePlugin(ProtocolPlugin):
 
     def blockChanged(self, x, y, z, block, selected_block, byuser):
         if not byuser:
-            #People shouldnt be blbing mines :P
+            # People shouldn't be blbing mines
             return
         if self.client.world.has_mine(x, y, z):
             self.client.sendServerMessage("You defused a mine!")
@@ -136,7 +136,7 @@ class DynamitePlugin(ProtocolPlugin):
                 # Explode2 in 3 seconds
                 reactor.callLater(self.delay+0.5, explode2)
         except AssertionError:
-            #oob
+            # oob
             pass                
 
     @build_list

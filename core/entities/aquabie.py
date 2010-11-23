@@ -83,7 +83,7 @@ else:
     if closestdistance < 2:
         sx,sy,sz,sh = world.spawn
         closestclient.teleportTo(sx,sy,sz,sh)
-        self.client.sendWorldMessage("%s has died" % closestclient.username)
+        self.client.sendWorldMessage("%s has died from a aquabie." % closestclient.username)
         
     i,k = closestposition
     distance = ((i-x)**2+(k-z)**2)**0.5

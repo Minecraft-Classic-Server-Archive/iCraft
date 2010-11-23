@@ -16,10 +16,24 @@ Need support? Want to chat or hang out with us? Go to irc.esper.net
 #iCraft (or hlmc.net)
 
 =========================
+========== EXTRAS:
+=========================
+
+Here are several extras for iCraft that make you experience better.
+
+Texture Packs - http://hlmc.net/tp/
+Artwork (Logos/iCons) - /extras/artwork/
+Convert (dat to gz/meta) - /extras/converter/
+Topographer (2D topdown Mapping) - /extras/topographer/
+Status Script (Python Website) - /extras/website/
+bat Executive (start.bat Windows) - /extras/start.bat
+Archiver (Archives Worlds from Servers) - /extras/archiver.py
+
+=========================
 ========== INSTALL:
 =========================
 
-Step 1: Install Python 2.6. Python 2.5/2.7 may work, Python 3.x WON'T.
+Step 1: Install Python 2.6. Python 2.5/2.7 may work, Python 3.x WON'T
 
 Step 2: Configure the config files found in the config folder (rename
 all of them with .example.conf to .conf, exception of irc/email -

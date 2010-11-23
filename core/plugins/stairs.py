@@ -36,7 +36,6 @@
 #    Suite 300, San Francisco, California, 94105, USA.
 
 from reqs.twisted.internet import reactor
-
 from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
@@ -210,9 +209,9 @@ class StairsPlugin(ProtocolPlugin):
             def do_step():
                 # Do 10 blocks
                 try:
-                    for x in range(10):#10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
+                    for x in range(10): # 10 blocks at a time, 10 blocks per tenths of a second, 100 blocks a second
                         block_iter.next()
-                    reactor.callLater(0.01, do_step)  #This is how long(in seconds) it waits to run another 10 blocks
+                    reactor.callLater(0.01, do_step) # This is how long (in seconds) it waits to run another 10 blocks
                 except StopIteration:
                     if byuser:
                         self.client.sendServerMessage("Your stairs just completed.")

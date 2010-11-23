@@ -40,7 +40,6 @@ from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
 import logging
-import datetime
 import traceback
 import random
 import time
@@ -150,7 +149,7 @@ class CommandPlugin(ProtocolPlugin):
                     return
                 runcmd = True
                 thiscmd = x
-                thiscmd = thiscmd.replace(" /", "/") #sometimes the meta file stores it with a leading space :/
+                thiscmd = thiscmd.replace(" /", "/") # sometimes the meta file stores it with a leading space
                 if thiscmd.startswith("/gcmd"):
                     guest = True
                     runcmd = not self.runningsensor
@@ -219,7 +218,7 @@ class CommandPlugin(ProtocolPlugin):
             try:
                 block = ord(self.client.GetBlockValue(message))
             except TypeError:
-                #it was invalid
+                # it was invalid
                 return True
             if 49<block<0:
                 self.client.sendServerMessage("Invalid block number.")
@@ -245,7 +244,7 @@ class CommandPlugin(ProtocolPlugin):
 
     def blockChanged(self, x, y, z, block, byUser):
         "Hook trigger for block changes."
-        #avoid infinite loops by making blocks unaffected by commands
+        # avoid infinite loops by making blocks unaffected by commands
         if not byUser:
             return False
         if self.client.world.has_command(x, y, z):
@@ -498,7 +497,7 @@ class CommandPlugin(ProtocolPlugin):
             parts[0] = "/gcmd"
             commandtext = ""
             command = str(parts[1])
-            cmdspecials = ["wait", "if", "exit", "getinput", "getnum", "getblock", "getyn", "self"] #not actual commands but can be used in cmdblocks
+            cmdspecials = ["wait", "if", "exit", "getinput", "getnum", "getblock", "getyn", "self"] # not actual commands but can be used in cmdblocks
             if not command in cmdspecials:
                 if command.lower() in self.client.commands:
                     func = self.client.commands[command.lower()]
@@ -633,7 +632,7 @@ class CommandPlugin(ProtocolPlugin):
             parts[0] = "/gscmd"
             commandtext = ""
             command = str(parts[1])
-            cmdspecials = ["wait", "if", "exit", "getinput", "getnum", "getblock", "getyn", "self"]  #not actual commands but can be used in cmdblocks
+            cmdspecials = ["wait", "if", "exit", "getinput", "getnum", "getblock", "getyn", "self"]  # not actual commands but can be used in cmdblocks
             if not command in cmdspecials:
                 if command.lower() in self.client.commands:
                     func = self.client.commands[command.lower()]
@@ -749,7 +748,7 @@ class CommandPlugin(ProtocolPlugin):
             return
         runcmd = True
         thiscmd = str(x)
-        thiscmd = thiscmd.replace(" /", "/") #sometimes the meta file stores it with a leading space :/
+        thiscmd = thiscmd.replace(" /", "/") # sometimes the meta file stores it with a leading space
         if thiscmd.startswith("/gcmd"):
             guest = True
             runcmd = not self.runningsensor
@@ -839,7 +838,7 @@ class CommandPlugin(ProtocolPlugin):
             if thiscmd[num:(num+4)] == "$rnd":
                 try:
                     limits = thiscmd[thiscmd.find("(", num)+1:thiscmd.find(")", num+5)].split(",")
-                    thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], str(random.randint(int(limits[0]), int(limits[1])))) #holy crap this is complicated
+                    thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], str(random.randint(int(limits[0]), int(limits[1])))) # holy crap this is complicated
                 except:
                     self.client.sendServerMessage("$rnd Syntax Error; Use: $rnd(num1,num2)")
         for num in range(len(thiscmd)):
@@ -851,7 +850,7 @@ class CommandPlugin(ProtocolPlugin):
                     z = int(coords[2])
                     check_offset = self.client.world.blockstore.get_offset(x, y, z)
                     block = ord(self.client.world.blockstore.raw_blocks[check_offset])
-                    thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], str(block)) #holy crap this is complicated
+                    thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], str(block)) # holy crap this is complicated
                 except:
                     self.client.sendServerMessage("$block Syntax Error; Use: $block(x,y,z)")
         for num in range(len(thiscmd)):
@@ -864,11 +863,11 @@ class CommandPlugin(ProtocolPlugin):
                         elif thiscmd[num2] == ")":
                             parentheses = parentheses-1
                         if parentheses == 0:
-                            #We've reached the end of the expression
+                            # We've reached the end of the expression
                             lastindex = num2
                     print str(thiscmd[thiscmd.find("(", num)+1:lastindex+1])
                     expression = str(eval(thiscmd[thiscmd.find("(", num)+1:lastindex+1]))
-                    thiscmd = thiscmd.replace(thiscmd[num:lastindex+2], expression) #holy crap this is complicated
+                    thiscmd = thiscmd.replace(thiscmd[num:lastindex+2], expression) # holy crap this is complicated
                 except:
                     self.client.sendServerMessage("$eval Syntax Error; Use: $eval(expression)")
         blocklist = ["air", "rock", "grass", "dirt", "cobblestone", "wood", "plant", "solid", "water", "still water", "lava", "still lava", "sand", "gravel", "gold ore", "iron ore", "coal ore", "trunk", "leaf", "sponge", "glass", "red cloth", "orange cloth", "yellow cloth", "lime green cloth", "green cloth", "turquoise cloth", "cyan cloth", "blue cloth", "dark blue cloth", "violet cloth", "purple cloth", "magenta cloth", "pink cloth", "black cloth", "gray cloth", "white cloth", "flower", "rose", "red mushroom", "brown mushroom", "gold", "iron", "double step", "step", "brick", "TNT", "bookshelf", "mossy cobblestone", "obsidian"]
@@ -876,7 +875,7 @@ class CommandPlugin(ProtocolPlugin):
             if thiscmd[num:(num+6)] == "$bname":
                 try:
                     blocknum = int(thiscmd[thiscmd.find("(", num)+1:thiscmd.find(")", num+5)])
-                    thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], blocklist[blocknum]) #holy crap this is complicated
+                    thiscmd = thiscmd.replace(thiscmd[num:thiscmd.find(")", num)+1], blocklist[blocknum]) # holy crap this is complicated
                 except:
                     self.client.sendServerMessage("$bname Syntax Error; Use: $bname(blockint)")
         if thiscmd.startswith(" if"):
@@ -889,7 +888,7 @@ class CommandPlugin(ProtocolPlugin):
                 self.client.sendServerMessage("IF Syntax Error; Use:: if \"a\"=\"b\": command!")
         parts = thiscmd.split()
         command = str(parts[0])
-        #Require confirmation
+        # Require confirmation
         if command == "pay":
             try:
                 target = parts[1]

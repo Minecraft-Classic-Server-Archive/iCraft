@@ -92,7 +92,7 @@ class MutePlugin(ProtocolPlugin):
     @only_username_command
     def commandSilence(self, username, byuser, overriderank):
         "/silence username - Mod\nDisallows the user to talk."
-        if self.client.factory.usernames[username].isMod():
+        if self.client.factory.isMod(username):
             self.client.sendServerMessage("You cannot silence staff!")
             return
         self.client.factory.silenced.add(username)

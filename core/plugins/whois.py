@@ -35,7 +35,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import cPickle #Now using the MUCH faster, optimized cPickle
+import cPickle # Now using the MUCH faster, optimized cPickle
 import logging
 import time
 from core.plugins import ProtocolPlugin
@@ -97,7 +97,7 @@ class PlayersPlugin(ProtocolPlugin):
             except:
                 title = ""
             if parts[1].lower() in self.client.factory.usernames:
-                #Parts is an array, always, so we get the first item.
+                # Parts is an array, always, so we get the first item.
                 username = self.client.factory.usernames[parts[1].lower()]
                 if self.client.isAdmin():
                     self.client.sendNormalMessage(("%s" %(title))+self.client.factory.usernames[user].userColour()+parts[1]+COLOUR_YELLOW+" ("+str(username.transport.getPeer().host)+")")
@@ -112,7 +112,7 @@ class PlayersPlugin(ProtocolPlugin):
                 else:
                     self.client.sendServerMessage("Balance: N/A")
             else:
-                #Parts is an array, always, so we get the first item.
+                # Parts is an array, always, so we get the first item.
                 username = parts[1].lower()
                 if username in self.client.factory.spectators:
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_BLACK+parts[1])
@@ -128,7 +128,7 @@ class PlayersPlugin(ProtocolPlugin):
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKYELLOW+parts[1])
                 elif username in self.client.world.ops:
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKCYAN+parts[1])
-                elif username in self.client.world.writers or self.client.factory.globalbuilders:
+                elif (username in self.client.world.writers):
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_CYAN+parts[1])
                 elif username in self.client.factory.members:
                     self.client.sendNormalMessage(("%s" %(title))+COLOUR_GREY+parts[1])

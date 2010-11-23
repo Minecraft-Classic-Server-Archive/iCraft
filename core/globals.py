@@ -52,7 +52,6 @@ def Rank(self, parts, byuser, overriderank,server=None):
                 world = self.client.world
             else:
                 return "You must provide a world"
-        #Make builder
         if not server:
             if not overriderank:
                 if not (self.client.username.lower() in world.ops or self.client.isMod() or self.client.isWorldOwner()):
@@ -88,7 +87,6 @@ def Rank(self, parts, byuser, overriderank,server=None):
                     return ("You are not high enough rank!")
         world.ops.add(username)
         return ("Opped %s" % username)
-        #make op
     elif parts[1] == "worldowner":
         if len(parts) > 3:
             try:
@@ -108,22 +106,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
                 return ("You are not high enough rank!")
         self.client.world.owner = (username)
         return ("%s is now a World Owner." % username)
-        #make world owner
-    elif parts[1] == "globalbuilder":
-        #make them a global builder
-        if not server:
-            if not self.client.isMod():
-                return ("You are not high enough rank!")
-        else:
-            if not parts[-1] == "console":
-                if not factory.isMod(parts[-1]):
-                    return ("You are not high enough rank!")
-        factory.globalbuilders.add(username)
-        if username in factory.usernames:
-            factory.usernames[username].sendGlobalBuilderUpdate()
-        return ("%s is now a Global Builder." % username)
     elif parts[1] == "member":
-        #make them a member
         if not server:
             if not self.client.isMod():
                 return ("You are not high enough rank!")
@@ -136,7 +119,6 @@ def Rank(self, parts, byuser, overriderank,server=None):
             factory.usernames[username].sendMemberUpdate()
         return ("%s is now a Member." % username)
     elif parts[1] == "mod":
-        #make them a mod
         if not server:
             if not self.client.isDirector():
                 return ("You are not high enough rank!")
@@ -149,7 +131,6 @@ def Rank(self, parts, byuser, overriderank,server=None):
             factory.usernames[username].sendModUpdate()
         return ("%s is now a Mod." % username)
     elif parts[1] == "admin":
-        #make them admin
         if not server:
             if not self.client.isDirector():
                 return ("You are not high enough rank!")
@@ -162,7 +143,6 @@ def Rank(self, parts, byuser, overriderank,server=None):
             factory.usernames[username].sendAdminUpdate()
         return ("%s is now an admin." % username)
     elif parts[1] == "director":
-        #make them director
         if not server:
             if not self.client.isOwner():
                 return ("You are not high enough rank!")
@@ -194,7 +174,6 @@ def DeRank(self, parts, byuser, overriderank, server=None):
                 world = self.client.world
             else:
                 return "You must provide a world"
-        #Make builder
         if not server:
             if not ((self.client.username in world.ops) or self.client.isMod()) and overriderank:
                 return ("You are not high enough rank!")
@@ -238,7 +217,6 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             if user.world == world:
                 user.sendOpUpdate()
         return ("Deopped %s" % username)
-        #make op
     elif parts[1] == "worldowner":
         if len(parts) > 3:
             try:
@@ -266,25 +244,7 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             if user.world == world:
                 user.sendOpUpdate()
         return ("%s is no longer the World Owner." % username)
-        #make worldowner
-    elif parts[1] == "globalbuilder":
-        #make them a global builder
-        if not server:
-            if not self.client.isMod():
-                return ("You are not high enough rank!")
-        else:
-            if not parts[-1] == "console":
-                if not factory.isMod(parts[-1]):
-                    return ("You are not high enough rank!")
-        if username in factory.globalbuilders:
-            factory.members.remove(username)
-        else:
-            return ("No such Global Builder \"%s\"" % username.lower())
-        if username in factory.usernames:
-            factory.usernames[username].sendGlobalBuilderUpdate()
-        return ("%s is no longer a Global Builder." % username.lower())
     elif parts[1] == "member":
-        #make them a member
         if not server:
             if not self.client.isMod():
                 return ("You are not high enough rank!")
@@ -300,7 +260,6 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             factory.usernames[username].sendMemberUpdate()
         return ("%s is no longer a Member." % username.lower())
     elif parts[1] == "mod":
-        #make them a mod
         if not server:
             if not self.client.isDirector():
                 return ("You are not high enough rank!")
@@ -316,7 +275,6 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             factory.usernames[username].sendModUpdate()
         return ("%s is no longer a Mod." % username.lower())
     elif parts[1] == "admin":
-        #make them admin
         if not server:
             if not self.client.isDirector():
                 return ("You are not high enough rank!")
@@ -332,7 +290,6 @@ def DeRank(self, parts, byuser, overriderank, server=None):
         else:
             return ("No such admin \"%s\""% username.lower())
     elif parts[1] == "director":
-        #make them director
         if not server:
             if not self.client.isOwner():
                 return ("You are not high enough rank!")
@@ -385,7 +342,7 @@ def Credits(self, server=None):
     Temp.append ("Thanks to the following people for making iCraft possible...")
     Temp.append ("Mojang Specifications (Minecraft): Notch, dock, ez, ...")
     Temp.append ("Creators: aera aka AndrewGodwin (Myne and The Archives), iKJames aka KingJames, JamesKirslis (hlmc.net, iCraft)")
-    Temp.append ("Devs: Adam01, AndrewPH, eugo (Knossus), gdude2002, goober, NotMeh, Saanix, sk8rjwd, tehcid, Varriount")
+    Temp.append ("Devs: Adam01, AndrewPH, eugo (Knossus), gdude2002 (arbot), goober, NotMeh, Saanix, sk8rjwd, tehcid, Varriount")
     Temp.append ("Old Devs: destroyerx1, Dwarfy, erronjason, gothfox, ntfwc, PixelEater, revenant, willempiee")
-    Temp.append ("Others: Akai, Antoligy, Bidoof_King, Bioniclegenius (Red_Link), CDRom, fragmer, iMak, Kelraider, MystX, PyroPyro, setveen, ...")
+    Temp.append ("Others: Akai, Antoligy, Bidoof_King, Bioniclegenius (Red_Link), CDRom, fragmer, GLaDOS (Cortana), iMak, Kelraider, MystX, PyroPyro, setveen, ...")
     return Temp

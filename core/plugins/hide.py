@@ -71,5 +71,5 @@ class HidePlugin(ProtocolPlugin):
         else:
             self.client.sendServerMessage("That was Magic!")
             self.hidden = False
-            #Imagine that! They've mysteriously appeared.
+            # Imagine that! They've mysteriously appeared.
             self.client.queueTask(TASK_NEWPLAYER, [self.client.id, self.client.username, self.client.x, self.client.y, self.client.z, self.client.h, self.client.p])

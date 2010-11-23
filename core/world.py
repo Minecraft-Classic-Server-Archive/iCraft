@@ -68,7 +68,6 @@ class World(object):
         self.all_write = True
         self.admin_blocks = True
         self.private = False
-        self.highlight_ops = True
         self._physics = False
         self._finite_water = False
         self.is_archive = False
@@ -82,7 +81,6 @@ class World(object):
         self.autoshutdown = True
         self.saving = False
         self.users = {}
-        self.rpg = False
         self.global_chat = True
         self.zoned = False
         self.userzones = {}
@@ -224,10 +222,6 @@ class World(object):
             else:
                 self.zoned = True
         if config.has_section("display"):
-            if config.has_option("display", "highlight_ops"):
-                self.highlight_ops = config.getboolean("display", "highlight_ops")
-            else:
-                self.highlight_ops = True
             if config.has_option("display", "physics"):
                 self.physics = config.getboolean("display", "physics")
             else:
@@ -372,7 +366,6 @@ class World(object):
         config.set("permissions", "private", str(self.private))
         config.set("permissions", "zoned", str(self.zoned))
         # Store display settings
-        config.set("display", "highlight_ops", str(self.highlight_ops))
         config.set("display", "physics", str(self.physics))
         config.set("display", "finite_water", str(self.finite_water))
         # Store teleports

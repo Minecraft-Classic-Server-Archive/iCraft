@@ -294,12 +294,12 @@ class StdinPlugin(threading.Thread):
                                 if username in self.server.usernames:
                                     self.server.usernames[username].sendWhisper("Console", text)
                                     logging.log(logging.INFO,"@Console to "+username+": "+text)
-                                    self.whisperlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | @Console to "+username+": "+text+"\n")
+                                    self.whisperlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+" | @Console to "+username+": "+text+"\n")
                                     self.whisperlog.flush()
                                 else:
                                     print ("%s is currently offline." % username)
                         elif message.startswith("!"):
-                            #It's a world message.
+                            # It's a world message.
                             if len(message) == 1:
                                 print ("Please include a message to send.")
                             else:
@@ -314,28 +314,27 @@ class StdinPlugin(threading.Thread):
                                         if self.server.irc_relay:
                                             self.server.irc_relay.sendServerMessage("!Console in "+str(world)+": "+out)
                                         logging.log(logging.INFO,"!Console in "+str(self.server.worlds[world].id)+": "+out)
-                                        self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | !Console in "+str(self.server.worlds[world].id)+": "+out+"\n")
+                                        self.wclog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+" | !Console in "+str(self.server.worlds[world].id)+": "+out+"\n")
                                         self.wclog.flush()
                                     else:
                                         print ("That world does not exist. Try !world message")
                         elif message.startswith("#"):
-                            #It's an staff-only message.
+                            # It's an staff-only message.
                             if len(message) <= 2:
                                 print ("Please include a message to send.")
                             else:
                                 try:
                                     text = message[1:]
                                 except ValueError:
-                                    self.server.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN,"Console", message)))
+                                    self.server.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN, "Console", message)))
                                 else:
                                     text = text[:len(text)-1]
-                                    self.server.queue.put((self, TASK_STAFFMESSAGE, (0, COLOUR_DARKGREEN,"Console", text,False)))
-                                    logging.log(logging.INFO,"#Console: "+text)
-                                    self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M")+" | #Console: "+text+"\n")
+                                    self.server.queue.put((self, TASK_STAFFMESSAGE, (0, COLOUR_DARKGREEN, "Console", text,False)))
+                                    logging.log(logging.INFO, "#Console: "+text)
+                                    self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+" | #Console: "+text+"\n")
                                     self.adlog.flush()
                         else:
-                            self.server.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN,"Console", message[0:len(message)-1])))
-                            #self.server.queue.put((self, TASK_MESSAGE, (255, "", COLOUR_DARKGREEN+"Console", message[0:len(message)-1])))
+                            self.server.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN, "Console", message[0:len(message)-1])))
             except:
                 print traceback.format_exc()
                 logging.log(logging.ERROR, traceback.format_exc())

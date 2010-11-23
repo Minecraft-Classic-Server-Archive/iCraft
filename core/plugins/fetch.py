@@ -45,7 +45,10 @@ class FetchPlugin(ProtocolPlugin):
         "bring": "commandFetch",
         "forcefetch": "commandForceFetch",
         "forcebring": "commandForceFetch",
+        "ffetch": "commandForceFetch",
+        "fbring": "commandForceFetch",
         "invite": "commandInvite",
+        "finvite": "commandFetch",
         "forceinvite": "commandFetch",
     }
 
@@ -103,7 +106,7 @@ class FetchPlugin(ProtocolPlugin):
     @admin_only
     @username_command
     def commandForceFetch(self, user, byuser, overriderank):
-        "/forcefetch username - Admin\nAliases: forcebring\nTeleports a user to be where you are"
+        "/forcefetch username - Admin\nAliases: fbring, forcebring, ffetch\nTeleports a user to be where you are"
         # Shift the locations right to make them into block coords
         rx = self.client.x >> 5
         ry = self.client.y >> 5
@@ -123,7 +126,7 @@ class FetchPlugin(ProtocolPlugin):
     @player_list
     @username_command
     def commandInvite(self, user, byuser, overriderank):
-        "/invite username - Guest\nInvites a user to come to you."
+        "/invite username - Guest\nAliases: finvite\nInvites a user to come to you."
         if user.world == self.client.world:
             self.client.sendServerMessage("%s has been invited." % user.username)
             user.sendServerMessage("%s has invited you." % self.client.username)

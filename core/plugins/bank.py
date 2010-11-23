@@ -131,7 +131,7 @@ class MoneyPlugin(ProtocolPlugin):
             bank[target] = bank[target] + amount
             bank[user] = bank[user] - amount
             self.dumpBank(bank)
-            self.client.sendServerMessage("You sent %d %s." % amount, self.client.factory.currency)
+            self.client.sendServerMessage("You sent %d %s." % (amount, self.client.factory.currency))
             self.money_logger.info("%(user)s sent %(amount)d %(currency)s to %(target)s" % {'user': user, 'amount': amount, 'currency': self.client.factory.currency, 'target': target})
             #factory.usernames uses all lowercased for some reason
             if target in self.client.factory.usernames:
