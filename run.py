@@ -62,9 +62,9 @@ if os.name == "posix" and os.path.exists("nohup.out"):
 
 if not os.path.exists("logs/"):
     os.mkdir("logs/")
-if not useConsoleLog and not os.path.exists("logs/console/"):
+if useConsoleLog and not os.path.exists("logs/console/"):
     os.mkdir("logs/console/")
-if not useConsoleLog and not os.path.exists("logs/console/console.log"):
+if useConsoleLog and not os.path.exists("logs/console/console.log"):
     file = open("logs/console/console.log", "w")
     file.write("")
     file.close()

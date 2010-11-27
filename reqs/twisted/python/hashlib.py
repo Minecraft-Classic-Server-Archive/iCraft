@@ -17,8 +17,8 @@ except ImportError:
     from md5 import md5
     from sha import sha as sha1
 else:
-    md5  = _hashlibs.md5
-    sha1 = _hashlibs.sha1
+    md5  = _hashlib.md5
+    sha1 = _hashlib.sha1
 
 
 __all__ = ["md5", "sha1"]
