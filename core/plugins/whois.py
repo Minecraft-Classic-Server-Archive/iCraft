@@ -41,6 +41,7 @@ import time
 from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
+from core.globals import *
 
 class PlayersPlugin(ProtocolPlugin):
     
@@ -102,7 +103,7 @@ class PlayersPlugin(ProtocolPlugin):
                 if self.client.isAdmin():
                     self.client.sendNormalMessage(("%s" %(title))+self.client.factory.usernames[user].userColour()+parts[1]+COLOUR_YELLOW+" ("+str(username.transport.getPeer().host)+")")
                 else:
-                    self.client.sendNormalMessage(("%s" %(title))+self.client.userColour()+parts[1])
+                    self.client.sendNormalMessage(("%s" %(title))+self.client.factory.usernames[user].userColour()+parts[1])
                 if username.gone == 1:
                     self.client.sendNormalMessage(COLOUR_DARKPURPLE+"Away"+COLOUR_YELLOW+" in %s" % (username.world.id))
                 else:
@@ -114,26 +115,7 @@ class PlayersPlugin(ProtocolPlugin):
             else:
                 # Parts is an array, always, so we get the first item.
                 username = parts[1].lower()
-                if username in self.client.factory.spectators:
-                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_BLACK+parts[1])
-                elif username in self.client.factory.owner:
-                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKGREEN+parts[1])
-                elif username in self.client.factory.directors:
-                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_GREEN+parts[1])
-                elif username in self.client.factory.admins:
-                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_RED+parts[1])
-                elif username in self.client.factory.mods:
-                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_BLUE+parts[1])
-                elif username in self.client.world.owner:
-                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKYELLOW+parts[1])
-                elif username in self.client.world.ops:
-                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_DARKCYAN+parts[1])
-                elif (username in self.client.world.writers):
-                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_CYAN+parts[1])
-                elif username in self.client.factory.members:
-                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_GREY+parts[1])
-                else:
-                    self.client.sendNormalMessage(("%s" %(title))+COLOUR_WHITE+parts[1])
+                self.client.sendNormalMessage(("%s" %(title))+self.client.userColour()+parts[1])
                 if username not in self.client.factory.lastseen:
                     self.client.sendNormalMessage(COLOUR_DARKRED+"Offline"+COLOUR_YELLOW+" (Never seen)")
                 else:

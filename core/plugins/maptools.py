@@ -44,7 +44,6 @@ class PrivatePlugin(ProtocolPlugin):
     commands = {
         "private": "commandPrivate",
         "lock": "commandLock",
-        "gchat": "commandGChat"
         #"ponly": "commandPOnly"
     }
     
@@ -75,14 +74,6 @@ class PrivatePlugin(ProtocolPlugin):
             self.client.world.all_write = True
             self.client.sendWorldMessage("This world is now unlocked.")
             self.client.sendServerMessage("Unlocked %s" % self.client.world.id)
-
-    @world_list
-    @mod_only
-    @on_off_command
-    def commandGChat(self, onoff, byuser, rankoverride):
-        "/gchat on|off - Mod\nTurns Global Chat on or off in this world.\nWorldChat is used instead if off."
-        self.client.world.global_chat = onoff == "on"
-        self.client.sendServerMessage("Global chat is now %s for this world." %onoff)
 
     #@op_only
     #@on_off_command

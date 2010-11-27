@@ -48,14 +48,22 @@ class TeleportPlugin(ProtocolPlugin):
 
     @world_list
     def commandGoto(self, parts, byuser, overriderank):
-        "/goto x y z - Guest\nTeleports you to coords. NOTE: y is up."
+        "/goto x y z [h p] - Guest\nTeleports you to coords. NOTE: y is up."
         try:
             x = int(parts[1])
             y = int(parts[2])
             z = int(parts[3])
-            self.client.teleportTo(x, y, z)
+            try:
+                try:
+                    h = int(parts[4])
+                    self.client.teleportTo(x, y, z, h)
+                except:
+                    p = int(parts[5])
+                    self.client.teleportTo(x, y, z, h, p)
+            except:
+                self.client.teleportTo(x, y, z)
         except (IndexError, ValueError):
-            self.client.sendServerMessage("Usage: /goto x y z")
+            self.client.sendServerMessage("Usage: /goto x y z [h p]")
     
     @player_list
     @username_command

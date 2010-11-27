@@ -174,6 +174,9 @@ class ControllerProtocol(LineReceiver):
     def commandMods(self, data):
         self.sendJson({"mods": list(self.factory.mods)})
 
+    def commandGlobalBuilders(self, data):
+        self.sendJson({"globalbuilders": list(self.factory.globalbuilders)})
+
     def commandMembers(self, data):
         self.sendJson({"members": list(self.factory.members)})
 
@@ -194,7 +197,6 @@ class ControllerProtocol(LineReceiver):
                 "locked": not world.all_write,
                 "physics": world.physics,
                 "zones": world.zoned,
-                "gchat": world.global_chat,
                 "colors": world.highlight_ops,
                 "fwater": world.finite_water,
                 "solids": world.admin_blocks,
@@ -217,7 +219,6 @@ class ControllerProtocol(LineReceiver):
             "locked": not world.all_write,
             "physics": world.physics,
             "zones": world.zoned,
-            "gchat": world.global_chat,
             "colors": world.highlight_ops,
             "fwater": world.finite_water,
             "solids": world.admin_blocks,

@@ -54,6 +54,7 @@ class helpPlugin(ProtocolPlugin):
         "credits": "commandCredits",
         "motd": "commandMOTD",
         "greeting": "commandMOTD",
+        "rules": "commandRules",
     }
 
     @info_list
@@ -84,7 +85,7 @@ class helpPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("Sand will fall, grass will grow, sponges will absorb.")
                     self.client.sendServerMessage("Use unflood to move all water, lava, and spouts from the world.")
                 elif parts[1].lower() == "ranks":
-                    self.client.sendNormalMessage(COLOUR_YELLOW+"Help: Server Ranks - "+COLOUR_DARKGREEN+"Owner/Console (9) "+COLOUR_GREEN+"Director (8) "+COLOUR_RED+"Admin (7) "+COLOUR_BLUE+"Mod (6) "+COLOUR_DARKYELLOW+"World Owner (5) "+COLOUR_DARKCYAN+"Op (4) "+COLOUR_CYAN+"Builder (3) "+COLOUR_GREY+"Member (2) "+COLOUR_WHITE+"Guest (1) "+COLOUR_BLACK+"Spec (0)")
+                    self.client.sendNormalMessage(COLOUR_YELLOW+"Help: Server Ranks - "+COLOUR_DARKGREEN+"Owner/Console [9] "+COLOUR_GREEN+"Director [8] "+COLOUR_RED+"Admin [7] "+COLOUR_BLUE+"Mod [6] "+COLOUR_DARKYELLOW+"World Owner [5] "+COLOUR_DARKCYAN+"Op [4] "+COLOUR_CYAN+"(Global) "+COLOUR_CYAN+"Builder [3] "+COLOUR_GREY+"Member [2] "+COLOUR_WHITE+"Guest [1] "+COLOUR_BLACK+"Spec [0]")
                 elif parts[1].lower() == "cc":
                     self.client.sendServerMessage("Help; Color Codes")
                     self.client.sendNormalMessage("&a%a &b%b &c%c &d%d &e%e &f%f")
@@ -214,5 +215,20 @@ class helpPlugin(ProtocolPlugin):
     def commandMOTD(self, parts, byuser, overriderank):
         "/motd - Guest\nAliases: greeting\nShows the greeting."
         self.client.sendServerMessage("MOTD for "+self.client.factory.server_name+":")
-        for line in self.client.factory.initial_greeting.split("\n"):
+        try:
+            r = open('config/greeting.txt', 'r')
+        except:
+            r = open('config/greeting.example.txt', 'r')
+        for line in r:
+            self.client.sendNormalMessage(line)
+
+    @info_list
+    def commandRules(self, parts, byuser, overriderank):
+        "/rules - Guest\nShows the server rules."
+        self.client.sendServerMessage("Rules for "+self.client.factory.server_name+":")
+        try:
+            r = open('config/rules.txt', 'r')
+        except:
+            r = open('config/rules.example.txt', 'r')
+        for line in r:
             self.client.sendNormalMessage(line)

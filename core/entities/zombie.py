@@ -52,7 +52,7 @@ if var_cango:
     self.client.sendBlock(x, y+1, z, block)
     var_position = (x,y-1,z)
     x,y,z = var_position
-    block = chr(35)
+    block = chr(29)
     world[x, y, z] = block
     self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
     self.client.sendBlock(x, y, z, block)
@@ -107,7 +107,7 @@ else:
             self.client.sendBlock(x, y+1, z, block)
             var_position = target
             x,y,z = var_position
-            block = chr(35)
+            block = chr(29)
             world[x, y, z] = block
             self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
             self.client.sendBlock(x, y, z, block)
@@ -138,7 +138,7 @@ else:
                 self.client.sendBlock(x, y+1, z, block)
                 var_position = target
                 x,y,z = var_position
-                block = chr(35)
+                block = chr(29)
                 world[x, y, z] = block
                 self.client.queueTask(TASK_BLOCKSET, (x, y, z, block), world=world)
                 self.client.sendBlock(x, y, z, block)

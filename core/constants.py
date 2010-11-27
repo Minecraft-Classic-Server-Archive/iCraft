@@ -37,8 +37,8 @@
 
 import os
 
-INFO_VERSION = "v3.0.5"
-INFO_FULLVERSION = "v3.0.5 (with setup)"
+INFO_VERSION = "v3.0.6"
+INFO_FULLVERSION = "v3.0.6 (with setup)"
 INFO_VIPLIST = set(["notch", "ez", "dock", "aera", "andrewgodwin", "ikjames", "kingjames", "jameskirslis", "adam01", "andrewph", "eugo", "knossus", "gdude2002", "arbot", "goober", "notmeh", "saanix", "sk8rjwd", "tehcid", "varriount", "destroyerx1", "dwarfy", "erronjason", "gothfox", "ntfwc", "pixeleater", "revenant", "willempiee", "akai", "antoligy", "bidoof_king", "bioniclegenius", "red_link", "cdrom", "fragmer", "imak", "kelraider", "mystx", "pyropyro", "setveen", "cortana", "thepolice"])
 
 FORMAT_LENGTHS = {

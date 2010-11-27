@@ -59,7 +59,7 @@ class ShapesPlugin(ProtocolPlugin):
     @build_list
     @builder_only
     def commandSphere(self, parts, byuser, overriderank):
-        "/sphere blocktype [x y z] radius - Builder\nPlace/delete a block and /sphere block radius"
+        "/sphere blocktype radius [x y z] - Builder\nPlace/delete a block and /sphere block radius"
         if len(parts) < 6 and len(parts) != 3:
             self.client.sendServerMessage("Please enter a type (and possibly two coord triples)")
         else:
@@ -135,7 +135,7 @@ class ShapesPlugin(ProtocolPlugin):
     @build_list
     @builder_only
     def commandHSphere(self, parts, byuser, overriderank):
-        "/hsphere blocktype [x y z] radius - Builder\nPlace/delete a block, makes a hollow /sphere"
+        "/hsphere blocktype radius [x y z] - Builder\nPlace/delete a block, makes a hollow /sphere"
         if len(parts) < 6 and len(parts) != 3:
             self.client.sendServerMessage("Please enter a type (and possibly two coord triples)")
         else:
@@ -533,7 +533,7 @@ class ShapesPlugin(ProtocolPlugin):
     @build_list
     @op_only
     def commandCsphere(self, parts, byuser, overriderank):
-        "/csphere blocktype blocktype x y z radius - Op\nPlace/delete a block and /csphere block radius"
+        "/csphere blocktype blocktype radius [x y z] - Op\nPlace/delete a block and /csphere block radius"
         if len(parts) < 7 and len(parts) != 4:
             self.client.sendServerMessage("Please enter two types a radius(and possibly a coord triple)")
         else:
@@ -648,7 +648,7 @@ class ShapesPlugin(ProtocolPlugin):
     @build_list
     @op_only
     def commandCircle(self, parts, byuser, overriderank):
-        "/circle blocktype x y z radius axis - Op\nPlace/delete a block and /circle block radius axis"
+        "/circle blocktype radius axis [x y z] - Op\nPlace/delete a block and /circle block radius axis"
         if len(parts) < 7 and len(parts) != 4:
             self.client.sendServerMessage("Please enter a type, radius, axis(and possibly a coord triple)")
         else:
@@ -753,7 +753,7 @@ class ShapesPlugin(ProtocolPlugin):
     @build_list
     @op_only
     def commandDome(self, parts, byuser, overriderank):
-        "/dome blocktype x y z radius - Op\nPlace/delete a block and /sphere block radius"
+        "/dome blocktype radius [x y z] - Op\nPlace/delete a block and /sphere block radius"
         if len(parts) < 7 and len(parts) != 4:
             self.client.sendServerMessage("Please enter a type radius fill?(and possibly a coord triple)")
         else:
@@ -850,7 +850,7 @@ class ShapesPlugin(ProtocolPlugin):
     @build_list
     @op_only
     def commandEllipsoid(self, parts, byuser, overriderank):
-        "/ellipsoid blocktype x y z x2 y2 z2 endradius - Op\nAliases: ell\nPlace/delete two blocks and block endradius"
+        "/ellipsoid blocktype endradius [x y z x2 y2 z2] - Op\nAliases: ell\nPlace/delete two blocks and block endradius"
         if len(parts) < 9 and len(parts) != 3:
             self.client.sendServerMessage("Please enter a type endradius (and possibly two coord triples)")
         else:

@@ -73,7 +73,7 @@ if bombintialdelay <= 0:
         for user in var_userkillist2:
             sx,sy,sz,sh = world.spawn
             user.teleportTo(sx,sy,sz,sh)
-            self.client.sendWorldMessage("%s has died from TNT." % user.username)
+            self.client.sendWorldMessage("%s has died from TNT (or a creeper?)" % user.username)
     if bombfinaldelay <=0:
         var_dellist.append(index)
         block = '\x00'
@@ -82,6 +82,7 @@ if bombintialdelay <= 0:
             try:
                 if world.blockstore.raw_blocks[world.blockstore.get_offset(ax,ay,az)] not in var_unbreakables:
                     world[ax,ay, az] = block
+
                     self.client.queueTask(TASK_BLOCKSET, (ax, ay, az, block), world=world)
                     self.client.sendBlock(ax, ay, az, block)
             except:

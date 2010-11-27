@@ -217,7 +217,7 @@ class CoreServerProtocol(Protocol):
         self.factory.queue.put((self, TASK_PLAYERLEAVE, (self.id,)))
         if self.username:
             self.log("Disconnected '%s'" % (self.username,))
-            self.runHook("playerquit",self.username)
+            self.runHook("playerquit", self.username)
             self.log("(reason: %s)" % (reason,), level=logging.DEBUG)
         # Kill all plugins
         self.stopIdleTimer();
@@ -249,7 +249,7 @@ class CoreServerProtocol(Protocol):
         return (self.username.lower() in self.world.ops) or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
     def isWorldOwner(self):
-        return (self.username.lower() in self.world.owner.lower()) or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
+        return (self.username.lower() in self.world.owner) or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
     def isOwner(self):
         return self.username.lower()==self.factory.owner
@@ -267,10 +267,10 @@ class CoreServerProtocol(Protocol):
         return self.factory.isMod(self.username.lower()) or self.isAdmin() or self.isDirector() or self.isOwner()
 
     def isBuilder(self):
-        return (self.username.lower() in self.world.writers) or self.isOp() or self.isWorldOwner()
+        return (self.username.lower() in self.world.writers) or (self.username.lower() in self.factory.globalbuilders) or self.isOp() or self.isWorldOwner()
 
     def isMember(self):
-        return self.factory.isMember(self.username.lower()) or self.isBuilder or self.isOp or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
+        return self.factory.isMember(self.username.lower()) or self.isBuilder() or self.isOp() or self.isWorldOwner() or self.isMod() or self.isAdmin() or self.isDirector() or self.isOwner()
 
     def isSpectator(self):
         return self.factory.isSpectator(self.username.lower())
@@ -313,7 +313,7 @@ class CoreServerProtocol(Protocol):
                 if not self.transport.getHost().host.split(".")[0:2] == self.transport.getPeer().host.split(".")[0:2]:
                     if mppass != correct_pass:
                         self.log("Kicked '%s'; invalid password (%s, %s)" % (self.username, mppass, correct_pass))
-                        self.sendError("Incorrect authentication. (try again in 60s?)")
+                        self.sendError("Incorrect authentication, please try again.")
                         return
                 self.log("Connected, as '%s'" % self.username)
                 self.identified = True
@@ -560,7 +560,7 @@ class CoreServerProtocol(Protocol):
                     if getattr(func, "op_only", False) and not (self.isOp() or self.isMod()):
                         self.sendServerMessage("'%s' is an Op-only command!" % command)
                         return
-                    if getattr(func, "builer_only", False) and not (self.isBuilder() or self.isOp() or self.isMod()):
+                    if getattr(func, "builder_only", False) and not (self.isBuilder() or self.isOp() or self.isMod()):
                         self.sendServerMessage("'%s' is a Builder-only command!" % command)
                         return
                     if getattr(func, "member_only", False) and not (self.isMember() or self.isBuilder() or self.isOp() or self.isMod()):
@@ -598,17 +598,12 @@ class CoreServerProtocol(Protocol):
                         except ValueError:
                             self.sendServerMessage("Please include a message to send.")
                         else:
-                            if self.world.global_chat:
-                                self.sendWorldMessage ("!"+self.title+self.userColour()+self.username+":"+COLOUR_WHITE+" "+text)
-                                self.log("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
-                                self.wclog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+"] !"+self.usertitlename+" in "+str(self.world.id)+": "+text+"\n")
-                                self.wclog.flush()
-                                if self.factory.irc_relay:
-                                    self.factory.irc_relay.sendServerMessage(COLOUR_YELLOW+"!"+self.title+self.userColour()+self.username+COLOUR_BLACK+" in "+str(self.world.id)+": "+text)
-                            else:
-                                self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.title, self.userColour()+self.username, message)))
-                                if self.factory.irc_relay:
-                                    self.factory.irc_relay.sendServerMessage(self.title+self.userColour()+self.username+": "+COLOUR_BLACK+text)
+                            self.sendWorldMessage ("!"+self.title+self.userColour()+self.username+":"+COLOUR_WHITE+" "+text)
+                            self.log("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
+                            self.wclog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+"] !"+self.usertitlename+" in "+str(self.world.id)+": "+text+"\n")
+                            self.wclog.flush()
+                            if self.factory.irc_relay:
+                                self.factory.irc_relay.sendServerMessage(COLOUR_YELLOW+"!"+self.title+self.userColour()+self.username+COLOUR_BLACK+" in "+str(self.world.id)+": "+text)
                 elif message.startswith("#"):
                     # It's an staff-only message.
                     if len(message) == 1:
@@ -630,15 +625,7 @@ class CoreServerProtocol(Protocol):
                         self.sendServerMessage("Cat got your tongue?")
                     else:
                         if override is not True:
-                            if not self.world.global_chat:
-                                self.sendWorldMessage ("!"+self.title+self.userColour()+self.username+":"+COLOUR_WHITE+" "+message)
-                                self.log("!"+self.usertitlename+" in "+str(self.world.id)+": "+message)
-                                self.wclog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+"] !"+self.usertitlename+" in "+str(self.world.id)+": "+message+"\n")
-                                self.wclog.flush()
-                                if self.factory.irc_relay:
-                                    self.factory.irc_relay.sendServerMessage(COLOUR_YELLOW+"!"+self.title+self.userColour()+self.username+COLOUR_BLACK+" in "+str(self.world.id)+": "+message)
-                            else:
-                                self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
+                            self.factory.queue.put((self, TASK_MESSAGE, (self.id, self.userColour(), self.usertitlename, message)))
                 self.resetIdleTimer()
             else:
                 if type == 2:
@@ -653,25 +640,25 @@ class CoreServerProtocol(Protocol):
 
     def userColour(self):
         if self.factory.colors:
-            if self.isSpectator():
+            if (self.username.lower() in self.factory.spectators):
                 color = COLOUR_BLACK
-            elif self.isOwner():
+            elif (self.username.lower() in self.factory.owner):
                 color = COLOUR_DARKGREEN
-            elif self.isDirector():
+            elif (self.username.lower() in self.factory.directors):
                 color = COLOUR_GREEN
-            elif self.isAdmin():
+            elif (self.username.lower() in self.factory.admins):
                 color = COLOUR_RED
-            elif self.isMod():
+            elif (self.username.lower() in self.factory.mods):
                 color = COLOUR_BLUE
             elif self.username.lower() in INFO_VIPLIST:
                 color = COLOUR_YELLOW
-            elif self.isWorldOwner():
+            elif (self.username.lower() in self.world.owner):
                 color = COLOUR_DARKYELLOW
-            elif self.isOp():
+            elif (self.username.lower() in self.world.ops):
                 color = COLOUR_DARKCYAN
-            elif self.isBuilder():
+            elif (self.username.lower() in self.world.writers):
                 color = COLOUR_CYAN
-            elif self.isMember():
+            elif (self.username.lower() in self.factory.members):
                 color = COLOUR_GREY
             else:
                 color = COLOUR_WHITE
@@ -779,6 +766,15 @@ class CoreServerProtocol(Protocol):
             self.sendServerMessage("You are now a Builder in this world.")
         else:
             self.sendServerMessage("You are no longer a Builder in this world.")
+        self.runHook("rankchange")
+        self.respawn()
+
+    def sendGlobalBuilderUpdate(self):
+        "Sends a message."
+        if self.isBuilder():
+            self.sendServerMessage("You are now a Global Builder.")
+        else:
+            self.sendServerMessage("You are no longer a Global Builder.")
         self.runHook("rankchange")
         self.respawn()
  
@@ -990,8 +986,12 @@ class CoreServerProtocol(Protocol):
 
     def sendWelcome(self):
         if not self.sent_first_welcome:
-            for line in self.factory.initial_greeting.split("\n"):
-                self.sendPacked(TYPE_MESSAGE, 127, line.strip())
+            try:
+                r = open('config/greeting.txt', 'r')
+            except:
+                r = open('config/greeting.example.txt', 'r')
+            for line in r:
+                self.sendPacked(TYPE_MESSAGE, 127, line)
             self.sent_first_welcome = True
             self.runHook("playerjoined",self.username)
             self.MessageAlert()
@@ -1042,7 +1042,7 @@ class CoreServerProtocol(Protocol):
                                 if self.isBuilder():
                                     return True
                                 else:
-                                    self.sendServerMessage("You must be " + zone[7] + "to build here.")
+                                    self.sendServerMessage("You must be "+zone[7]+" to build here.")
                                     return False
                 if "op" == zone[7]:
                     x1,y1,z1,x2,y2,z2 = zone[1:7]
@@ -1052,7 +1052,7 @@ class CoreServerProtocol(Protocol):
                                 if self.isOp():
                                     return True
                                 else:
-                                    self.sendServerMessage("You must be " + zone[7] + "to build here.")
+                                    self.sendServerMessage("You must be "+zone[7]+" to build here.")
                                     return False
                 if "worldowner" == zone[7]:
                     x1,y1,z1,x2,y2,z2 = zone[1:7]
@@ -1062,7 +1062,7 @@ class CoreServerProtocol(Protocol):
                                 if self.isWorldOwner():
                                     return True
                                 else:
-                                    self.sendServerMessage("You must be " + zone[7] + "to build here.")
+                                    self.sendServerMessage("You must be "+zone[7]+" to build here.")
                                     return False
                 if "member" == zone[7]:
                     x1,y1,z1,x2,y2,z2 = zone[1:7]
@@ -1072,7 +1072,7 @@ class CoreServerProtocol(Protocol):
                                 if self.isMember():
                                     return True
                                 else:
-                                    self.sendServerMessage("You must be " + zone[7] + "to build here.")
+                                    self.sendServerMessage("You must be "+zone[7]+" to build here.")
                                     return False
                 if "mod" == zone[7]:
                     x1,y1,z1,x2,y2,z2 = zone[1:7]
@@ -1082,7 +1082,7 @@ class CoreServerProtocol(Protocol):
                                 if self.isMod():
                                     return True
                                 else:
-                                    self.sendServerMessage("You must be " + zone[7] + "to build here.")
+                                    self.sendServerMessage("You must be "+zone[7]+" to build here.")
                                     return False
                 if "admin" == zone[7]:
                     x1,y1,z1,x2,y2,z2 = zone[1:7]
@@ -1092,7 +1092,7 @@ class CoreServerProtocol(Protocol):
                                 if self.isAdmin():
                                     return True
                                 else:
-                                    self.sendServerMessage("You must be " + zone[7] + "to build here.")
+                                    self.sendServerMessage("You must be "+zone[7]+" to build here.")
                                     return False
                 if "director" == zone[7]:
                     x1,y1,z1,x2,y2,z2 = zone[1:7]
@@ -1102,7 +1102,7 @@ class CoreServerProtocol(Protocol):
                                 if self.isDirector():
                                     return True
                                 else:
-                                    self.sendServerMessage("You must be " + zone[7] + "to build here.")
+                                    self.sendServerMessage("You must be "+zone[7]+" to build here.")
                                     return False
                 if "owner" == zone[7]:
                     x1,y1,z1,x2,y2,z2 = zone[1:7]
@@ -1112,7 +1112,7 @@ class CoreServerProtocol(Protocol):
                                 if self.isOwner():
                                     return True
                                 else:
-                                    self.sendServerMessage("You must be " + zone[7] + "to build here.")
+                                    self.sendServerMessage("You must be "+zone[7]+" to build here.")
                                     return False
         if self.world.id == self.factory.default_name and self.isMember() and not self.isMod() and not self.world.all_write:
             self.sendBlock(x, y, z)

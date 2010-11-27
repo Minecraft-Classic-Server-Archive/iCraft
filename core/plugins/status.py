@@ -89,8 +89,7 @@ class WorldUtilPlugin(ProtocolPlugin):
         self.client.sendServerMessage("- " + \
             (self.client.world.all_write and "&4Unlocked" or "&2Locked") + "&e | " + \
             (self.client.world.zoned and "&2Zones" or "&4Zones") + "&e | " + \
-            (self.client.world.private and "&2Private" or "&4Private") + "&e | " + \
-            (self.client.world.global_chat and "&2GChat" or "&4GChat")
+            (self.client.world.private and "&2Private" or "&4Private")
         )
         self.client.sendServerMessage("- " + \
             (self.client.world.physics and "&2Physics" or "&4Physics") + "&e | " + \

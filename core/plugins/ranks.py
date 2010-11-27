@@ -52,12 +52,16 @@ class ModsPlugin(ProtocolPlugin):
         "specced": "commandSpecced",
         "writer": "commandOldRanks",
         "builder": "commandOldRanks",
+        "globalwriter": "commandOldRanks",
+        "globalbuilder": "commandOldRanks",
         "op": "commandOldRanks",
         "mod": "commandOldRanks",
         "admin": "commandOldRanks",
         "director": "commandOldRanks",
         "dewriter": "commandOldDeRanks",
         "debuilder": "commandOldDeRanks",
+        "deglobalwriter": "commandOldDeRanks",
+        "deglobalbuilder": "commandOldDeRanks",
         "deop": "commandOldDeRanks",
         "demod": "commandOldDeRanks",
         "deadmin": "commandOldDeRanks",
@@ -96,24 +100,28 @@ class ModsPlugin(ProtocolPlugin):
     @player_list
     @op_only
     def commandOldRanks(self, parts, byuser, overriderank):
-        "/rankname username [world] - Op\nAliases: member, writer, builder, op, mod, admin, director\nThis is here for Myne users."
+        "/rankname username [world] - Op\nAliases: member, (global)writer, (global)builder, op, mod, admin, director\nThis is here for Myne users."
         if len(parts) < 2:
             self.client.sendServerMessage("You must specify a rank and username.")
         else:
             if parts[0] == "/writer":
                 parts[0] = "/builder"
+            elif parts[0] == "/globalwriter":
+                parts[0] = "/globalbuilder"
             parts = ["/rank", parts[0][1:]] + parts[1:]
             self.client.sendServerMessage(Rank(self, parts, byuser, overriderank))
 
     @player_list
     @op_only
     def commandOldDeRanks(self, parts, byuser, overriderank):
-        "/derankname username [world] - Op\nAliases: demember, dewriter, debuilder, deop, demod, deadmin, dedirector\nThis is here for Myne users."
+        "/derankname username [world] - Op\nAliases: de(global)member, de(global)writer, debuilder, deop, demod, deadmin, dedirector\nThis is here for Myne users."
         if len(parts) < 2:
             self.client.sendServerMessage("You must specify a rank and username.")
         else:
             if parts[0] == "/dewriter":
                 parts[0] = "/debuilder"
+            elif parts[0] == "/deglobalwriter":
+                parts[0] = "/deglobalbuilder"
             parts = ["/derank", parts[0][1:]] + parts[1:]
             self.client.sendServerMessage(DeRank(self, parts, byuser, overriderank))
 

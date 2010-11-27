@@ -118,6 +118,18 @@ def Rank(self, parts, byuser, overriderank,server=None):
         if username in factory.usernames:
             factory.usernames[username].sendMemberUpdate()
         return ("%s is now a Member." % username)
+    elif parts[1] == "globalbuilder":
+        if not server:
+            if not self.client.isMod():
+                return ("You are not high enough rank!")
+        else:
+            if not parts[-1] == "console":
+                if not factory.isMod(parts[-1]):
+                    return ("You are not high enough rank!")
+        factory.globalbuilders.add(username)
+        if username in factory.usernames:
+            factory.usernames[username].sendGlobalBuilderUpdate()
+        return ("%s is now a Global Builder." % username)
     elif parts[1] == "mod":
         if not server:
             if not self.client.isDirector():
@@ -258,6 +270,21 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             return ("No such member \"%s\"" % username.lower())
         if username in factory.usernames:
             factory.usernames[username].sendMemberUpdate()
+        return ("%s is no longer a Member." % username.lower())
+    elif parts[1] == "globalbuilder":
+        if not server:
+            if not self.client.isMod():
+                return ("You are not high enough rank!")
+        else:
+            if not parts[-1] == "console":
+                if not factory.isMod(parts[-1]):
+                    return ("You are not high enough rank!")
+        if username in factory.globalbuilders:
+            factory.globalbuilders.remove(username)
+        else:
+            return ("No such global builder \"%s\"" % username.lower())
+        if username in factory.usernames:
+            factory.usernames[username].sendGlobalBuilderUpdate()
         return ("%s is no longer a Member." % username.lower())
     elif parts[1] == "mod":
         if not server:

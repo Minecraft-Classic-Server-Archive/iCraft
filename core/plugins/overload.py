@@ -39,13 +39,13 @@ from reqs.twisted.internet import reactor
 from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
+from core.world import World
 
 class OverloadPlugin(ProtocolPlugin):
     
     commands = {
         "overload": "commandOverload",
         #"send": "commandSend",
-        "blazer": "commandBlazer",
     }
     
     @player_list
@@ -56,27 +56,14 @@ class OverloadPlugin(ProtocolPlugin):
         client.sendOverload()
         self.client.sendServerMessage("Overload sent to %s" % client.username)
 
-    #@player_list
-    #@mod_only
-    #@username_command
-    #def commandSend(self, client, byuser, overriderank):
-        #"/send username [world] - Mod\nSends the users client another world."
-        #if user.isMod():
-            #self.client.sendServerMessage("You cannot send Staff!")
-        #if len(parts) == 2:
-            #self.client.sendServerMessage("Please specify a world ID.")
-        #else:
-            #world_id = parts[2]
-            #user.changeToWorld("%s" % world_id)
-            #else:
-                #user.sendServerMessage("You were sent to '%s'." % self.client.world.id)
-                #user.changeToWorld("default")
-                #self.client.sendServerMessage("User %s was sent." % user.username)
-        #else:
-            #self.client.sendServerMessage("Your user is in another world!")
-
+    @player_list
     @mod_only
-    def commandBlazer(self, parts, byuser, overriderank):
-        "/blazer - Mod\nBlazer!"
-        for i in range(10):
-            self.client.sendServerMessage("SPAM!")
+    @username_command
+    def commandSend(self, parts, byuser, overriderank):
+        "/send username [world] - Mod\nSends the users client to another world."
+        #if self.client.isMod():
+        #    self.client.sendServerMessage("You cannot send Staff!")
+        world_id = parts[1]
+        client.changeToWorld(world_id)
+        client.sendServerMessage("You were sent to '%s'." % world.id)
+        self.client.sendServerMessage("User %s was sent." % user.username)

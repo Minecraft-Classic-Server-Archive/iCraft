@@ -35,9 +35,9 @@ Archiver (Archives Worlds from Servers) - /extras/archiver.py
 
 Step 1: Install Python 2.6. Python 2.5/2.7 may work, Python 3.x WON'T
 
-Step 2: Configure the config files found in the config folder (rename
-all of them with .example.conf to .conf, exception of irc/email -
-rename them IF you want what they offer)
+Step 2: Configure the config files found in the config folder - rename
+all of them with .example.conf to .conf, exception of irc/email,
+rename them IF you want what they offer, do the same for .example.txt
 
 Step 3: Get on and enjoy iCraft, as it should now be working. Good luck
 with your server.

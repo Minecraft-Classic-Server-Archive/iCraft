@@ -123,8 +123,14 @@ class CoreFactory(Factory):
                     self.irc_pass = self.irc_config.get("irc", "password")
                     self.irc_channel = self.irc_config.get("irc", "channel")
                     self.irc_cmdlogs = self.irc_config.getboolean("irc", "cmdlogs")
+                    self.ircbot = self.irc_config.getboolean("irc", "ircbot")
+                    self.staffchat = self.irc_config.getboolean("irc", "staffchat")
                     self.irc_relay = ChatBotFactory(self)
-                    reactor.connectTCP(self.irc_config.get("irc", "server"), self.irc_config.getint("irc", "port"), self.irc_relay)
+                    if self.ircbot and not self.irc_channel == "#icraft" and not self.irc_nick == "botname":
+                        reactor.connectTCP(self.irc_config.get("irc", "server"), self.irc_config.getint("irc", "port"), self.irc_relay)
+                    else:
+                        logging.log(logging.ERROR, "IRC Bot failed to connect, you could modify, rename or remove irc.conf")
+                        logging.log(logging.ERROR, "You need to change your 'botname' and 'channel' fields to fix this error or turn the bot off by disabling 'ircbot'")
                     return True
             except:
                 return False
@@ -139,7 +145,6 @@ class CoreFactory(Factory):
             #self.public = self.config.getboolean("main", "public")
             #self.controller_port = self.config.get("network", "controller_port")
             #self.controller_password = self.config.get("network", "controller_password")
-            self.initial_greeting = self.config.get("main", "greeting").replace("\\n", "\n")
             self.owner = self.config.get("main", "owner").lower()
             self.duplicate_logins = self.options_config.getboolean("options", "duplicate_logins")
             self.console_delay = self.options_config.getint("options", "console_delay")
@@ -165,7 +170,6 @@ class CoreFactory(Factory):
             self.build_op = self.ploptions_config.get("build", "op")
             self.build_other = self.ploptions_config.get("build", "other")
             self.elimit = self.ploptions_config.getint("entities", "limit")
-            self.staffchat = self.options_config.getboolean("options", "staffchat")
             if self.backup_auto:
                 reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
         except:
@@ -200,7 +204,6 @@ class CoreFactory(Factory):
             self.max_clients = self.config.getint("main", "max_clients")
             self.server_name = self.config.get("main", "name")
             self.server_message = self.config.get("main", "description")
-            self.initial_greeting = self.config.get("main", "greeting").replace("\\n", "\n")
             self.public = self.config.getboolean("main", "public")
             self.controller_port = self.config.get("network", "controller_port")
             self.controller_password = self.config.get("network", "controller_password")
@@ -220,7 +223,6 @@ class CoreFactory(Factory):
             self.default_backup = self.options_config.get("worlds", "default_backup")
             self.asd_delay = self.options_config.getint("worlds", "asd_delay")
             self.gchat = self.options_config.getboolean("worlds", "gchat")
-            self.staffchat = self.options_config.getboolean("options", "staffchat")
         except:
             logging.log(logging.ERROR, "You don't have a options.conf file! You need to rename options.example.conf to options.conf")
             self.exit()
@@ -244,12 +246,19 @@ class CoreFactory(Factory):
         except:
             logging.log(logging.ERROR, "You don't have a ploptions.conf file! You need to rename ploptions.example.conf to ploptions.conf")
             self.exit()
+        if not os.path.exists("config/greeting.txt"):
+            logging.log(logging.ERROR, "You don't have a greeting.txt file! You need to rename greeting.example.txt to ploptions.txt")
+            self.exit()
+        if not os.path.exists("config/rules.txt"):
+            logging.log(logging.ERROR, "You don't have a rules.txt file! You need to rename rules.example.txt to rules.txt")
+            self.exit()
         if self.use_irc:
             self.irc_nick = self.irc_config.get("irc", "nick")
             self.irc_pass = self.irc_config.get("irc", "password")
             self.irc_channel = self.irc_config.get("irc", "channel")
             self.irc_cmdlogs = self.irc_config.getboolean("irc", "cmdlogs")
             self.ircbot = self.irc_config.getboolean("irc", "ircbot")
+            self.staffchat = self.irc_config.getboolean("irc", "staffchat")
             self.irc_relay = ChatBotFactory(self)
             if self.ircbot and not self.irc_channel == "#icraft" and not self.irc_nick == "botname":
                 reactor.connectTCP(self.irc_config.get("irc", "server"), self.irc_config.getint("irc", "port"), self.irc_relay)
@@ -301,6 +310,7 @@ class CoreFactory(Factory):
         self.directors = set()
         self.admins = set()
         self.mods = set()
+        self.globalbuilders = set()
         self.members = set()
         self.spectators = set()
         self.silenced = set()
@@ -356,6 +366,9 @@ class CoreFactory(Factory):
         if config.has_section("mods"):
             for name in config.options("mods"):
                 self.mods.add(name)
+        if config.has_section("globalbuilders"):
+            for name in config.options("globalbuilders"):
+                self.globalbuilders.add(name)
         if config.has_section("members"):
             for name in config.options("members"):
                 self.members.add(name)
@@ -405,6 +418,7 @@ class CoreFactory(Factory):
         config.add_section("directors")
         config.add_section("admins")
         config.add_section("mods")
+        config.add_section("globalbuilders")
         config.add_section("members")
         config.add_section("silenced")
         bans.add_section("banned")
@@ -418,6 +432,8 @@ class CoreFactory(Factory):
             config.set("admins", admin, "true")
         for mod in self.mods:
             config.set("mods", mod, "true")
+        for globalbuilder in self.globalbuilders:
+            config.set("globalbuilders", globalbuilder, "true")
         for member in self.members:
             config.set("members", member, "true")
         for ban, reason in self.banned.items():
@@ -495,7 +511,7 @@ class CoreFactory(Factory):
                 logging.log(logging.INFO, "World '%s' has been saved." % world_id)
             if self.save_count == 5:
                 for client in list(list(self.worlds[world_id].clients))[:]:
-                    client.sendServerMessage(datetime.time.utcnow().strftime("[%H:%M] ")+"World '%s' has been saved." % world_id)
+                    client.sendServerMessage("[%s] World '%s' has been saved." % (datetime.datetime.utcnow().strftime("%H:%M"), world_id))
                 self.save_count = 1
             else:
                 self.save_count += 1
@@ -586,6 +602,7 @@ class CoreFactory(Factory):
         """
         for client in list(list(self.worlds[world_id].clients))[:]:
             if world_id == self.default_name:
+                client.loadWorld("worlds/%s" % world_id, world_id)
                 client.changeToWorld(self.default_backup)
             else:
                 client.changeToWorld(self.default_name)
@@ -677,8 +694,7 @@ class CoreFactory(Factory):
                         text = self.messagestrip(text)
                         data = (id,colour,username,text)
                         for client in self.clients.values():
-                            if (client.world.global_chat or client.world is source_client.world):
-                                client.sendMessage(*data)
+                            client.sendMessage(*data)
                         id, colour, username, text = data
                         logging.log(logging.INFO, "%s: %s" % (username, text))
                         self.chatlog.write("[%s] %s: %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S"), username, text))

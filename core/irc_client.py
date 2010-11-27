@@ -197,7 +197,7 @@ class ChatBot(irc.IRCClient):
                 else:
                     self.msg(user, "07You must be an op to use %s." %command[1])
             if not command[1].startswith("#"):
-                logging.log(logging.INFO,"%s just used: %s" %(user," ".join(command[1:])))
+                logging.log(logging.INFO, "%s just used: %s" % (user, " ".join(command[1:])))
         except:
             logging.log(logging.ERROR, traceback.format_exc())
             self.msg(user, "Internal Server Error (See the Console for more details)")
@@ -221,7 +221,7 @@ class ChatBot(irc.IRCClient):
                             for key in self.factory.worlds:
                                 users =  ", ".join(str(c.username) for c in self.factory.worlds[key].clients)
                                 if users:
-                                    whois = ("07%s: %s" % (key,users))
+                                    whois = ("07%s: %s" % (key, users))
                                     self.msg(self.factory.irc_channel, whois)
                                     users=None
                                     none=False
@@ -232,14 +232,14 @@ class ChatBot(irc.IRCClient):
                             worlds = ", ".join([id for id, world in self.factory.worlds.items()])
                             self.msg(self.factory.irc_channel, "07Online Worlds: "+worlds)
                         elif msg_command[1] == ("staff"):
-                            self.msg(self.factory.irc_channel,"07Please see your PM for this Server's Staff List.")
-                            self.msg(user,"The Server Staff - Owner: "+self.factory.owner)
+                            self.msg(self.factory.irc_channel,"07Please see your PM for the Staff List.")
+                            self.msg(user, "The Server Staff - Owner: "+self.factory.owner)
                             list = Staff(self, self.factory)
                             for each in list:
                                 self.msg(user," ".join(each))
                         elif msg_command[1] == ("credits"):
                             self.msg(self.factory.irc_channel,"07Please see your PM for the Credits.")
-                            self.msg(user,"The Credits")
+                            self.msg(user, "The Credits")
                             list = Credits(self, self.factory)
                             for each in list:
                                 self.msg(user,"".join(each))
@@ -247,11 +247,22 @@ class ChatBot(irc.IRCClient):
                             self.msg(self.factory.irc_channel, "07Help Center")
                             self.msg(self.factory.irc_channel, "07Commands: Use '$"+self.nickname+" cmdlist'")
                             self.msg(self.factory.irc_channel, "07WorldChat: Use '!world message'")
+                            self.msg(self.factory.irc_channel, "07IRCChat: Use '$message'")
                             self.msg(self.factory.irc_channel, "07About: Use '$"+self.nickname+" about'")
                             self.msg(self.factory.irc_channel, "07Credits: Use '$"+self.nickname+" credits'")
+                        elif msg_command[1] == ("rules"):
+                            self.msg(self.factory.irc_channel,"07Please see your PM for the Rules.")
+                            self.msg(user, "The Rules")
+                            try:
+                                r = open('config/rules.txt', 'r')
+                            except:
+                                r = open('config/rules.example.txt', 'r')
+                            for line in r:
+                                line = line.replace("\n", "")
+                                self.msg(user, line)
                         elif msg_command[1] == ("cmdlist"):
                             self.msg(self.factory.irc_channel, "07Command List")
-                            self.msg(self.factory.irc_channel, "07about cmdlist credits help staff who worlds")
+                            self.msg(self.factory.irc_channel, "07about cmdlist credits help rules staff who worlds")
                             self.msg(self.factory.irc_channel, "07Use '$"+self.nickname+" command arguments' to do it.")
                             self.msg(self.factory.irc_channel, "07NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
                         elif msg_command[1] == ("about"):
@@ -264,9 +275,11 @@ class ChatBot(irc.IRCClient):
                             self.msg(self.factory.irc_channel, "07Site: "+self.factory.info_url)
                         else:
                             self.msg(self.factory.irc_channel, "07Sorry, "+msg_command[1]+" is not a command!")
-                        logging.log(logging.INFO,"%s just used: %s" %(user," ".join(msg_command[1:])))
+                        logging.log(logging.INFO, "%s just used: %s" % (user, " ".join(msg_command[1:])))
                     else:
                         self.msg(self.factory.irc_channel,"07You must provide a command to use the IRC bot.")
+                elif msg.startswith("$"):
+                    logging.log(logging.INFO, "<$%s> %s" % (user, msg))
                 elif msg.startswith("!"):
                     # It's a world message.
                     message = msg.split(" ")
@@ -276,7 +289,7 @@ class ChatBot(irc.IRCClient):
                         try:
                            world = message[0][1:len(message[0])]
                            out = "\n ".join(message[1:])
-                           text = COLOUR_PURPLE+"IRC: "+COLOUR_YELLOW+datetime.datetime.utcnow().strftime("[%H:%M] ")+COLOUR_WHITE+"<!"+user+">"+COLOUR_WHITE+out
+                           text = COLOUR_PURPLE+"IRC: "+COLOUR_WHITE+"<!"+user+">"+COLOUR_WHITE+out
                         except ValueError:
                             self.msg(self.factory.irc_channel, "07Please include a message to send.")
                         else:
@@ -364,9 +377,8 @@ class ChatBot(irc.IRCClient):
                             msg = msg.replace("&", "*")
                     #self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, user, msg)))
                     for client in self.factory.clients.values():
-                        if (client.world.global_chat or client.world is source_client.world):
-                            client.sendNormalMessage(COLOUR_PURPLE+"IRC: "+COLOUR_YELLOW+datetime.datetime.utcnow().strftime("[%H:%M] ")+COLOUR_WHITE+"<"+user+">")
-                            client.sendNormalMessage(msg)
+                        client.sendNormalMessage(COLOUR_PURPLE+"IRC: "+client.userColour()+"<"+user+">")
+                        client.sendNormalMessage(msg)
                     logging.log(logging.INFO, "<%s> %s" % (user, msg))
                     self.factory.chatlog.write("[%s] <*%s> %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), user, msg))
                     self.factory.chatlog.flush()
@@ -382,12 +394,11 @@ class ChatBot(irc.IRCClient):
         msg = "".join([char for char in msg if ord(char) < 128 and char != "" or "0"])
         #self.factory.queue.put((self, TASK_ACTION, (127, COLOUR_PURPLE, user, msg)))
         for client in self.factory.clients.values():
-            if (client.world.global_chat or client.world is source_client.world):
-                client.sendNormalMessage(COLOUR_PURPLE+"IRC: "+COLOUR_YELLOW+datetime.datetime.utcnow().strftime("[%H:%M] ")+COLOUR_WHITE+"* "+user)
-                client.sendNormalMessage(msg)
-        logging.log(logging.INFO, "* %s %s" % (username, text))
-        self.chatlog.write("[%s] * %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S"), username, text))
-        self.chatlog.flush()
+            client.sendNormalMessage(COLOUR_PURPLE+"IRC: * "+client.userColour()+user)
+            client.sendNormalMessage(msg)
+        logging.log(logging.INFO, "* %s %s" % (user, msg))
+        self.factory.chatlog.write("[%s] * %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S"), user, msg))
+        self.factory.chatlog.flush()
 
     def sendMessage(self, username, message):
         message = message.replace("&0", "01")
