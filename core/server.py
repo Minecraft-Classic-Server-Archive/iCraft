@@ -126,7 +126,7 @@ class CoreFactory(Factory):
                     self.ircbot = self.irc_config.getboolean("irc", "ircbot")
                     self.staffchat = self.irc_config.getboolean("irc", "staffchat")
                     self.irc_relay = ChatBotFactory(self)
-                    if self.ircbot and not self.irc_channel == "#icraft" and not self.irc_nick == "botname":
+                    if self.ircbot and not self.irc_channel == "#channel" and not self.irc_nick == "botname":
                         reactor.connectTCP(self.irc_config.get("irc", "server"), self.irc_config.getint("irc", "port"), self.irc_relay)
                     else:
                         logging.log(logging.ERROR, "IRC Bot failed to connect, you could modify, rename or remove irc.conf")
@@ -247,7 +247,7 @@ class CoreFactory(Factory):
             logging.log(logging.ERROR, "You don't have a ploptions.conf file! You need to rename ploptions.example.conf to ploptions.conf")
             self.exit()
         if not os.path.exists("config/greeting.txt"):
-            logging.log(logging.ERROR, "You don't have a greeting.txt file! You need to rename greeting.example.txt to ploptions.txt")
+            logging.log(logging.ERROR, "You don't have a greeting.txt file! You need to rename greeting.example.txt to greeting.txt")
             self.exit()
         if not os.path.exists("config/rules.txt"):
             logging.log(logging.ERROR, "You don't have a rules.txt file! You need to rename rules.example.txt to rules.txt")

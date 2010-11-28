@@ -489,7 +489,7 @@ class ChatBot(irc.IRCClient):
         if old_nick in self.ops:
             self.ops.remove(old_nick)
             self.ops.append(new_nick)
-        msg = "%s%s is now known as %s." % (COLOUR_YELLOW, old_nick, new_nick)
+        msg = "%s%s is now known as %s" % (COLOUR_YELLOW, old_nick, new_nick)
         self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
 
 
@@ -497,7 +497,7 @@ class ChatBot(irc.IRCClient):
         "Called when I observe someone else being kicked from a channel."
         if kickee in self.ops:
             self.ops.remove(kickee)
-        msg = "%s%s was kicked from %s by %s." % (COLOUR_YELLOW, kickee, channel, kicker)
+        msg = "%s%s was kicked from %s by %s" % (COLOUR_YELLOW, kickee, channel, kicker)
         self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
         if not kickee == message:
             msg = "%sReason: %s" % (COLOUR_YELLOW, message)
@@ -508,14 +508,14 @@ class ChatBot(irc.IRCClient):
         "Called when I see another user leaving a channel."
         if user in self.ops:
             self.ops.remove(user)
-        msg = "%s%s has left %s." % (COLOUR_YELLOW, user.split("!")[0], channel)
+        msg = "%s%s has left %s" % (COLOUR_YELLOW, user.split("!")[0], channel)
         self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
 
     def userJoined(self, user, channel):
         "Called when I see another user joining a channel."
         if user in self.ops:
             self.ops.remove(user)
-        msg = "%s%s has joined %s." % (COLOUR_YELLOW, user.split("!")[0], channel)
+        msg = "%s%s has joined %s" % (COLOUR_YELLOW, user.split("!")[0], channel)
         self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
 
     def modeChanged(self, user, channel, set, modes, args):
@@ -527,7 +527,7 @@ class ChatBot(irc.IRCClient):
                 arguments.append(element.split("!")[0])
         if set and modes.startswith("o"):
             if len(arguments) < 2:
-                msg = "%s%s was opped on %s by %s." % (COLOUR_YELLOW, arguments[0], channel, setUser)
+                msg = "%s%s was opped on %s by %s" % (COLOUR_YELLOW, arguments[0], channel, setUser)
             else:
                 msg = "%sUsers opped on %s by %s: %s (%s)" % (COLOUR_YELLOW, channel, setUser, ", ".join(arguments), len(arguments))
             self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
@@ -539,7 +539,7 @@ class ChatBot(irc.IRCClient):
             for name in args:
                 done.append(name.split("!")[0])
             if len(arguments) < 2:
-                msg = "%s%s was deopped on %s by %s." % (COLOUR_YELLOW, arguments[0], channel, setUser)
+                msg = "%s%s was deopped on %s by %s" % (COLOUR_YELLOW, arguments[0], channel, setUser)
             else:
                 msg = "%sUsers deopped on %s by %s: %s (%s)" % (COLOUR_YELLOW, channel, setUser, ", ".join(arguments), len(arguments))
             self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
@@ -548,7 +548,7 @@ class ChatBot(irc.IRCClient):
                     self.ops.remove(name)
         elif set and modes.startswith("v"):
             if len(arguments) < 2:
-                msg = "%s%s was voiced on %s by %s." % (COLOUR_YELLOW, arguments[0], channel, setUser)
+                msg = "%s%s was voiced on %s by %s" % (COLOUR_YELLOW, arguments[0], channel, setUser)
             else:
                 msg = "%sUsers voiced on %s by %s: %s (%s)" % (COLOUR_YELLOW, channel, setUser, ", ".join(arguments), len(arguments))
             self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
@@ -560,7 +560,7 @@ class ChatBot(irc.IRCClient):
             for name in args:
                 done.append(name.split("!")[0])
             if len(arguments) < 2:
-                msg = "%s%s was devoiced on %s by %s." % (COLOUR_YELLOW, arguments[0], channel, setUser)
+                msg = "%s%s was devoiced on %s by %s" % (COLOUR_YELLOW, arguments[0], channel, setUser)
             else:
                 msg = "%sUsers devoiced on %s by %s: %s (%s)" % (COLOUR_YELLOW, channel, setUser, ", ".join(arguments), len(arguments))
             self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
@@ -568,12 +568,12 @@ class ChatBot(irc.IRCClient):
                 if name in self.ops:
                     self.ops.remove(name)
         elif set and modes.startswith("b"):
-            msg = "%sBan set in %s by %s." % (COLOUR_YELLOW, channel, setUser)
+            msg = "%sBan set in %s by %s" % (COLOUR_YELLOW, channel, setUser)
             self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
             msg = "%s(%s)" % (COLOUR_YELLOW, " ".join(args))
             self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
         elif not set and modes.startswith("b"):
-            msg = "%sBan lifted in %s by %s." % (COLOUR_YELLOW, channel, setUser)
+            msg = "%sBan lifted in %s by %s" % (COLOUR_YELLOW, channel, setUser)
             self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
             msg = "%s(%s)" % (COLOUR_YELLOW, " ".join(args))
             self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, "IRC", msg)))
