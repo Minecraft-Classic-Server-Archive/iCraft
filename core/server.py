@@ -162,14 +162,30 @@ class CoreFactory(Factory):
         self.ploptions_config = ConfigParser()
         self.wordfilter = ConfigParser()
         self.save_count = 1
-        self.config.read("config/main.conf")
-        self.options_config.read("config/options.conf")
-        self.ploptions_config.read("config/ploptions.conf")
+        try:
+            self.config.read("config/main.conf")
+        except:
+            logging.log(logging.ERROR, "Something is messed up with your main.conf file. (Did you edit it in Notepad?)")
+            self.exit()
+        try:
+            self.options_config.read("config/options.conf")
+        except:
+            logging.log(logging.ERROR, "Something is messed up with your options.conf file. (Did you edit it in Notepad?)")
+            self.exit()
+        try:
+            self.ploptions_config.read("config/ploptions.conf")
+        except:
+            logging.log(logging.ERROR, "Something is messed up with your ploptions.conf file. (Did you edit it in Notepad?)")
+            self.exit()
         self.use_irc = False
         if  (os.path.exists("config/irc.conf")):
             self.use_irc = True
             self.irc_config = ConfigParser()
-            self.irc_config.read("config/irc.conf")
+            try:
+                self.irc_config.read("config/irc.conf")
+            except:
+                logging.log(logging.ERROR, "Something is messed up with your irc.conf file. (Did you edit it in Notepad?)")
+                self.exit()
         self.saving = False
         try:
             self.max_clients = self.config.getint("main", "max_clients")
@@ -242,7 +258,11 @@ class CoreFactory(Factory):
             self.irc_relay = None
         self.default_loaded = False
         # Word Filter
-        self.wordfilter.read("config/wordfilter.conf")
+        try:
+            self.wordfilter.read("config/wordfilter.conf")
+        except:
+            logging.log(logging.ERROR, "Something is messed up with your wordfilter.conf file. (Did you edit it in Notepad?)")
+            self.exit()
         self.filter = []
         try:
             number = int(self.wordfilter.get("filter","count"))
@@ -255,7 +275,11 @@ class CoreFactory(Factory):
         self.salt = hashlib.md5(hashlib.md5(str(random.getrandbits(128))).digest()).hexdigest()[-32:].strip("0")
         # Load up the plugins specified
         self.plugins_config = ConfigParser()
-        self.plugins_config.read("config/plugins.conf")
+        try:
+            self.plugins_config.read("config/plugins.conf")
+        except:
+            logging.log(logging.ERROR, "Something is messed up with your irc.conf file. (Did you edit it in Notepad?)")
+            self.exit()
         try:
             plugins = self.plugins_config.options("plugins")
         except:
