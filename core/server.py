@@ -235,12 +235,12 @@ class CoreFactory(Factory):
         except:
             logging.log(logging.ERROR, "You don't have a ploptions.conf file! You need to rename ploptions.example.conf to ploptions.conf")
             self.exit()
-        if not os.path.exists("config/greeting.txt"):
-            logging.log(logging.ERROR, "You don't have a greeting.txt file! You need to rename greeting.example.txt to greeting.txt")
-            self.exit()
-        if not os.path.exists("config/rules.txt"):
-            logging.log(logging.ERROR, "You don't have a rules.txt file! You need to rename rules.example.txt to rules.txt")
-            self.exit()
+        #if not os.path.exists("config/greeting.txt"):
+        #    logging.log(logging.ERROR, "You don't have a greeting.txt file! You need to rename greeting.example.txt to greeting.txt (If this error persists, you may have used Notepad.)")
+        #    self.exit()
+        #if not os.path.exists("config/rules.txt"):
+        #    logging.log(logging.ERROR, "You don't have a rules.txt file! You need to rename rules.example.txt to rules.txt (If this error persists, you may have used Notepad.)")
+        #    self.exit()
         if self.use_irc:
             self.irc_nick = self.irc_config.get("irc", "nick")
             self.irc_pass = self.irc_config.get("irc", "password")
