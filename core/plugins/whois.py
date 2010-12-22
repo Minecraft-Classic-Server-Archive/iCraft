@@ -105,6 +105,8 @@ class PlayersPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("Balace: M%d, "+COLOUR_DARKPURPLE+"is currently Away" % (bank[user]))
                 elif username.gone == 1:
                     self.client.sendNormalMessage(COLOUR_DARKPURPLE+"is currently Away")
+                elif user in bank:
+                    self.client.sendServerMessage("Balace: M%d" % (bank[user]))
             else:
                 # Parts is an array, always, so we get the first item.
                 username = parts[1].lower()
