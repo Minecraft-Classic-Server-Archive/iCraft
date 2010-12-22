@@ -78,8 +78,7 @@ The Salt is also used to help verify users' identities.
             "salt": self.factory.salt,
             }), 30)
             self.url = fh.read().strip()
-            if self.factory.console_delay == self.factory.delay_count:
-                logging.log(logging.INFO, "Heartbeat Sent. Your URL (saved to docs/SERVERURL): %s" % self.url)
+            logging.log(logging.INFO, "Heartbeat Sent. Your URL (saved to docs/SERVERURL): %s" % self.url)
             open('docs/SERVERURL', 'w').write(self.url)
             if not self.factory.console.is_alive():
                 self.factory.console.run()
