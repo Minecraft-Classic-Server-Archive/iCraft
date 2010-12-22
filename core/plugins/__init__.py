@@ -108,7 +108,7 @@ def load_plugins(plugins):
     try:
         __import__("core.plugins.interact")
     except ImportError:
-        logging.log(logging.ERROR, "You do not have Interact, you need to go get it." % module_name)
+        logging.log(logging.ERROR, "You do not have Interact, you need to go get it.")
         sys.exit(1);
     for module_name in plugins:
         try:
