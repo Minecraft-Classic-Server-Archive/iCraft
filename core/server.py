@@ -721,11 +721,11 @@ class CoreFactory(Factory):
                         for client in self.usernames:
                             self.usernames[client].sendNewPlayer(*data)
                             if self.username.lower() in INFO_VIPLIST and not self.isMod():
-                                self.usernames[client].sendNormalMessage(COLOUR_DARKRED+"iCraft Team Member spotted;")
+                                self.usernames[client].sendNormalMessage(COLOUR_DARKRED+"A VIP of iCraft spotted;")
                             self.usernames[client].sendServerMessage("%s has come online." % source_client.username)
                         if self.irc_relay and world:
                             if self.username.lower() in INFO_VIPLIST and not self.isMod():
-                                self.irc_relay.sendServerMessage("04iCraft Team Member spotted;")
+                                self.irc_relay.sendServerMessage("04A VIP of iCraft spotted;")
                             self.irc_relay.sendServerMessage("07%s has come online." % source_client.username)
                     # Someone joined a world!
                     elif task is TASK_NEWPLAYER:
