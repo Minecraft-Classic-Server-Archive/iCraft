@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,9 +34,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import random
-import os
-import shutil
+import random, os, shutil
 from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
@@ -131,7 +128,7 @@ class MultiWorldPlugin(ProtocolPlugin):
             self.client.sendServerMessage("Please specify a worldname.")
         else:
             if parts[1] in self.client.factory.worlds:
-                self.client.factory.rebootworld(parts[1])
+                self.client.factory.rebootWorld(parts[1])
                 self.client.sendServerMessage("World %s rebooted" % parts[1])
             else:
                 self.client.sendServerMessage("World '%s' isnt booted." % parts[1])
@@ -155,7 +152,8 @@ class MultiWorldPlugin(ProtocolPlugin):
     @world_list
     @only_string_command("world name")
     def commandLoad(self, world_id, byuser, overriderank, params=None):
-        "/l worldname - Guest\nAliases: j, join, load, map\nMoves you into world 'worldname'"
+        "/l worldname [backup] - Guest\nAliases: j, join, load, map\nMoves you into world 'worldname'"
+        world_id = world_id.replace("/", "/backup/")
         if world_id not in self.client.factory.worlds:
             self.client.sendServerMessage("Attempting to boot and join '%s'" % world_id)
             try:

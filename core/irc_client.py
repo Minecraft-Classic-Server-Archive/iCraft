@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,12 +34,10 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import datetime
-import traceback
+import datetime, traceback, logging
 from reqs.twisted.words.protocols import irc
 from reqs.twisted.words.protocols.irc import IRC
 from reqs.twisted.internet import protocol
-import logging
 from constants import *
 from globals import *
 from core.plugins import protocol_plugins
@@ -127,11 +124,8 @@ class ChatBot(irc.IRCClient):
                         self.msg(user, "07StaffChat: Use '#message'")
                 elif command[1] == ("cmdlist"):
                     self.msg(user, "07Here are your Admin Commands:")
-                    self.msg(user, "07ban banned banreason boot derank kick rank rehash shutdown spec")
+                    self.msg(user, "07ban banned banreason boot derank kick rank shutdown spec")
                     self.msg(user, "07Use 'command arguments' to do it.")
-                elif command[1] == ("rehash"):
-                    self.factory.reloadConfig()
-                    self.msg(user, "07Reloaded the Server Configuration.")
                 elif command[1] == ("banreason"):
                     if len(command) == 3:
                         username = command[2]
@@ -266,7 +260,7 @@ class ChatBot(irc.IRCClient):
                             self.msg(self.factory.irc_channel, "07Use '$"+self.nickname+" command arguments' to do it.")
                             self.msg(self.factory.irc_channel, "07NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
                         elif msg_command[1] == ("about"):
-                            self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft %s; http://hlmc.net/ - irc.esper.net #icraft | Credits: Use '$%s credits'" % (INFO_VERSION, self.nickname))
+                            self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft; http://hlmc.net/ | Credits: Use '$%s credits'" % (self.nickname))
                             self.msg(self.factory.irc_channel, "07Name: "+self.factory.server_name+"; owned by "+self.factory.owner)
                             try:
                                 self.msg(self.factory.irc_channel, "07URL: "+self.factory.heartbeat.url)
@@ -307,6 +301,48 @@ class ChatBot(irc.IRCClient):
                     goodchars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", "!", "@", "#", "$", "%", "*", "(", ")", "-", "_", "+", "=", "{", "[", "}", "]", ":", ";", "\"", "\'", "<", ",", ">", ".", "?", "/", "\\", "|"]
                     for character in msg:
                         if not character.lower() in goodchars:
+                            msg = msg.replace("&0", "&0")
+                            msg = msg.replace("&1", "&1")
+                            msg = msg.replace("&2", "&2")
+                            msg = msg.replace("&3", "&3")
+                            msg = msg.replace("&4", "&4")
+                            msg = msg.replace("&5", "&5")
+                            msg = msg.replace("&6", "&6")
+                            msg = msg.replace("&7", "&7")
+                            msg = msg.replace("&8", "&8")
+                            msg = msg.replace("&9", "&9")
+                            msg = msg.replace("&a", "&a")
+                            msg = msg.replace("&b", "&b")
+                            msg = msg.replace("&c", "&c")
+                            msg = msg.replace("&d", "&d")
+                            msg = msg.replace("&e", "&e")
+                            msg = msg.replace("&f", "&f")
+                            msg = msg.replace("0", "&f")
+                            msg = msg.replace("00", "&f")
+                            msg = msg.replace("1", "&0")
+                            msg = msg.replace("01", "&0")
+                            msg = msg.replace("2", "&1")
+                            msg = msg.replace("02", "&1")
+                            msg = msg.replace("3", "&2")
+                            msg = msg.replace("03", "&2")
+                            msg = msg.replace("4", "&c")
+                            msg = msg.replace("04", "&c")
+                            msg = msg.replace("5", "&4")
+                            msg = msg.replace("05", "&4")
+                            msg = msg.replace("6", "&5")
+                            msg = msg.replace("06", "&5")
+                            msg = msg.replace("7", "&6")
+                            msg = msg.replace("07", "&6")
+                            msg = msg.replace("8", "&e")
+                            msg = msg.replace("08", "&e")
+                            msg = msg.replace("9", "&a")
+                            msg = msg.replace("09", "&a")
+                            msg = msg.replace("10", "&3")
+                            msg = msg.replace("11", "&b")
+                            msg = msg.replace("12", "&9")
+                            msg = msg.replace("13", "&d")
+                            msg = msg.replace("14", "&8")
+                            msg = msg.replace("15", "&7")
                             msg = msg.replace(character, "*")
                     msg = msg.replace("%0", "&0")
                     msg = msg.replace("%1", "&1")
@@ -324,48 +360,6 @@ class ChatBot(irc.IRCClient):
                     msg = msg.replace("%d", "&d")
                     msg = msg.replace("%e", "&e")
                     msg = msg.replace("%f", "&f")
-                    msg = msg.replace("&0", "&0")
-                    msg = msg.replace("&1", "&1")
-                    msg = msg.replace("&2", "&2")
-                    msg = msg.replace("&3", "&3")
-                    msg = msg.replace("&4", "&4")
-                    msg = msg.replace("&5", "&5")
-                    msg = msg.replace("&6", "&6")
-                    msg = msg.replace("&7", "&7")
-                    msg = msg.replace("&8", "&8")
-                    msg = msg.replace("&9", "&9")
-                    msg = msg.replace("&a", "&a")
-                    msg = msg.replace("&b", "&b")
-                    msg = msg.replace("&c", "&c")
-                    msg = msg.replace("&d", "&d")
-                    msg = msg.replace("&e", "&e")
-                    msg = msg.replace("&f", "&f")
-                    msg = msg.replace("0", "&f")
-                    msg = msg.replace("00", "&f")
-                    msg = msg.replace("1", "&0")
-                    msg = msg.replace("01", "&0")
-                    msg = msg.replace("2", "&1")
-                    msg = msg.replace("02", "&1")
-                    msg = msg.replace("3", "&2")
-                    msg = msg.replace("03", "&2")
-                    msg = msg.replace("4", "&c")
-                    msg = msg.replace("04", "&c")
-                    msg = msg.replace("5", "&4")
-                    msg = msg.replace("05", "&4")
-                    msg = msg.replace("6", "&5")
-                    msg = msg.replace("06", "&5")
-                    msg = msg.replace("7", "&6")
-                    msg = msg.replace("07", "&6")
-                    msg = msg.replace("8", "&e")
-                    msg = msg.replace("08", "&e")
-                    msg = msg.replace("9", "&a")
-                    msg = msg.replace("09", "&a")
-                    msg = msg.replace("10", "&3")
-                    msg = msg.replace("11", "&b")
-                    msg = msg.replace("12", "&9")
-                    msg = msg.replace("13", "&d")
-                    msg = msg.replace("14", "&8")
-                    msg = msg.replace("15", "&7")
                     msg = msg.replace("./", " /")
                     msg = msg.replace(".!", " !")
                     if msg[len(msg)-2] == "&":
@@ -377,7 +371,7 @@ class ChatBot(irc.IRCClient):
                             msg = msg.replace("&", "*")
                     #self.factory.queue.put((self, TASK_IRCMESSAGE, (127, COLOUR_PURPLE, user, msg)))
                     for client in self.factory.clients.values():
-                        client.sendNormalMessage(COLOUR_PURPLE+"IRC: "+client.userColour()+"<"+user+">")
+                        client.sendNormalMessage(COLOUR_PURPLE+"IRC: "+COLOUR_WHITE+"<"+user+">")
                         client.sendNormalMessage(msg)
                     logging.log(logging.INFO, "<%s> %s" % (user, msg))
                     self.factory.chatlog.write("[%s] <*%s> %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M"), user, msg))
@@ -394,7 +388,7 @@ class ChatBot(irc.IRCClient):
         msg = "".join([char for char in msg if ord(char) < 128 and char != "" or "0"])
         #self.factory.queue.put((self, TASK_ACTION, (127, COLOUR_PURPLE, user, msg)))
         for client in self.factory.clients.values():
-            client.sendNormalMessage(COLOUR_PURPLE+"IRC: * "+client.userColour()+user)
+            client.sendNormalMessage(COLOUR_PURPLE+"IRC: * "+COLOUR_WHITE+user)
             client.sendNormalMessage(msg)
         logging.log(logging.INFO, "* %s %s" % (user, msg))
         self.factory.chatlog.write("[%s] * %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S"), user, msg))

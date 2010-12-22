@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,9 +34,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import cPickle # Now using the MUCH faster, optimized cPickle
-import logging
-import time
+import cPickle, logging, time
 from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
@@ -101,31 +98,26 @@ class PlayersPlugin(ProtocolPlugin):
                 # Parts is an array, always, so we get the first item.
                 username = self.client.factory.usernames[parts[1].lower()]
                 if self.client.isAdmin():
-                    self.client.sendNormalMessage(("%s" %(title))+self.client.factory.usernames[user].userColour()+parts[1]+COLOUR_YELLOW+" ("+str(username.transport.getPeer().host)+")")
+                    self.client.sendNormalMessage(self.client.factory.usernames[user].userColour()+("%s" % (title))+parts[1]+COLOUR_YELLOW+" "+username.world.id+" | "+str(username.transport.getPeer().host))
                 else:
-                    self.client.sendNormalMessage(("%s" %(title))+self.client.factory.usernames[user].userColour()+parts[1])
-                if username.gone == 1:
-                    self.client.sendNormalMessage(COLOUR_DARKPURPLE+"Away"+COLOUR_YELLOW+" in %s" % (username.world.id))
-                else:
-                    self.client.sendNormalMessage(COLOUR_DARKGREEN+"Online"+COLOUR_YELLOW+" in %s" % (username.world.id))
-                if user in bank:
-                    self.client.sendServerMessage("Balance: M%d." %(bank[user]))
-                else:
-                    self.client.sendServerMessage("Balance: N/A")
+                    self.client.sendNormalMessage(self.client.factory.usernames[user].userColour()+("%s" % (title))+parts[1]+COLOUR_YELLOW+" "+username.world.id)
+                if username.gone == 1 and user in bank:
+                    self.client.sendServerMessage("Balace: M%d, "+COLOUR_DARKPURPLE+"is currently Away" % (bank[user]))
+                elif username.gone == 1:
+                    self.client.sendNormalMessage(COLOUR_DARKPURPLE+"is currently Away")
             else:
                 # Parts is an array, always, so we get the first item.
                 username = parts[1].lower()
-                self.client.sendNormalMessage(("%s" %(title))+self.client.userColour()+parts[1])
-                if username not in self.client.factory.lastseen:
-                    self.client.sendNormalMessage(COLOUR_DARKRED+"Offline"+COLOUR_YELLOW+" (Never seen)")
-                else:
+                self.client.sendNormalMessage(self.client.userColour()+("%s" % (title))+parts[1]+COLOUR_DARKRED+" Offline")
+                try:
                     t = time.time() - self.client.factory.lastseen[username]
-                    days = t // 86400
-                    hours = (t % 86400) // 3600
-                    mins = (t % 3600) // 60
-                    desc = "%id, %ih, %im" % (days, hours, mins)
-                    self.client.sendNormalMessage(COLOUR_DARKRED+"Offline"+COLOUR_YELLOW+" (%s ago)" % (desc))
-                if user in bank:
-                    self.client.sendServerMessage("Balance: C%d." %(bank[user]))
-                else:
-                    self.client.sendServerMessage("Balance: N/A")
+                except:
+                    return
+                days = t // 86400
+                hours = (t % 86400) // 3600
+                mins = (t % 3600) // 60
+                desc = "%id, %ih, %im" % (days, hours, mins)
+                if username in self.client.factory.lastseen and user in bank:
+                    self.client.sendServerMessage("Balance: M%s, on %s ago" % (bank[user], desc))
+                elif username in self.client.factory.lastseen:
+                    self.client.sendServerMessage("on %s ago" % (desc))

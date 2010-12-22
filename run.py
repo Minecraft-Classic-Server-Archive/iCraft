@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -37,11 +36,7 @@
 
 #!/usr/bin/python
 
-import os
-import sys
-import time
-import logging
-import os,shutil
+import os, sys, time, logging, shutil
 from reqs.twisted.internet import reactor
 from logging.handlers import SMTPHandler
 from core.constants import *
@@ -49,9 +44,8 @@ from core.server import CoreFactory
 from core.controller import ControllerFactory
 from ConfigParser import RawConfigParser as ConfigParser
 
-print ("Now starting up iCraft %s .." % INFO_FULLVERSION)
-print ("- Please don't forget to check for updates.")
-print ("- Do you need help with iCraft? Feel free to stop by either way; http://hlmc.net/ | irc.esper.net #icraft")
+print ("Now starting up iCraft.. Make sure to check and update often.")
+print ("Do you need help with iCraft? Feel free to stop by either way; http://hlmc.net/ | irc.esper.net #icraft")
 
 useConsoleLog = True
 # Disable file logging if using nohup.out
@@ -71,7 +65,7 @@ if useConsoleLog and not os.path.exists("logs/console/console.log"):
 
 def LogTimestamp():
     if os.path.exists("logs/console/console.log"):
-        shutil.copy("logs/console/console.log", "logs/console/console." +time.strftime("%m-%d-%Y_%H",time.localtime(time.time())) +".log")
+        shutil.copy("logs/console/console.log", "logs/console/console."+time.strftime("%m-%d-%Y_%H",time.localtime(time.time()))+".log")
         f=open("logs/console/console.log",'w')
         f.close()
     reactor.callLater(6*60*60, LogTimestamp) # 24hours*60minutes*60seconds
@@ -115,24 +109,6 @@ factory.makedatfile("config/data/titles.dat")
 controller = ControllerFactory(factory)
 reactor.listenTCP(factory.config.getint("network", "port"), factory)
 reactor.listenTCP(factory.config.getint("network", "controller_port"), controller)
-if factory.use_email:
-    if factory.email_config.getboolean("email", "need_auth"):
-        email = logging.handlers.SMTPHandler(
-            (factory.email_config.get("email", "host"),factory.email_config.get("email", "port")),
-            factory.email_config.get("email", "from"),
-            [factory.email_config.get("email", "to")],
-            factory.email_config.get("email", "subject"),
-            (factory.email_config.get("email", "username"), factory.email_config.get("email", "password")),
-        )
-    else:
-        email = logging.handlers.SMTPHandler(
-            (factory.email_config.get("email", "host"),factory.email_config.get("email", "port")),
-            factory.email_config.get("email", "from"),
-            [factory.email_config.get("email", "to")],
-            factory.email_config.get("email", "subject"),
-        )
-    email.setLevel(logging.ERROR)
-    logging.root.addHandler(email)
 money_logger = logging.getLogger('TransactionLogger')
 fh = logging.FileHandler('logs/server.log')
 formatter = logging.Formatter("%(asctime)s: %(message)s")

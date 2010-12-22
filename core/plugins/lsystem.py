@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,11 +34,11 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
+import math
 from reqs.twisted.internet import reactor
 from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
-import math
 from random import choice
 
 class LinePlugin(ProtocolPlugin):
@@ -446,7 +445,6 @@ class LinePlugin(ProtocolPlugin):
                         try:
                             drawer_location,drawer_orientationvector,block = savedlocations.pop()
                         except:
-                            print str(finalsequence)
                             self.client.sendServerMessage("No saved location error ('[' but no ']')")
                             return
                     elif item == "N":

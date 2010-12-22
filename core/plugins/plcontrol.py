@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -46,6 +45,8 @@ class CorePlugin(ProtocolPlugin):
         "pll": "commandPluginload",
         "plu": "commandPluginunload",
         "plr": "commandPluginreload",
+        "pllist": "commandPluginlist",
+        "pllistall": "commandPluginlist",
     }
     
     @director_only
@@ -78,3 +79,14 @@ class CorePlugin(ProtocolPlugin):
             self.client.sendServerMessage("No such plugin '%s'." % plugin_name)
         else:
             self.client.sendServerMessage("Plugin '%s' unloaded." % plugin_name)
+
+    @admin_only
+    def commandPluginlist(self, parts, byuser, overriderank):
+        "/pllist - Admin\nAliases: pllistall\nShows all plugins."
+        pluginlist = os.listdir("core/plugins")
+        newpluginlist = []
+        for plugin in pluginlist:
+            if not plugin.endswith(".pyc"):
+                plugin = plugin.replace(".py","")
+                newpluginlist.append(plugin)
+        self.client.sendServerList(["Plugins:"] + newpluginlist)

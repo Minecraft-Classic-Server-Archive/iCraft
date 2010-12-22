@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,11 +34,11 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
+import sys
 from reqs.twisted.internet import reactor
 from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
-import sys
 
 class BrepPlugin(ProtocolPlugin):
     
@@ -270,11 +269,8 @@ class BrepPlugin(ProtocolPlugin):
     def commandFill(self, parts, byuser, overriderank):
         "/fill blockname repblock [x y z x2 y2 z2] - Op\nFills the area with the block."
         if len(parts) < 9 and len(parts) != 3:
-            self.client.sendServerMessage("Please enter a type and a type to replace")
-            self.client.sendServerMessage("(and possibly two coord triples)")
-            self.client.sendServerMessage("Note that you must place two blocks to use it.")
-            self.client.sendServerMessage("The first block sets where to spread from and")
-            self.client.sendServerMessage("the second block sets which directions to spread.")
+            self.client.sendSplitServerMessage("Please enter a type and a type to replace (and possibly two coord triples)")
+            self.client.sendSplitServerMessage("Note that you must place two blocks to use it. The first block sets where to spread from and the second block sets which directions to spread.")
         else:
             # Try getting the block as a direct integer type.
             try:

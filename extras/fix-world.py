@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,29 +34,21 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import gzip
-import sys
-import os
+import gzip, sys, os
 
 if len(sys.argv) == 1:
     print "Please provide a filename."
-
 filename = sys.argv[1]    
-    
 print "Fixing %s..." % filename
-
 gzf = gzip.GzipFile(filename)
 ngzf = gzip.GzipFile(filename + ".new", "wb")
-
 # Write the size header
 ngzf.write(gzf.read(4))
-
 # Write each byte, checking for out-of-range
 chunk = gzf.read(2048)
 while chunk:
     ngzf.write("".join([("\0" if ord(byte) > 49 else byte) for byte in chunk]))
     chunk = gzf.read(2048)
-
 gzf.close()
 ngzf.close()
 os.rename(filename+".new", filename)

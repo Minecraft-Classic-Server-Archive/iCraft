@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,17 +34,19 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import gzip
-import struct
-import os
-import traceback
-import logging
+import gzip, struct, os, traceback, logging, sys
 from Queue import Empty
 from ConfigParser import RawConfigParser as ConfigParser
 from array import array
 from deferred import Deferred
 from blockstore import BlockStore
 from constants import *
+try:
+    from tracker import dbconnection
+    apsw = 1
+except:
+    print ("You should install APSW if you want blocktracking.")
+    apsw = 0
 
 class World(object):
     """
@@ -61,6 +62,7 @@ class World(object):
         self.basename = basename
         self.blocks_path = os.path.join(basename, "blocks.gz")
         self.meta_path = os.path.join(basename, "world.meta")
+        self.database_path = os.path.join(basename, "database.db")
         # Other settings
         self.owner = "N/A"
         self.ops = set()
@@ -68,6 +70,7 @@ class World(object):
         self.all_write = True
         self.admin_blocks = True
         self.private = False
+        self.highlight_ops = True
         self._physics = False
         self._finite_water = False
         self.is_archive = False
@@ -81,6 +84,8 @@ class World(object):
         self.autoshutdown = True
         self.saving = False
         self.users = {}
+        if apsw == 1:
+            self.BlockEngine = dbconnection(self)
         self.global_chat = True
         self.zoned = False
         self.userzones = {}
@@ -104,6 +109,8 @@ class World(object):
         "Starts up this World; we spawn a BlockStore, and run it."
         self.blockstore = BlockStore(self.blocks_path, self.x, self.y, self.z)
         self.blockstore.start()
+        if apsw == 1:
+            self.BlockEngine.tableopen()
         # If physics is on, turn it on
         if self._physics:
             self.blockstore.in_queue.put([TASK_PHYSICSON])
@@ -116,7 +123,10 @@ class World(object):
         self.save_meta()
 
     def unload(self):
-        self.factory.unloadWorld(self.id,True)
+        self.factory.unloadWorld(self.id, True)
+        if apsw == 1:
+            self.BlockEngine.dbclose()
+            self.BlockEngine = None
 
     def read_queue(self):
         "Reads messages from the BlockStore and acts on them."
@@ -222,6 +232,10 @@ class World(object):
             else:
                 self.zoned = True
         if config.has_section("display"):
+            if config.has_option("display", "highlight_ops"):
+                self.highlight_ops = config.getboolean("display", "highlight_ops")
+            else:
+                self.highlight_ops = True
             if config.has_option("display", "physics"):
                 self.physics = config.getboolean("display", "physics")
             else:
@@ -294,7 +308,6 @@ class World(object):
                         break
                     else:
                         i+=1
-                        
         self.entitylist = []
         if config.has_section("entitylist"):
             for option in config.options("entitylist"):
@@ -366,6 +379,7 @@ class World(object):
         config.set("permissions", "private", str(self.private))
         config.set("permissions", "zoned", str(self.zoned))
         # Store display settings
+        config.set("display", "highlight_ops", str(self.highlight_ops))
         config.set("display", "physics", str(self.physics))
         config.set("display", "finite_water", str(self.finite_water))
         # Store teleports
@@ -394,12 +408,10 @@ class World(object):
         # Store rank zones
         for name, zone in self.rankzones.items():
             config.set("rankzones", str(name), ", ".join(map(str, zone)))
-
         # Store entitylist
         for i in range(len(self.entitylist)):
             entry = self.entitylist[i]
             config.set("entitylist", str(i), str(entry))
-            
         fp = open(self.meta_path, "w")
         config.write(fp)
         fp.close()

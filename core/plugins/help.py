@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,8 +34,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import random
-import os
+import random, os
 from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
@@ -64,20 +62,14 @@ class helpPlugin(ProtocolPlugin):
             try:
                 func = self.client.commands[parts[1].lower()]
             except KeyError:
-                if parts[1].lower() == "basics":
-                    self.client.sendServerMessage("Help; Basics")
-                    self.client.sendServerMessage("/worlds - Lists all worlds.")
-                    self.client.sendServerMessage("/l worldname - Takes you to another world.")
-                    self.client.sendServerMessage("/tp username - This takes you to someone else.")
-                    self.client.sendServerMessage("Step through portals to teleport around.")
-                elif parts[1].lower() == "chat":
+                if parts[1].lower() == "chats":
                     self.client.sendServerMessage("Help; Chats")
-                    if self.client.isMod():
-                        self.client.sendServerMessage("StaffChat: #message")
                     self.client.sendServerMessage("Whispers: @username Whispers")    
                     self.client.sendServerMessage("WorldChat: !message")
+                    if self.client.isMod():
+                        self.client.sendServerMessage("StaffChat: #message")
                 elif parts[1].lower() == "physic":
-                    self.client.sendServerMessage("Help; Physic Engine")
+                    self.client.sendServerMessage("Help; Physics Engine")
                     self.client.sendServerMessage("Turn physics on to use Physics (max of 5 worlds)")
                     self.client.sendServerMessage("If fwater is on then your water won't move.")
                     self.client.sendServerMessage("Orange blocks make Lavafalls, darkblue blocks make Waterfalls.")
@@ -108,15 +100,16 @@ class helpPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("There's no help for that command.")
         else:
             self.client.sendServerMessage("The Central Help Hub")
-            self.client.sendServerMessage("Documents: /help [basics|cc|chat|guide|physic|ranks]")
+            self.client.sendServerMessage("Documents: /help [cc|chats|guide|physic|ranks]")
             self.client.sendServerMessage("Commands: /cmdlist - Lookup: /help command")
-            self.client.sendServerMessage("About: /about | Credits: /credits")
+            self.client.sendServerMessage("About: /about - Credits: /credits")
+            self.client.sendServerMessage("MOTD: /motd - Rules: /rules")
 
     @info_list
     def commandCmdlist(self, parts, byuser, overriderank):
         "/cmdlist category - Guest\nThe command list of your rank, categories."
         if len(parts) > 1:
-            if parts[1].lower() == "all":
+            if parts[1].lower() == "all" and not self.isMod():
                 self.ListCommands("all")
                 self.client.sendServerMessage("cmdlist all is deprecated, use the cmdlist categories instead.")
             elif parts[1].lower() == "build":
@@ -193,7 +186,7 @@ class helpPlugin(ProtocolPlugin):
     @info_list
     def commandAbout(self, parts, byuser, overriderank):
         "/about - Guest\nAliases: info\nAbout the server and software."
-        self.client.sendSplitServerMessage("About The Server, powered by iCraft %s; http://hlmc.net/ - irc.esper.net #icraft | Credits: /credits" % INFO_VERSION)
+        self.client.sendSplitServerMessage("About The Server, powered by iCraft; http://hlmc.net/ | Credits: /credits")
         self.client.sendSplitServerMessage("Name: "+self.client.factory.server_name+"; owned by "+self.client.factory.owner)
         self.client.sendSplitServerMessage(self.client.factory.server_message)
         self.client.sendServerMessage("URL: "+self.client.factory.info_url)

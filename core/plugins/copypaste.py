@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,25 +34,28 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
+import sys
 from reqs.twisted.internet import reactor
 from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
-
-import sys
 
 class BsavePlugin(ProtocolPlugin):
     
     commands = {
         "copy": "commandSave",
         "paste": "commandLoad",
-        "rotate": "commandRotate"
+        "pasta": "commandLoad",
+        "rotate": "commandRotate",
+        "xzrotate": "commandRotatexz",
+        "xyrotate": "commandRotatexy",
+        "yzrotate": "commandRotateyz",
     }
     
     @build_list
     @builder_only
     def commandLoad(self, parts, byuser, overriderank):
-        "/paste [x y z] - Builder\nRestore blocks saved earlier using /copy"
+        "/paste [x y z] - Builder\nAliases: pasta\nRestore blocks saved earlier using /copy"
         if len(parts) < 4 and len(parts) != 1:
             self.client.sendServerMessage("Please enter coordinates.")
         else:
@@ -74,7 +76,8 @@ class BsavePlugin(ProtocolPlugin):
             # Check whether we have anything saved
             try:
                 num_saved = len(self.client.bsaved_blocks)
-                self.client.sendServerMessage("Loading %d blocks..." % num_saved)
+                if byuser:
+                    self.client.sendServerMessage("Loading %d blocks..." % num_saved)
             except AttributeError:
                 self.client.sendServerMessage("Please /copy something first.")
                 return
@@ -220,6 +223,123 @@ class BsavePlugin(ProtocolPlugin):
                 tempz = z
                 x = zmax-tempz
                 z = tempx
+                tempblocks.add((x,y,z,block))
+            self.client.bsaved_blocks = tempblocks
+        if byuser:
+            self.client.sendServerMessage("Your rotate just completed.")
+
+    @build_list
+    @builder_only
+    def commandRotatexz(self, parts, byuser, overriderank):
+        "/xzrotate angle - Builder\nAllows you to rotate what you copied\nalong the X/Z axis."
+        if len(parts)<2:
+            self.client.sendServerMessage("You must give an angle to rotate!")
+            return
+        try:
+            angle = int(parts[1])
+        except ValueError:
+            self.client.sendServerMessage("Angle must be an integer!")
+            return
+        if angle % 90 != 0:
+            self.client.sendServerMessage("Angle must be divisible by 90!")
+            return
+        rotations = angle/90
+        self.client.sendServerMessage("Rotating %s degrees..." %angle)
+        for rotation in range(rotations):
+            tempblocks = set()
+            xmax=zmax=0
+            try:
+                for x, y, z, block in self.client.bsaved_blocks:
+                    if x > xmax:
+                        xmax=x
+                    if z > zmax:
+                        zmax=z
+            except:
+                self.client.sendServerMessage("You haven't used /copy yet.")
+                return
+            for x, y, z, block in self.client.bsaved_blocks:
+                tempx = x
+                tempz = z
+                x = zmax-tempz
+                z = tempx
+                tempblocks.add((x,y,z,block))
+            self.client.bsaved_blocks = tempblocks
+        if byuser:
+            self.client.sendServerMessage("Your rotate just completed.")
+
+    @build_list
+    @builder_only
+    def commandRotatexy(self, parts, byuser, overriderank):
+        "/xyrotate angle - Builder\nAllows you to rotate what you copied\nalong the X/Y axis."
+        if len(parts)<2:
+            self.client.sendServerMessage("You must give an angle to rotate!")
+            return
+        try:
+            angle = int(parts[1])
+        except ValueError:
+            self.client.sendServerMessage("Angle must be an integer!")
+            return
+        if angle % 90 != 0:
+            self.client.sendServerMessage("Angle must be divisible by 90!")
+            return
+        rotations = angle/90
+        self.client.sendServerMessage("Rotating %s degrees..." %angle)
+        for rotation in range(rotations):
+            tempblocks = set()
+            xmax=ymax=0
+            try:
+                for x, y, z, block in self.client.bsaved_blocks:
+                    if x > xmax:
+                        xmax=x
+                    if y > ymax:
+                        ymax=y
+            except:
+                self.client.sendServerMessage("You haven't used /copy yet.")
+                return
+            for x, y, z, block in self.client.bsaved_blocks:
+                tempx = x
+                tempy = y
+                x = ymax-tempy
+                y = tempx
+                tempblocks.add((x,y,z,block))
+            self.client.bsaved_blocks = tempblocks
+        if byuser:
+            self.client.sendServerMessage("Your rotate just completed.")
+
+    @build_list
+    @builder_only
+    def commandRotateyz(self, parts, byuser, overriderank):
+        "/yzrotate angle - Builder\nAllows you to rotate what you copied\nalong the Y/Z axis."
+        if len(parts)<2:
+            self.client.sendServerMessage("You must give an angle to rotate!")
+            return
+        try:
+            angle = int(parts[1])
+        except ValueError:
+            self.client.sendServerMessage("Angle must be an integer!")
+            return
+        if angle % 90 != 0:
+            self.client.sendServerMessage("Angle must be divisible by 90!")
+            return
+        rotations = angle/90
+        self.client.sendServerMessage("Rotating %s degrees..." %angle)
+        for rotation in range(rotations):
+            tempblocks = set()
+            ymax=zmax=0
+            try:
+                for x, y, z, block in self.client.bsaved_blocks:
+                    if y > ymax:
+                        ymax=y
+                    if z > zmax:
+                        zmax=z
+            except:
+                self.client.sendServerMessage("You haven't used /copy yet.")
+                return
+            for x, y, z, block in self.client.bsaved_blocks:
+                tempy = y
+                tempz = z
+                y = zmax-tempz
+                z = tempy
                 tempblocks.add((x,y,z,block))
             self.client.bsaved_blocks = tempblocks
         if byuser:

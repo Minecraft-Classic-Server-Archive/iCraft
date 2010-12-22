@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -53,7 +52,7 @@ class ArchivesPlugin(ProtocolPlugin):
         self.selected_archive = None
     
     def commandAname(self, parts, True, False):
-        "/aname searchterm - Selects an archive name, by part or all of the name."
+        "/aname searchterm - Guest\nSelects an archive name, by part or all of the name."
         if len(parts) == 1:
             self.client.sendServerMessage("Please enter a search term")
         else:
@@ -73,7 +72,7 @@ class ArchivesPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("..and %s more." % (len(matches) - 3))
     
     def commandAtime(self, parts, True, False):
-        "/atime yyyy/mm/dd hh_mm - Selects the archive time to get"
+        "/atime yyyy/mm/dd hh_mm - Guest\nSelects the archive time to get"
         if len(parts) == 2:
             # Hackish. So sue me.
             if parts[1].lower() == "newest":
@@ -103,7 +102,7 @@ class ArchivesPlugin(ProtocolPlugin):
                 self.client.sendServerMessage("Selected archive from %s" % times[0][1].strftime("%Y/%m/%d %H_%M"))
     
     def commandAboot(self, parts, True, False):
-        "/aboot - Boots an archive after you've done /aname and /atime"
+        "/aboot - Guest\nBoots an archive after you've done /aname and /atime"
         if not self.selected_archive:
             if not self.selected_archive_name:
                 self.client.sendServerMessage("Please select an archive name first. (/aname)")

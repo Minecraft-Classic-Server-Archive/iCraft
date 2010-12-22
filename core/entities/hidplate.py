@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -63,12 +62,9 @@ if var_open:
     self.client.queueTask(TASK_BLOCKSET, (x,y,z, block), world=world)
     self.client.sendBlock(x,y,z, block) 
 else:
-    try:
-        blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(x,y,z)])
-        if blocktocheck == entity[4] or chr(0):
-            var_cango = True
-    except:
-        print("Please notify iCraft staff of a fatal mob error")
+    blocktocheck = ord(world.blockstore.raw_blocks[world.blockstore.get_offset(x,y,z)])
+    if blocktocheck == entity[4] or chr(0):
+        var_cango = True
 if var_cango == True:
     block = 0
     self.client.queueTask(TASK_BLOCKSET, (x,y,z, block), world=world)

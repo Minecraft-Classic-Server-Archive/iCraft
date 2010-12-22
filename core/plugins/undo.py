@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -52,6 +51,7 @@ class RecthirdPlugin(ProtocolPlugin):
         "blockchange": "blockChanged",
         "newworld": "newWorld",
     }
+
     def gotClient(self):
         self.client.var_undolist = []
         self.client.var_redolist = []
@@ -66,6 +66,7 @@ class RecthirdPlugin(ProtocolPlugin):
         else:
             del self.client.var_undolist[-1]
             self.client.var_undolist.insert(0,((x,y,z),block,originalblock))
+
     def newWorld(self, world):
         "Hook to reset undolist in new worlds."
         self.client.var_undolist = []

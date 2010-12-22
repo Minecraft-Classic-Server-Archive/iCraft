@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,11 +34,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import threading
-import logging
-import traceback, sys
-import time
-import datetime
+import threading, logging, traceback, sys, time, datetime
 from core.constants import *
 from globals import *
 
@@ -66,9 +61,25 @@ class StdinPlugin(threading.Thread):
                         return
                     message = line
                     if len(line)>1:
-                        goodchars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", " ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", "!", "@", "#", "$", "%", "*", "(", ")", "-", "_", "+", "=", "{", "[", "}", "]", ":", ";", "\"", "\'", "<", ",", ">", ".", "?", "/", "\\", "|"]
+                        goodchars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ", "!", "@", "#", "$", "%", "*", "(", ")", "-", "_", "+", "=", "{", "[", "}", "]", ":", ";", "\"", "\'", "<", ",", ">", ".", "?", "/", "\\", "|"]
                         for character in message:
                             if not character.lower() in goodchars:
+                                message = message.replace("&0", "&0")
+                                message = message.replace("&1", "&1")
+                                message = message.replace("&2", "&2")
+                                message = message.replace("&3", "&3")
+                                message = message.replace("&4", "&4")
+                                message = message.replace("&5", "&5")
+                                message = message.replace("&6", "&6")
+                                message = message.replace("&7", "&7")
+                                message = message.replace("&8", "&8")
+                                message = message.replace("&9", "&9")
+                                message = message.replace("&a", "&a")
+                                message = message.replace("&b", "&b")
+                                message = message.replace("&c", "&c")
+                                message = message.replace("&d", "&d")
+                                message = message.replace("&e", "&e")
+                                message = message.replace("&f", "&f")
                                 message = message.replace(character, "*")
                         message = message.replace("%0", "&0")
                         message = message.replace("%1", "&1")
@@ -86,22 +97,6 @@ class StdinPlugin(threading.Thread):
                         message = message.replace("%d", "&d")
                         message = message.replace("%e", "&e")
                         message = message.replace("%f", "&f")
-                        message = message.replace("&0", "&0")
-                        message = message.replace("&1", "&1")
-                        message = message.replace("&2", "&2")
-                        message = message.replace("&3", "&3")
-                        message = message.replace("&4", "&4")
-                        message = message.replace("&5", "&5")
-                        message = message.replace("&6", "&6")
-                        message = message.replace("&7", "&7")
-                        message = message.replace("&8", "&8")
-                        message = message.replace("&9", "&9")
-                        message = message.replace("&a", "&a")
-                        message = message.replace("&b", "&b")
-                        message = message.replace("&c", "&c")
-                        message = message.replace("&d", "&d")
-                        message = message.replace("&e", "&e")
-                        message = message.replace("&f", "&f")
                         message = message.replace("./", " /")
                         message = message.replace(".!", " !")
                         message = message.replace(".@", " @")

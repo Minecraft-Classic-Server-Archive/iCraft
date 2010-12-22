@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -37,9 +36,7 @@
 
 import os
 
-INFO_VERSION = "v3.0.6"
-INFO_FULLVERSION = "v3.0.6 (with setup)"
-INFO_VIPLIST = set(["notch", "ez", "dock", "aera", "andrewgodwin", "ikjames", "kingjames", "jameskirslis", "adam01", "andrewph", "eugo", "knossus", "gdude2002", "arbot", "goober", "notmeh", "saanix", "sk8rjwd", "tehcid", "varriount", "destroyerx1", "dwarfy", "erronjason", "gothfox", "ntfwc", "pixeleater", "revenant", "willempiee", "akai", "antoligy", "bidoof_king", "bioniclegenius", "red_link", "cdrom", "fragmer", "imak", "kelraider", "mystx", "pyropyro", "setveen", "cortana", "thepolice"])
+INFO_VIPLIST = set(["notch", "ez", "dock", "aera", "andrewgodwin", "ikjames", "kingjames", "jameskirslis", "adam01", "andrewph", "eugo", "knossus", "gdude2002", "arbot", "goober", "notmeh", "saanix", "sk8rjwd", "tehcid", "varriount", "destroyerx1", "dwarfy", "erronjason", "gothfox", "ntfwc", "pixeleater", "revenant", "willempiee", "akai", "antoligy", "bidoof_king", "bioniclegenius", "red_link", "cdrom", "fragmer", "imak", "kelraider", "mystx", "pyropyro", "setveen", "cortana", "thepolice", "blahblahbal"])
 
 FORMAT_LENGTHS = {
     "b": 1,
@@ -209,12 +206,14 @@ BLOCK_STILL_H2O = 9
 BLOCK_STILL_WATER = 9
 BLOCK_STILLWATER = 9
 BLOCK_WATERVATOR = 9
-BLOCK_LAVA = 10
 BLOCK_REAL_WATER = 9
 BLOCK_REALWATER = 9
+BLOCK_LAVA = 10
+BLOCK_MAGMA = 10
 BLOCK_STILL_LAVA = 11
 BLOCK_STILLLAVA= 11
-BLOCK_STILL_FIRE = 11
+BLOCK_STILL_MAGMA = 11
+BLOCK_STILLMAGMA= 11
 BLOCK_LAVAVATOR = 11
 BLOCK_SAND = 12
 BLOCK_GRAVEL = 13
@@ -252,7 +251,6 @@ BLOCK_BLACKORES = 16
 BLOCK_BLACK_ORE = 16
 BLOCK_BLACKORE = 16
 BLOCK_LOG = 17
-BLOCK_TREE = 17
 BLOCK_LOGS = 17
 BLOCK_TREES = 17
 BLOCK_TRUNK = 17
@@ -268,6 +266,8 @@ BLOCK_LEAF = 18
 BLOCK_FOLIAGE = 18
 BLOCK_SPONGE = 19
 BLOCK_SPONGES = 19
+BLOCK_CHEESE = 19
+BLOCK_CHEESES = 19
 BLOCK_GLASS = 20
 BLOCK_RED_CLOTH = 21
 BLOCK_RED = 21

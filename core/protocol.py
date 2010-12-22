@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,13 +34,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import pickle
-import os
-import logging
-import hashlib
-import traceback
-import datetime
-import cPickle
+import os, logging, hashlib, traceback, datetime, cPickle
 from reqs.twisted.internet.protocol import Protocol
 from reqs.twisted.internet import reactor
 from core.constants import *
@@ -76,9 +69,13 @@ class CoreServerProtocol(Protocol):
         # Get an ID for ourselves
         try:
             self.id = self.factory.claimId(self)
-        except ServerFull and not self.factory.isMod():
-            self.sendError("This server is full from all of the users.")
-            return
+        except ServerFull:
+            if not self.factory.isMod():
+                self.sendError("This server is full from all of the users.")
+                return
+            else:
+                self.id = self.factory.claimId(self)
+                pass
         # Open the Whisper Log, Adminchat log and WorldChat Log
         self.whisperlog = open("logs/server.log", "a")
         self.wclog = open("logs/server.log", "a")
@@ -341,7 +338,7 @@ class CoreServerProtocol(Protocol):
                 # Then... stuff
                 for client in self.factory.usernames.values():
                     if self.username.lower() in INFO_VIPLIST and not self.isMod():
-                        client.sendNormalMessage(COLOUR_DARKRED+"iCraft Team Member spotted;")
+                        client.sendNormalMessage(COLOUR_DARKRED+"A VIP of iCraft spotted;")
                     client.sendServerMessage("%s has come online." % self.username)
                 if self.factory.irc_relay:
                     if self.username.lower() in INFO_VIPLIST and not self.isMod():
@@ -913,7 +910,7 @@ class CoreServerProtocol(Protocol):
 
     def sendOverload(self):
         "Sends an overload - a fake world designed to use as much memory as it can."
-        self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world" % self.factory.default_name, 0)
+        self.sendPacked(TYPE_INITIAL, 7, "Loading...", "Entering world", 0)
         self.sendPacked(TYPE_PRECHUNK)
         reactor.callLater(0.001, self.sendOverloadChunk)
 
@@ -1149,10 +1146,10 @@ class CoreServerProtocol(Protocol):
     def MessageAlert(self):
         if os.path.exists("config/data/inbox.dat"):
             file = open('config/data/inbox.dat', 'r')
-            messages = pickle.load(file)
+            messages = cPickle.load(file)
             file.close()
             for client in self.factory.clients.values():
-                if client.username.lower() in messages:
+                if client.username in messages:
                     client.sendServerMessage("You have an message waiting in your Inbox.")
                     client.sendServerMessage("Use /inbox to check and see.")
                     reactor.callLater(300, self.MessageAlert)

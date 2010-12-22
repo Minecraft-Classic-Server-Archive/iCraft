@@ -4,16 +4,16 @@ Thanks for choosing iCraft as your Creative Multiplayer software.
 ========== NOTE:
 =========================
 
-iCraft is NOT for Alpha, so the Alpha client will NOT work
-with iCraft. If you are looking for a Survival Multiplayer software
+iCraft is NOT for Alpha, so the Alpha client will NOT work with
+iCraft. If you are looking for a Survival Multiplayer software
 then we recommend you to use myne2.
 
 =========================
 ========== SUPPORT:
 =========================
 
-Need support? Want to chat or hang out with us? Go to irc.esper.net
-#iCraft (or hlmc.net)
+Need support? Want to chat or hang out with us?
+Go to irc.esper.net #icraft (or hlmc.net)
 
 =========================
 ========== EXTRAS:
@@ -30,17 +30,40 @@ bat Executive (start.bat Windows) - /extras/start.bat
 Archiver (Archives Worlds from Servers) - /extras/archiver.py
 
 =========================
+========== INTERACT:
+========== (cmdblocks)
+=========================
+
+Go here to get them (as they no longer ship)
+https://bitbucket.org/iKJames/Interact/
+
+Make sure to check for updates often.
+and ask for more in irc.freenode.net #interact
+
+=========================
 ========== INSTALL:
 =========================
 
 Step 1: Install Python 2.6. Python 2.5/2.7 may work, Python 3.x WON'T
 
-Step 2: Configure the config files found in the config folder - rename
-all of them with .example.conf to .conf, exception of irc/email,
-rename them IF you want what they offer, do the same for .example.txt
+Step 2 [Optional]: Go install the Python APSW software if you want to
+use blocktracking.
 
-Step 3: Get on and enjoy iCraft, as it should now be working. Good luck
-with your server.
+Step 3 [Optional]: Go install Interact
+See more information in the "INTERACT" section.
+
+Step 4: Follow section a + c (b IF you want a irc bot)
+
+a. Configure the config files found in the config folder - rename all
+of them with .example.conf to .conf (skip to c for no irc bot)
+
+b: Only rename irc.example.conf to irc.conf if you want to have a irc
+bot for your server.
+
+c: Rename and modify the .example.txt files to .txt
+
+Step 5: Launch using Python..then get on and enjoy iCraft, as it
+should now be working. Good luck with your server.
 
 =========================
 ========== UPGRADE:

@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -46,10 +45,10 @@ class PortalPlugin(ProtocolPlugin):
         "tpbox": "commandPortal",
         "phere": "commandPortalhere",
         "pend": "commandPortalend",
-        "pclear": "commandClearportals",
         "pshow": "commandShowportals",
         "tpshow": "commandShowportals",
         "pdel": "commandPortaldel",
+        "pclear": "commandPortaldel",
         "deltp": "commandPortaldel",
         "pdelend": "commandPortaldelend",
         "puse": "commandUseportals",
@@ -72,12 +71,12 @@ class PortalPlugin(ProtocolPlugin):
         if self.client.world.has_teleport(x, y, z):
             if self.portal_remove:
                 self.client.world.delete_teleport(x, y, z)
-                self.client.sendServerMessage("You deleted a teleport block.")
+                self.client.sendServerMessage("You deleted a Portal block.")
             else:
-                self.client.sendServerMessage("That is a teleport block, you cannot change it. (/pdel?)")
+                self.client.sendServerMessage("That is a Portal block, you cannot change it. (/pdel?)")
                 return False # False = they weren't allowed to build
         if self.portal_dest:
-            self.client.sendServerMessage("You placed a teleport block")
+            self.client.sendServerMessage("You placed a Portal block.")
             self.client.world.add_teleport(x, y, z, self.portal_dest)
     
     def posChanged(self, x, y, z, h, p):
@@ -118,7 +117,7 @@ class PortalPlugin(ProtocolPlugin):
         self.last_block_position = (rx, ry, rz)
     
     def newWorld(self, world):
-        "Hook to reset portal abilities in new worlds if not op."
+        "Hook to reset Portal abilities in new worlds if not op."
         if not self.client.isOp():
             self.portal_dest = None
             self.portal_remove = False
@@ -126,7 +125,7 @@ class PortalPlugin(ProtocolPlugin):
     
     @op_only
     def commandPortal(self, parts, byuser, overriderank):
-        "/p worldname x y z [r] - Op\nAliases: tpbox\nMakes the next block you place a portal."
+        "/p worldname x y z [r] - Op\nAliases: tpbox\nMakes the next block you place a Portal."
         if len(parts) < 5:
             self.client.sendServerMessage("Please enter a worldname, x, y and z.")
         else:
@@ -148,53 +147,62 @@ class PortalPlugin(ProtocolPlugin):
                     self.client.sendServerMessage("r must be between 0 and 255")
                     return
                 self.portal_dest = parts[1], x, y, z, h
-                self.client.sendServerMessage("You are now placing portal blocks. /portalend to stop")
+                self.client.sendServerMessage("Now you're thinking with Portals. /phere off to stop")
     
     @op_only
     def commandPortalhere(self, parts, byuser, overriderank):
-        "/phere - Op\nEnables portal-building mode, to here."
-        self.portal_dest = self.client.world.id, self.client.x>>5, self.client.y>>5, self.client.z>>5, self.client.h
-        self.client.sendServerMessage("You are now placing portal blocks to here.")
+        "/phere [off] - Op\nEnables Portal creation mode, to here."
+        if len(parts) > 1:
+            if parts[1].lower() == "off":
+                self.portal_dest = None
+                self.portal_remove = False
+                self.client.sendServerMessage("You are no longer placing Portal blocks.")
+            else:
+                self.client.sendServerMessage("You need to specify 'off'")
+        else:
+            self.portal_dest = self.client.world.id, self.client.x>>5, self.client.y>>5, self.client.z>>5, self.client.h
+            self.client.sendServerMessage("Now you're thinking with Portals. /phere off to stop")
     
     @op_only
     def commandPortalend(self, parts, byuser, overriderank):
-        "/pend - Op\nStops placing portal blocks."
-        self.portal_dest = None
-        self.portal_remove = False
-        self.client.sendServerMessage("You are no longer placing portal blocks.")
-    
-    @op_only
-    def commandClearportals(self, parts, byuser, overriderank):
-        "/pclear - Op\nRemoves all portals from the world."
-        self.client.world.clear_teleports()
-        self.client.sendServerMessage("All portals in this world removed.")
+        "/pend - Op\nHere for people that need it, as we're Still Alive."
+        self.client.sendServerMessage("You are looking for /phere off")
     
     @op_only
     def commandShowportals(self, parts, byuser, overriderank):
-        "/pshow - Op\nAliases: tpshow\nShows all portal blocks as blue, only to you."
+        "/pshow - Op\nAliases: tpshow\nShows all Portal blocks as blue, only to you."
         for offset in self.client.world.teleports.keys():
             x, y, z = self.client.world.get_coords(offset)
             self.client.sendPacked(TYPE_BLOCKSET, x, y, z, BLOCK_BLUE)
-        self.client.sendServerMessage("All portals appearing blue temporarily.")
-    
+        self.client.sendServerMessage("All Portals appearing blue temporarily.")
+
     @op_only
     def commandPortaldel(self, parts, byuser, overriderank):
-        "/pdel - Op\nAliases: deltp\nEnables portal-deleting mode"
-        self.client.sendServerMessage("You are now able to delete portals. /pdelend to stop")
-        self.portal_remove = True
-    
+        "/pdel [off|all] - Op\nAliases: deltp, pclear\nEnables Portal deletion mode"
+        if len(parts) > 1:
+            if parts[1].lower() == "off":
+                self.client.sendServerMessage("Portal deletion mode ended.")
+                self.portal_remove = False
+            elif parts[1].lower() == "all":
+                self.client.world.clear_teleports()
+                self.client.sendServerMessage("All Portals in this world removed.")
+            else:
+                self.client.sendServerMessage("You need to specify 'off' or 'all'")
+        else:
+            self.client.sendServerMessage("You are now able to delete Portals. /pdelend to stop")
+            self.portal_remove = True
+
     @op_only
     def commandPortaldelend(self, parts, byuser, overriderank):
-        "/pdelend - Op\nDisables portal-deleting mode"
-        self.client.sendServerMessage("Portal deletion mode ended.")
-        self.portal_remove = False
-    
+        "/pdelend - Op\nHere for people that need it, as we're Still Alive."
+        self.client.sendServerMessage("You are looking for /pdel off")
+
     @on_off_command
     def commandUseportals(self, onoff, byuser, overriderank):
-        "/puse on|off - Guest\nAllows you to enable or diable portal usage."
+        "/puse on|off - Guest\nAllows you to enable or disable Portal usage."
         if onoff == "on":
             self.portals_on = True
             self.client.sendServerMessage("Portals will now work for you again.")
         else:
             self.portals_on = False
-            self.client.sendServerMessage("Portals will now not work for you.")
+            self.client.sendServerMessage("Portals will no longer work for you.")

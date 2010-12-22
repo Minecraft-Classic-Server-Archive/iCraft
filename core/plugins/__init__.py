@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,7 +34,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import logging
+import logging, sys
 
 protocol_plugins = []
 server_plugins = []
@@ -106,6 +105,11 @@ class ProtocolPlugin(object):
 
 def load_plugins(plugins):
     "Given a list of plugin names, imports them so they register."
+    try:
+        __import__("core.plugins.interact")
+    except ImportError:
+        logging.log(logging.ERROR, "You do not have Interact, you need to go get it." % module_name)
+        sys.exit(1);
     for module_name in plugins:
         try:
             __import__("core.plugins.%s" % module_name)

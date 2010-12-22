@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -318,7 +317,7 @@ class ShapesPlugin(ProtocolPlugin):
     @build_list
     @op_only
     def commandPyramid(self, parts, byuser, overriderank):
-        "/pyramid blockname height [x y z] - Op\nSets all blocks in this area to be a pyramid."
+        "/pyramid blockname height fill [x y z] - Op\nSets all blocks in this area to be a pyramid."
         if len(parts) < 7 and len(parts) != 4:
             self.client.sendServerMessage("Please enter a block type height and fill?")
         else:
@@ -753,9 +752,9 @@ class ShapesPlugin(ProtocolPlugin):
     @build_list
     @op_only
     def commandDome(self, parts, byuser, overriderank):
-        "/dome blocktype radius [x y z] - Op\nPlace/delete a block and /sphere block radius"
+        "/dome blocktype radius fill [x y z] - Op\nPlace/delete a block and /sphere block radius"
         if len(parts) < 7 and len(parts) != 4:
-            self.client.sendServerMessage("Please enter a type radius fill?(and possibly a coord triple)")
+            self.client.sendServerMessage("Please enter a type radius and fill?(and possibly a coord triple)")
         else:
             # Try getting the fill
             fill = parts[3]

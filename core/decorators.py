@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -114,7 +113,7 @@ def username_command(func):
             if len(names)==1:
                 user = names[0]
             if not user in self.client.factory.usernames:
-                self.client.sendServerMessage("No such user '%s' (3+ chars needed)" % user)
+                self.client.sendServerMessage("No such user '%s' (3+ chars?)" % user)
             else:
                 if len(parts) > 2:
                     try:
@@ -134,10 +133,7 @@ def only_string_command(string_name):
                 self.client.sendServerMessage("Please specify a %s." % string_name)
             else:
                 username = parts[1].lower()
-                if len(parts) > 2:
-                    func(self, username, byuser, overriderank, parts[2:])
-                else:
-                    func(self, username, byuser, overriderank)
+                func(self, username, byuser, overriderank)
         inner.__doc__ = func.__doc__
         return inner
     return only_inner

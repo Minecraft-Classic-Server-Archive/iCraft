@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -77,7 +76,7 @@ class AdminBlocksPlugin(ProtocolPlugin):
     
     def sendAdminBlockUpdate(self):
         "Sends a packet that updates the client's admin-building ability"
-        self.client.sendPacked(TYPE_INITIAL, 6, "Admincrete Update", "Reloading the server...", self.canBreakAdminBlocks() and 100 or 0)
+        self.client.sendPacked(TYPE_INITIAL, 7, "Admincrete Update", "Reloading the server...", self.canBreakAdminBlocks() and 100 or 0)
     
     @world_list
     @op_only
@@ -92,8 +91,8 @@ class AdminBlocksPlugin(ProtocolPlugin):
             self.client.world.admin_blocks = False
             self.client.sendWorldMessage("Admin blocks are now disabled here.")
             self.client.sendServerMessage("Admin blocks off in %s" % self.client.world.id)
-        #for client in self.client.world.clients:
-        #    self.client.sendAdminBlockUpdate()
+        for client in self.client.world.clients:
+            self.client.sendAdminBlockUpdate()
     
     @build_list
     @op_only

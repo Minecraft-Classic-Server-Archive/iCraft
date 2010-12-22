@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,8 +34,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import os
-import shutil
+import os, shutil
 from reqs.twisted.internet import reactor
 from core.plugins import ProtocolPlugin
 from core.decorators import *
@@ -111,21 +109,20 @@ class BackupPlugin(ProtocolPlugin):
                 backup_number = str(int(backups[-1]))
             else:
                 backup_number = parts[2]
-            if not os.path.exists(world_dir+"backup/%s/" %backup_number):
-                self.client.sendServerMessage("Backup %s does not exist." %backup_number)
-            else:
-                old_clients = self.client.factory.worlds[world_id].clients                    
+            if not os.path.exists(world_dir+"backup/%s/" % backup_number):
+                self.client.sendServerMessage("Backup %s does not exist." % backup_number)
+            else:                    
                 if not os.path.exists(world_dir+"blocks.gz.new"):
-                    shutil.copy(world_dir+"backup/%s/blocks.gz" %backup_number,world_dir)
+                    shutil.copy(world_dir+"backup/%s/blocks.gz" % backup_number, world_dir)
                     try:
-                        shutil.copy(world_dir+"backup/%s/world.meta" %backup_number,world_dir)
+                        shutil.copy(world_dir+"backup/%s/world.meta" % backup_number, world_dir)
                     except:
                         pass
                 else:
-                    reactor.callLater(1, self.commandRestore(self, parts, overriderank))
-                self.client.factory.loadWorld("worlds/%s" % world_id, world_id)
-                self.client.sendServerMessage("%s has been restored to %s and booted." %(world_id,backup_number))
-                self.client.factory.worlds[world_id].clients = old_clients
+                    reactor.callLater(1, self.commandRestore(self, parts, byuser, overriderank))
+                default_name = self.client.factory.default_name
+                self.client.factory.unloadWorld("worlds/%s" % world_id, world_id)
+                self.client.sendServerMessage("%s has been restored to %s and booted." % (world_id, backup_number))
                 for client in self.client.factory.worlds[world_id].clients:
                     client.changeToWorld(world_id)
 

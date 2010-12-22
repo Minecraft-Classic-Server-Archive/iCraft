@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -136,7 +135,6 @@ class MessagingPlugin(ProtocolPlugin):
     @player_list
     def commandSlap(self, parts, byuser, overriderank):
         "/slap username [with object] - Guest\nSlap username [with object]."
-        self.irc_relay = ChatBotFactory(self)
         if len(parts) == 1:
             self.client.sendServerMessage("Enter the name for the slappee")
         else:
@@ -157,26 +155,29 @@ class MessagingPlugin(ProtocolPlugin):
         else:
             if stage == 1:
                 self.client.sendWorldMessage("* "+COLOUR_PURPLE+"%s slaps %s with %s!" % (self.client.username,name,object))
-                self.irc_relay.sendServerMessage("%s slaps %s with %s!" % (self.client.username,name,object))
+                if self.client.factory.irc_relay:
+                    self.client.factory.irc_relay.sendServerMessage("%s slaps %s with %s!" % (self.client.username,name,object))
             else:
                 self.client.sendWorldMessage("* "+COLOUR_PURPLE+"%s slaps %s with a giant smelly trout!" % (self.client.username,name))
-                self.irc_relay.sendServerMessage("* %s slaps %s with a giant smelly trout!" % (self.client.username,name))
+                if self.client.factory.irc_relay:
+                    self.client.factory.irc_relay.sendServerMessage("* %s slaps %s with a giant smelly trout!" % (self.client.username,name))
 
-    @only_username_command
-    @player_list
     @mod_only
-    def commandKill(self, username, byuser, overriderank):
-        "/kill username - Mod\nKills the user."
-        killer = self.client.username
+    @only_username_command
+    def commandKill(self, username, byuser, overriderank, params=[]):
+        "/kill username [reason] - Mod\nKills the user for reason (optional)"        
+        killer = self.client.username                           
         if username in INFO_VIPLIST:
-            self.client.sendServerMessage("You can't kill awesome people, sorry.")
+           self.client.sendServerMessage("You can't kill awesome people, sorry.")
         else:
             if username in self.client.factory.usernames:
-                self.client.factory.usernames[username].teleportTo(self.client.factory.usernames[username].world.spawn[0], self.client.factory.usernames[username].world.spawn[1], self.client.factory.usernames[username].world.spawn[2], self.client.factory.usernames[username].world.spawn[3])
-                self.client.factory.queue.put ((self.client.factory.usernames[username].world,TASK_WORLDMESSAGE, (255, self.client.factory.usernames[username].world, COLOUR_DARKRED+username+" has died. (KILL'd)")))
                 if killer.lower() == username:
-                    self.client.factory.usernames[username].sendServerMessage("You have died.")
-                else:
-                    self.client.factory.usernames[username].sendServerMessage("You have been killed by %s." % self.client.username)
+                    self.client.factory.usernames[username].sendServerMessage("You can't do suicide, sorry.")
+                    return
+                self.client.factory.usernames[username].teleportTo(self.client.factory.usernames[username].world.spawn[0], self.client.factory.usernames[username].world.spawn[1], self.client.factory.usernames[username].world.spawn[2], self.client.factory.usernames[username].world.spawn[3])
+                self.client.factory.usernames[username].sendServerMessage("You have been killed by %s." % self.client.username)
+                self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, username +" has been killed by " + killer))
+                if params:
+                    self.client.factory.queue.put((self.client, TASK_SERVERURGENTMESSAGE, "Reason: "+(" ".join(params))))
             else:
                 self.client.sendServerMessage("%s is not on the server." % username)

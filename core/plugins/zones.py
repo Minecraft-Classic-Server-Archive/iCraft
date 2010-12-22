@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -58,7 +57,7 @@ class ZonesPlugin(ProtocolPlugin):
 
     @op_only
     @on_off_command
-    def commandZones(self,onoff, byuser, overriderank):
+    def commandZones(self, onoff, byuser, overriderank):
         "/zones on|off - Op\nEnables or disables building zones in this world."
         if onoff == "on":
             if self.client.world.zoned:
@@ -89,7 +88,7 @@ class ZonesPlugin(ProtocolPlugin):
                 return
         for id, zone in self.client.world.userzones.items():
             if zone[0] == parts[1]:
-                self.client.sendServerMessage("Zone %s already exists. Pick a new name."%parts[1])
+                self.client.sendServerMessage("Zone %s already exists. Pick a new name." % parts[1])
                 return
         for id, zone in self.client.world.rankzones.items():
             if zone[0] == parts[1]:

@@ -16,7 +16,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -33,10 +32,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import shutil
-import os
-import sys, subprocess
-import traceback
+import shutil, os, sys, subprocess, traceback
 from reqs.twisted.internet import reactor
 from core.plugins import ProtocolPlugin
 from core.decorators import *
@@ -76,7 +72,7 @@ class IsoImage(ProtocolPlugin):
             os.chdir(pathname)
             self.client.sendServerMessage('Isoimage %s has been created.' %(worldname + str(angle) + ".png"))
         except:
-            #self.client.log(traceback.format_exc(), level=logging.ERROR)
-            #print traceback.format_exc()
-            self.client.sendServerMessage('Error!')
+            self.client.sendSplitServerMessage(traceback.format_exc().replace("Traceback (most recent call last):", ""))
+            self.client.sendSplitServerMessage("Internal Server Error - Traceback (Please report this to the Server Staff or the iCraft Team, see /about for contact info)")
+            self.client.log(traceback.format_exc(), level=logging.ERROR)
             os.chdir(pathname)

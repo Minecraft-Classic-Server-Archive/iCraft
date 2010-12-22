@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,12 +34,11 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import traceback
+import traceback, cPickle
 from core.plugins import ProtocolPlugin
 from core.decorators import *
 from reqs.twisted.internet import reactor
 from core.constants import *
-import pickle
 
 class OfflineMessPlugin(ProtocolPlugin):
     
@@ -61,14 +59,14 @@ class OfflineMessPlugin(ProtocolPlugin):
                 to_user = parts[1].lower()
                 mess = " ".join(parts[2:])
                 file = open('config/data/inbox.dat', 'r')
-                messages = pickle.load(file)
+                messages = cPickle.load(file)
                 file.close()
                 if to_user in messages:
                     messages[to_user]+= "\n" + from_user + ": " + mess
                 else:
                     messages[to_user] = from_user + ": " + mess
                 file = open('config/data/inbox.dat', 'w')
-                pickle.dump(messages, file)
+                cPickle.dump(messages, file)
                 file.close()
                 self.client.factory.usernames[to_user].MessageAlert()
                 self.client.sendServerMessage("A message has been sent to %s" % to_user)
@@ -78,7 +76,7 @@ class OfflineMessPlugin(ProtocolPlugin):
     def commandCheckMessages(self, parts, byuser, overriderank):
         "/inbox - Guest\nChecks your Inbox of messages"
         file = open('config/data/inbox.dat', 'r')
-        messages = pickle.load(file)
+        messages = cPickle.load(file)
         file.close()
         if self.client.username.lower() in messages:
             self.client._sendMessage(COLOUR_DARKPURPLE, messages[self.client.username.lower()])
@@ -90,7 +88,7 @@ class OfflineMessPlugin(ProtocolPlugin):
         "/c - Guest\nAliases: clear\nClears your Inbox of messages"
         target = self.client.username.lower()
         file = open('config/data/inbox.dat', 'r')
-        messages = pickle.load(file)
+        messages = cPickle.load(file)
         file.close()
         if len(parts) == 2:
             target = parts[1]
@@ -99,6 +97,6 @@ class OfflineMessPlugin(ProtocolPlugin):
             return False
         messages.pop(target)
         file = open('config/data/inbox.dat', 'w')
-        pickle.dump(messages, file)
+        cPickle.dump(messages, file)
         file.close()
         self.client.sendServerMessage("All your messages have been deleted.")

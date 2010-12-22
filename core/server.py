@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -35,21 +34,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA
 
-import urllib2
-import time
-import logging
-import os
-import re
-import sys
-import datetime
-import shutil
-import traceback
-import pickle
-import threading
-import socket
-import gc
-import hashlib
-import random
+import urllib2, time, logging, os, re, sys, datetime, shutil, traceback, pickle, threading, socket, gc, hashlib, random
 from urllib import urlencode
 from core.console import StdinPlugin
 from Queue import Queue, Empty
@@ -126,7 +111,7 @@ class CoreFactory(Factory):
                     self.ircbot = self.irc_config.getboolean("irc", "ircbot")
                     self.staffchat = self.irc_config.getboolean("irc", "staffchat")
                     self.irc_relay = ChatBotFactory(self)
-                    if self.ircbot and not self.irc_channel == "#channel" and not self.irc_nick == "botname":
+                    if self.ircbot and not (self.irc_channel == "#icraft" or self.irc_channel == "#channel") and not self.irc_nick == "botname":
                         reactor.connectTCP(self.irc_config.get("irc", "server"), self.irc_config.getint("irc", "port"), self.irc_relay)
                     else:
                         logging.log(logging.ERROR, "IRC Bot failed to connect, you could modify, rename or remove irc.conf")
@@ -139,15 +124,8 @@ class CoreFactory(Factory):
     def reloadConfig(self):
         try:
             # TODO: Figure out which of these would work dynamically, otherwise delete them from this area.
-            #self.max_clients = self.config.getint("main", "max_clients")
-            #self.server_name = self.config.get("main", "name")
-            #self.server_message = self.config.get("main", "description")
-            #self.public = self.config.getboolean("main", "public")
-            #self.controller_port = self.config.get("network", "controller_port")
-            #self.controller_password = self.config.get("network", "controller_password")
             self.owner = self.config.get("main", "owner").lower()
             self.duplicate_logins = self.options_config.getboolean("options", "duplicate_logins")
-            self.console_delay = self.options_config.getint("options", "console_delay")
             self.info_url = self.options_config.get("options", "info_url")
             self.away_kick = self.options_config.getboolean("options", "away_kick")
             self.away_time = self.options_config.getint("options", "away_time")
@@ -169,7 +147,6 @@ class CoreFactory(Factory):
             self.build_mod = self.ploptions_config.get("build", "mod")
             self.build_op = self.ploptions_config.get("build", "op")
             self.build_other = self.ploptions_config.get("build", "other")
-            self.elimit = self.ploptions_config.getint("entities", "limit")
             if self.backup_auto:
                 reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
         except:
@@ -185,7 +162,6 @@ class CoreFactory(Factory):
         self.ploptions_config = ConfigParser()
         self.wordfilter = ConfigParser()
         self.save_count = 1
-        self.delay_count = 1
         self.config.read("config/main.conf")
         self.options_config.read("config/options.conf")
         self.ploptions_config.read("config/ploptions.conf")
@@ -194,26 +170,24 @@ class CoreFactory(Factory):
             self.use_irc = True
             self.irc_config = ConfigParser()
             self.irc_config.read("config/irc.conf")
-        self.use_email = False
-        if  (os.path.exists("config/email.conf")):
-            self.use_email = True
-            self.email_config = ConfigParser()
-            self.email_config.read("config/email.conf")
         self.saving = False
         try:
             self.max_clients = self.config.getint("main", "max_clients")
-            self.server_name = self.config.get("main", "name")
             self.server_message = self.config.get("main", "description")
             self.public = self.config.getboolean("main", "public")
             self.controller_port = self.config.get("network", "controller_port")
             self.controller_password = self.config.get("network", "controller_password")
+            self.server_name = self.config.get("main", "name")
+            if self.server_name == "iCraft 3.0 Server":
+                logging.log(logging.ERROR, "You forgot to give your server a name.")
             self.owner = self.config.get("main", "owner").lower()
+            if self.owner == "yournamehere":
+                logging.log(logging.ERROR, "You forgot to make yourself the server owner.")
         except:
             logging.log(logging.ERROR, "You don't have a main.conf file! You need to rename main.example.conf to main.conf")
             self.exit()
         try:
             self.duplicate_logins = self.options_config.getboolean("options", "duplicate_logins")
-            self.console_delay = self.options_config.getint("options", "console_delay")
             self.info_url = self.options_config.get("options", "info_url")
             self.away_kick = self.options_config.getboolean("options", "away_kick")
             self.away_time = self.options_config.getint("options", "away_time")
@@ -240,7 +214,6 @@ class CoreFactory(Factory):
             self.build_mod = self.ploptions_config.get("build", "mod")
             self.build_op = self.ploptions_config.get("build", "op")
             self.build_other = self.ploptions_config.get("build", "other")
-            self.elimit = self.ploptions_config.get("entities", "limit")
             if self.backup_auto:
                 reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
         except:
@@ -260,7 +233,7 @@ class CoreFactory(Factory):
             self.ircbot = self.irc_config.getboolean("irc", "ircbot")
             self.staffchat = self.irc_config.getboolean("irc", "staffchat")
             self.irc_relay = ChatBotFactory(self)
-            if self.ircbot and not self.irc_channel == "#icraft" and not self.irc_nick == "botname":
+            if self.ircbot and not (self.irc_channel == "#icraft" or self.irc_channel == "#channel") and not self.irc_nick == "botname":
                 reactor.connectTCP(self.irc_config.get("irc", "server"), self.irc_config.getint("irc", "port"), self.irc_relay)
             else:
                 logging.log(logging.ERROR, "IRC Bot failed to connect, you could modify, rename or remove irc.conf")
@@ -463,13 +436,9 @@ class CoreFactory(Factory):
         fp.close()
 
     def printInfo(self):
-        if self.console_delay == self.delay_count:
-            logging.log(logging.INFO, "There are %s users on the server" % len(self.clients))
-            for key in self.worlds:
-                logging.log(logging.INFO, "%s: %s" % (key, ", ".join(str(c.username) for c in self.worlds[key].clients)))
-            self.delay_count=1
-        else:
-            self.delay_count+=1
+        logging.log(logging.INFO, "There are %s users on the server" % len(self.clients))
+        for key in self.worlds:
+            logging.log(logging.INFO, "%s: %s" % (key, ", ".join(str(c.username) for c in self.worlds[key].clients)))
         if (time.time() - self.last_heartbeat) > 180:
             self.heartbeat = None
             self.heartbeat = Heartbeat(self)
@@ -507,8 +476,7 @@ class CoreFactory(Factory):
             world = self.worlds[world_id]
             world.save_meta()
             world.flush()
-            if self.console_delay == self.delay_count:
-                logging.log(logging.INFO, "World '%s' has been saved." % world_id)
+            logging.log(logging.INFO, "World '%s' has been saved." % world_id)
             if self.save_count == 5:
                 for client in list(list(self.worlds[world_id].clients))[:]:
                     client.sendServerMessage("[%s] World '%s' has been saved." % (datetime.datetime.utcnow().strftime("%H:%M"), world_id))
@@ -596,7 +564,7 @@ class CoreFactory(Factory):
         self.saveWorld(world_id,True)
         logging.log(logging.INFO, "World '%s' Shutdown." % world_id)
 
-    def rebootworld(self, world_id):
+    def rebootWorld(self, world_id):
         """
         Reboots a world in a crash case
         """
@@ -770,7 +738,7 @@ class CoreFactory(Factory):
                         for user, client in self.usernames.items():
                             if self.isMod(user):
                                 client.sendMessage(100, COLOUR_YELLOW+"#"+colour, username, message, False, False)
-                        if self.factory.staffchat and self.irc_relay and len(data)>3:
+                        if self.staffchat and self.irc_relay and len(data)>3:
                             self.irc_relay.sendServerMessage("#"+username+": "+text,True,username,IRC)
                         logging.log(logging.INFO, "#"+username+": "+text)
                         self.adlog = open("logs/server.log", "a")
@@ -917,7 +885,7 @@ class CoreFactory(Factory):
         if self.backup_auto:
             reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
 
-    def Backup(self,world_id):
+    def Backup(self, world_id):
             world_dir = ("worlds/%s/" % world_id)
             if world_id == self.default_name and not self.backup_default:
                 return
@@ -932,16 +900,16 @@ class CoreFactory(Factory):
                     if x.isdigit():
                         backups.append(x)
                 backups.sort(lambda x, y: int(x) - int(y))
-
                 path = os.path.join(world_dir+"backup/", "0")
                 if backups:
                     path = os.path.join(world_dir+"backup/", str(int(backups[-1])+1))
                 os.mkdir(path)
                 shutil.copy(world_dir + "blocks.gz", path)
+                shutil.copy(world_dir + "world.meta", path)
                 try:
-                    logging.log(logging.INFO, "%s's backup %s is saved." %(world_id, str(int(backups[-1])+1)))
+                    logging.log(logging.INFO, "%s's backup %s is saved." % (world_id, str(int(backups[-1])+1)))
                 except:
-                    logging.log(logging.INFO, "%s's backup 0 is saved.")
+                    logging.log(logging.INFO, "%s's backup 0 is saved." % (world_id))
                 if len(backups)+1 > self.backup_max:
                     for i in range(0,((len(backups)+1)-self.backup_max)):
                         shutil.rmtree(os.path.join(world_dir+"backup/", str(int(backups[i]))))

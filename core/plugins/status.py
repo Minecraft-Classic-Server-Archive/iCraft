@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010 both
+#    iCraft is Copyright 2010-2011 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -18,7 +18,6 @@
 #                   <Jason Sayre> admin@erronjason.com AKA "erronjason"
 #                   <Jonathon Dunford> sk8rjwd@yahoo.com AKA "sk8rjwd"
 #                   <Joseph Connor> destroyerx100@gmail.com AKA "destroyerx1"
-#                   <Joshua Connor> fooblock@live.com AKA "Fooblock"
 #                   <Kamyla Silva> supdawgyo@hotmail.com AKA "NotMeh"
 #                   <Kristjan Gunnarsson> kristjang@ffsn.is AKA "eugo"
 #                   <Nathan Coulombe> NathanCoulombe@hotmail.com AKA "Saanix"
@@ -57,9 +56,10 @@ class WorldUtilPlugin(ProtocolPlugin):
     @player_list
     @mod_only
     def commandSetOwner(self, parts, byuser, overriderank):
-        "/setowner username - Mod\nAliases: owner, worldowner\nSets the world's owner string"
+        "/setowner [username] - Mod\nAliases: owner, worldowner\nSets the world's owner string, or unsets it."
         if len(parts) == 1:
-            self.client.sendServerMessage("Please specify an World Owner.")
+            self.client.world.owner = "N/A"
+            self.client.sendServerMessage("The World Owner has been unset.")
         else:
             self.client.world.owner = str(parts[1])
             self.client.sendServerMessage("The World Owner has been set.")
@@ -83,26 +83,20 @@ class WorldUtilPlugin(ProtocolPlugin):
     @info_list
     def commandStatus(self, parts, byuser, overriderank):
         "/status - Guest\nAliases: mapinfo\nReturns info about the current world"
-        self.client.sendServerMessage("World: %s" % (self.client.world.id))
-        self.client.sendServerMessage("Owner: %s" % self.client.world.owner)
-        self.client.sendServerMessage("Size: %sx%sx%s" % (self.client.world.x, self.client.world.y, self.client.world.z))
-        self.client.sendServerMessage("- " + \
-            (self.client.world.all_write and "&4Unlocked" or "&2Locked") + "&e | " + \
-            (self.client.world.zoned and "&2Zones" or "&4Zones") + "&e | " + \
-            (self.client.world.private and "&2Private" or "&4Private")
-        )
-        self.client.sendServerMessage("- " + \
-            (self.client.world.physics and "&2Physics" or "&4Physics") + "&e | " + \
-            (self.client.world.finite_water and "&4FWater" or "&2FWater") + "&e | " + \
+        self.client.sendServerMessage("%s (%sx%sx%s)" % (self.client.world.id, self.client.world.x, self.client.world.y, self.client.world.z))
+        if not self.client.world.owner == "n/a":
+            self.client.sendServerMessage("Owner: %s" % (self.client.world.owner))
+        self.client.sendNormalMessage(\
+            (self.client.world.all_write and "&4Unlocked" or "&2Locked")+" "+\
+            (self.client.world.zoned and "&2Zones" or "&4Zones")+" "+\
+            (self.client.world.private and "&2Private" or "&4Private")+" "+\
+            (self.client.world.physics and "&2Physics" or "&4Physics")+" "+\
+            (self.client.world.finite_water and "&4FWater" or "&2FWater")+" "+\
             (self.client.world.admin_blocks and "&2Solids" or "&4Solids")
         )
-        if not self.client.world.ops:
-            self.client.sendServerMessage("Ops: N/A")
-        else:
+        if self.client.world.ops:
             self.client.sendServerList(["Ops:"] + list(self.client.world.ops))
-        if not self.client.world.writers:
-            self.client.sendServerMessage("Builders: N/A")
-        else:
+        if self.client.world.writers:
             self.client.sendServerList(["Builders:"] + list(self.client.world.writers))
   
     @world_list
