@@ -388,7 +388,7 @@ class ChatBot(irc.IRCClient):
         msg = "".join([char for char in msg if ord(char) < 128 and char != "" or "0"])
         #self.factory.queue.put((self, TASK_ACTION, (127, COLOUR_PURPLE, user, msg)))
         for client in self.factory.clients.values():
-            client.sendNormalMessage(COLOUR_PURPLE+"IRC: * "+COLOUR_WHITE+user)
+            client.sendNormalMessage(COLOUR_PURPLE+"IRC: "+COLOUR_YELLOW+"* "+COLOUR_WHITE+user)
             client.sendNormalMessage(msg)
         logging.log(logging.INFO, "* %s %s" % (user, msg))
         self.factory.chatlog.write("[%s] * %s %s\n" % (datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S"), user, msg))
