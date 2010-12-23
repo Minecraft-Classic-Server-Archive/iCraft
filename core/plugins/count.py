@@ -68,13 +68,15 @@ class CountPlugin(ProtocolPlugin):
             self.num = 0
             return
         counttimer = ResettableTimer(self.num, 1, self.sendgo, self.sendcount)
-        self.client.sendPlainWorldMessage("&2[COUNTDOWN] %s" %self.num)
+        self.client.sendPlainWorldMessage("&7COUNTDOWN: &c%s" %self.num)
         counttimer.start()
 
     def sendgo(self):
-        self.client.sendPlainWorldMessage("&2[COUNTDOWN] GO!")
+        self.client.sendPlainWorldMessage("&7GET SET: &aGO!")
         self.num = 0
 
     def sendcount(self, count):
-        if not int(self.num)-int(count) == 0:
-            self.client.sendPlainWorldMessage("&2[COUNTDOWN] %s" %(int(self.num)-int(count)))
+        if int(self.num)-int(count) == 1:
+            self.client.sendPlainWorldMessage("&7GET READY: &e1")
+        elif not int(self.num)-int(count) == 0:
+            self.client.sendPlainWorldMessage("&7COUNTDOWN: &c%s" %(int(self.num)-int(count)))
