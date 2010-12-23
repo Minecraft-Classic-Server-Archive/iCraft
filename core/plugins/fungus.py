@@ -50,7 +50,7 @@ class FungisPlugin(ProtocolPlugin):
     @op_only
     def commandFungus(self, parts, byuser, overriderank):
         "/fungus blockname repblock [x y z x2 y2 z2] - Op\nFunguses the area with the block."
-        if len(parts) < 9 and len(parts) != 2:
+        if len(parts) < 9 and len(parts) != 3:
             self.client.sendSplitServerMessage("Please enter a type and a type to replace (and possibly two coord triples)")
             self.client.sendSplitServerMessage("Note that you must place two blocks to use it. The first block sets where to spread from and the second block sets which directions to spread.")
         else:
@@ -70,7 +70,7 @@ class FungisPlugin(ProtocolPlugin):
                 self.client.sendServerMessage("'%s' is not a valid block type." % parts[1])
                 return
             # If they only provided the type argument, use the last block place
-            if len(parts) == 2:
+            if len(parts) == 3:
                 try:
                     x = self.client.world.x /2
                     y = self.client.world.y /2
