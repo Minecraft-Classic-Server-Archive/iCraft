@@ -55,29 +55,29 @@ class BuyPlugin(ProtocolPlugin):
         else:
             if len(parts) == 3 or len(parts) == 4:
                 size = parts[2]
-                if size == '16':
+                if size == "16":
                     template = "16"
                     price = 1536
-                elif size == '32':
+                elif size == "32":
                     template = "32"
                     price = 6144
-                elif size == '64':
+                elif size == "64":
                     template = "64"
                     price = 24576
-                elif size == '128':
+                elif size == "128":
                     template = "128"
                     price = 98304
-                elif size == '256':
+                elif size == "256":
                     template = "256"
                     price = 393216
-                elif size == '512':
+                elif size == "512":
                     template = "512"
                     price = 1572864
                 else:
                     self.client.sendServerMessage("%s is not a valid size." % size)
                     return
             else:
-                self.client.sendServerMessage("Please specify a new worldname and size.")
+                self.client.sendServerMessage("Please specify a worldname and size.")
                 return
             file = open('config/data/balances.dat', 'r')
             bank = cPickle.load(file)
@@ -88,14 +88,14 @@ class BuyPlugin(ProtocolPlugin):
                 self.client.sendServerMessage("You don't have an account yet. Use /bank first.")
                 return
             if not amount <= bank[user]:
-                self.client.sendServerMessage("You need atleast %s to buy this." % amount)
+                self.client.sendServerMessage("You need atleast %s to buy this world." % amount)
                 return False
             else:
                 file = open('config/data/balances.dat', 'w')
                 bank[user] = bank[self.client.username.lower()] - amount
                 cPickle.dump(bank, file)
                 file.close()
-                self.client.sendServerMessage("Payed %s for map" % amount)
+                self.client.sendServerMessage("Paid %s for the world." % amount)
             world_id = parts[1].lower()
             self.client.factory.newWorld(world_id, template)
             self.client.factory.loadWorld("worlds/%s" % world_id, world_id)
