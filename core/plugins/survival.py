@@ -38,7 +38,7 @@ from core.plugins import ProtocolPlugin
 from core.decorators import *
 from core.constants import *
 import random
-survivalworldslist = ["survival", "ultrasurvival"]
+survivalworldslist = ["survival"]
 
 class SurvivalPlugin(ProtocolPlugin):
     commands = {
