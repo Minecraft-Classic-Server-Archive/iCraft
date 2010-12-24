@@ -595,12 +595,12 @@ class CoreServerProtocol(Protocol):
                         except ValueError:
                             self.sendServerMessage("Please include a message to send.")
                         else:
-                            self.sendWorldMessage ("!"+self.title+self.userColour()+self.username+":"+COLOUR_WHITE+" "+text)
+                            self.sendWorldMessage ("!"+self.userColour()+self.usertitlename+":"+COLOUR_WHITE+" "+text)
                             self.log("!"+self.usertitlename+" in "+str(self.world.id)+": "+text)
                             self.wclog.write("["+datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+"] !"+self.usertitlename+" in "+str(self.world.id)+": "+text+"\n")
                             self.wclog.flush()
                             if self.factory.irc_relay:
-                                self.factory.irc_relay.sendServerMessage(COLOUR_YELLOW+"!"+self.title+self.userColour()+self.username+COLOUR_BLACK+" in "+str(self.world.id)+": "+text)
+                                self.factory.irc_relay.sendServerMessage(COLOUR_YELLOW+"!"+self.userColour()+self.usertitlename+COLOUR_BLACK+" in "+str(self.world.id)+": "+text)
                 elif message.startswith("#"):
                     # It's an staff-only message.
                     if len(message) == 1:
