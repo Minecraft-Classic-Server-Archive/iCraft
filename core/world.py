@@ -42,7 +42,7 @@ from deferred import Deferred
 from blockstore import BlockStore
 from constants import *
 try:
-    from tracker import dbconnection
+    from database import connection
     apsw = 1
 except:
     print ("You should install APSW if you want blocktracking.")

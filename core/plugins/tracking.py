@@ -44,7 +44,7 @@ day = 86400
 hour = 3600
 min = 60
 
-class BlockTracker(ProtocolPlugin):
+class Tracking(ProtocolPlugin):
 
     commands = {
         #"multiundo": "commandMultiUndo",

@@ -38,7 +38,7 @@ import apsw, traceback
 from collections import deque
 from threading import Thread
 
-class Connection(Thread):
+class connection(Thread):
     "Creates a connenction to the database for storage."
 
     def __init__(self, world):
