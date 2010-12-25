@@ -101,11 +101,13 @@ class PlayersPlugin(ProtocolPlugin):
                     self.client.sendNormalMessage(self.client.factory.usernames[user].userColour()+("%s" % (title))+parts[1]+COLOUR_YELLOW+" "+username.world.id+" | "+str(username.transport.getPeer().host))
                 else:
                     self.client.sendNormalMessage(self.client.factory.usernames[user].userColour()+("%s" % (title))+parts[1]+COLOUR_YELLOW+" "+username.world.id)
-                if username.gone == 1 and user in bank:
-                    self.client.sendServerMessage("Balace: M%d, "+COLOUR_DARKPURPLE+"is currently Away" % (bank[user]))
+                if username in INFO_VIPLIST:
+                    self.client.sendServerMessage("is a VIP of iCraft")
+                elif username in INFO_VIPLIST and username.gone == 1:
+                    self.client.sendServerMessage("is a VIP of iCraft; "+COLOUR_DARKPURPLE+"is currently Away")
                 elif username.gone == 1:
                     self.client.sendNormalMessage(COLOUR_DARKPURPLE+"is currently Away")
-                elif user in bank:
+                if user in bank:
                     self.client.sendServerMessage("Balace: M%d" % (bank[user]))
             else:
                 # Parts is an array, always, so we get the first item.
