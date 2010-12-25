@@ -833,7 +833,10 @@ class CoreFactory(Factory):
     def newWorld(self, new_name, template="default"):
         "Creates a new world from some template."
         # Make the directory
-        os.mkdir("worlds/%s" % new_name)
+        try:
+            os.mkdir("worlds/%s" % new_name)
+        except:
+            client.sendServerMessage("Sorry, that world already exists!)
         # Find the template files, copy them to the new location
         for filename in ["blocks.gz", "world.meta"]:
             try:

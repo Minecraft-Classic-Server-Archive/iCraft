@@ -85,13 +85,26 @@ class BackendSocket(object):
 class status:
     def GET(self):
         bs = BackendSocket(BACKEND_HOST, BACKEND_PORT, BACKEND_PASSWORD)
+        name = bs.query("name")['name']
+        motd = bs.query("motd")['motd']
+        public = bs.query("public")['public']
+        limit = bs.query("limit")['limit']
+        awaytime = bs.query("awaytime")['awaytime']
+        asd = bs.query("asd")['asd']
+        gchat = bs.query("gchat")['gchat']
+        bufreq = bs.query("bufreq")['bufreq']
+        bumax = bs.query("bumax")['bumax']
+        ircserver = bs.query("ircserver")['ircserver']
+        ircchannel = bs.query("ircchannel")['ircchannel']
+        owner = bs.query("owner")['owner']
+        specs = bs.query("specs")['specs']
         worlds = sorted(bs.query("userworlds")['worlds'])
         users = bs.query("users")['users']
         directors = bs.query("directors")['directors']
         admins = bs.query("Admins")['admins']
         mods = bs.query("Mods")['mods']
         members = bs.query("Members")['members']
-        return render.status(directors, admins, mods, members, users, worlds)
+        return render.status(name, motd, public, limit, awaytime, asd, gchat, bufreq, bumax, ircserver, ircchannel, owner, specs, worlds, users, directors, admins, mods, members)
 
 
 class css:

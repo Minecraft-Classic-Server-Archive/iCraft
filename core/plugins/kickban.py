@@ -108,10 +108,10 @@ class KickBanPlugin(ProtocolPlugin):
             if not params:
                 self.client.sendServerMessage("Please give a reason.")
             else:
+                self.client.sendServerMessage("%s has been banned." % username)
                 self.client.factory.addBan(username, " ".join(params))
                 if username in self.client.factory.usernames:
                     self.client.factory.usernames[username].sendError("You got Banned!")
-                self.client.sendServerMessage("%s has been Banned." % username)
     
     @player_list
     @director_only
@@ -126,10 +126,10 @@ class KickBanPlugin(ProtocolPlugin):
                 if not params:
                     self.client.sendServerMessage("Please give a reason.")
                 else:
+                    self.client.sendServerMessage("%s has been IPBanned." % ip)
                     self.client.factory.addIpBan(ip, " ".join(params))
                     if username in self.client.factory.usernames:
                         self.client.factory.usernames[username].sendError("You got Banned!")
-                    self.client.sendServerMessage("%s has been IPBanned." % ip)
         except:
             self.client.sendServerMessage("Sorry, that username is not online.")
     
