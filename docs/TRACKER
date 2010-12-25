@@ -1,0 +1,15 @@
+IDEAS: Undo by date, region and player (ungrief)
+For anyone who is interested in helping, these are the current functions that the tracker module has:
+[ http://www.sqlite.org/lang_expr.html | http://www.sqlite.org/lang.html ]
+
+A write table function - writes to the database for a world;
+def writetable(self, blockoffset, name, date, before, after)
+
+A readname function that accepts both tuples, lists, and single values.
+This function returns all data of blocks placed by a player or multiple players;
+def readname(name)
+
+A get offset function that works like the readname function,
+but returns data based upon a single offset or list of offsets;
+data structure (124768, 'goober', 1289008346.276, 3, 0)
+                offset, name, date, before, after

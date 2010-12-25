@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010-2011 both
+#    iCraft is Copyright 2010 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -34,7 +34,7 @@
 #    Or, send a letter to Creative Commons, 171 2nd Street,
 #    Suite 300, San Francisco, California, 94105, USA.
 
-import gzip, struct, os, traceback, logging, sys
+import gzip, struct, os, traceback, logging
 from Queue import Empty
 from ConfigParser import RawConfigParser as ConfigParser
 from array import array
@@ -62,7 +62,7 @@ class World(object):
         self.basename = basename
         self.blocks_path = os.path.join(basename, "blocks.gz")
         self.meta_path = os.path.join(basename, "world.meta")
-        self.database_path = os.path.join(basename, "database.db")
+        self.database_path = os.path.join(basename, "storage.db")
         # Other settings
         self.owner = "N/A"
         self.ops = set()
@@ -70,7 +70,6 @@ class World(object):
         self.all_write = True
         self.admin_blocks = True
         self.private = False
-        self.highlight_ops = True
         self._physics = False
         self._finite_water = False
         self.is_archive = False
@@ -232,10 +231,6 @@ class World(object):
             else:
                 self.zoned = True
         if config.has_section("display"):
-            if config.has_option("display", "highlight_ops"):
-                self.highlight_ops = config.getboolean("display", "highlight_ops")
-            else:
-                self.highlight_ops = True
             if config.has_option("display", "physics"):
                 self.physics = config.getboolean("display", "physics")
             else:
@@ -379,7 +374,6 @@ class World(object):
         config.set("permissions", "private", str(self.private))
         config.set("permissions", "zoned", str(self.zoned))
         # Store display settings
-        config.set("display", "highlight_ops", str(self.highlight_ops))
         config.set("display", "physics", str(self.physics))
         config.set("display", "finite_water", str(self.finite_water))
         # Store teleports

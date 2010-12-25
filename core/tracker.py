@@ -38,108 +38,78 @@ import apsw, traceback
 from collections import deque
 from threading import Thread
 
-class dbconnection(Thread):
-    "Establish a connection to the memory database and define the cursor."
+class Connection(Thread):
+    "Creates a connenction to the database for storage."
 
-# Startup variables
     def __init__(self, world):
-        self.dbpath = world.basename +"/database.db"
-        self.memcon = apsw.Connection(':memory:')
+        self.run = True
+        self.count = 0
+        self.path = world.basename+"/storage.db"
+        self.memcon = apsw.Connection(":memory:")
         self.memcursor = self.memcon.cursor()
         self.memlist = deque()
-        self.disklist = deque()
-        self.worlddb = apsw.Connection('{0}'.format(self.dbpath))
-        self.worldcursor = self.worlddb.cursor()
+        self.worldlist = deque()
+        self.worldcon = apsw.Connection("{0}".format(self.path))
+        self.worldcursor = self.worldcon.cursor()
         self.worldcursor.execute("pragma journal_mode=wal")
-        self.counter = 0
-        self.run = True
         try:
-            self.memcursor.execute('CREATE TABLE main (id INTEGER PRIMARY KEY,matbefore INTEGER, matafter INTEGER, name VARCHAR(50), date DATE)')
-        except:
-            pass
-        try:
-            self.worldcursor.execute('CREATE TABLE main (id INTEGER PRIMARY KEY,matbefore INTEGER, matafter INTEGER, name VARCHAR(50), date DATE)')
+            self.memcursor.execute("CREATE TABLE blocks (id INTEGER PRIMARY KEY, name VARCHAR(50), date DATE, before INTEGER, after INTEGER)")
+            self.worldcursor.execute("CREATE TABLE blocks (id INTEGER PRIMARY KEY, name VARCHAR(50), date DATE, before INTEGER, after INTEGER)")
         except:
             pass
 
-# Core functions, not normally used by plugins
-    def tableopen(self):
+    def opentable(self):
         self.memcursor = None
         self.worldcursor = None
-        self.memcon.backup("main", self.worlddb, "main").step()
+        self.memcon.backup("blocks", self.worldcon, "blocks").step()
         self.memcursor = self.memcon.cursor()
-        self.worldcursor = self.worlddb.cursor()
-        print ("World opened succesfully.")
+        self.worldcursor = self.worldcon.cursor()
 
-    def dbclose(self):
+    def close(self):
         self.memwrite()
-        self.diskwrite()
-        print ("Database closing..")
+        self.worldwrite()
         self.memcursor = None
         self.worldcursor = None
-        self.memcon = None
-        self.worlddb = None
         self.run = False
 
-    def writetable(self, blockoffset, matbefore, matafter, name, date):
+    def writetable(self, blockoffset, name, date, before, after):
         if self.run:
-            self.memlist.append((blockoffset, matbefore, matafter, name, date))
-            self.disklist.append((blockoffset, matbefore, matafter, name, date))
-            if len(self.memlist) > 150:
+            self.memlist.append((blockoffset, name, date, before, after))
+            self.worldlist.append((blockoffset, name, date, before, after))
+            if len(self.memlist) > 200:
                 self.memwrite()
-                self.counter = self.counter + 1
-                if self.counter > 5:
-                    self.diskwrite()
+                self.count = self.count+1
+                if self.count > 5:
+                    self.worldwrite()
 
     def memwrite(self):
         if self.run:
-            self.memcursor.executemany("INSERT OR REPLACE INTO main VALUES (?,?,?,?,?)",self.memlist)
+            self.memcursor.executemany("INSERT OR REPLACE INTO blocks VALUES (?, ?, ?, ?, ?)", self.worldlist)
             self.memlist.clear()
-            print ("Memory database updated.")
 
-    def diskwrite(self):
+    def worldwrite(self):
         if self.run:
-            self.worldcursor.executemany("INSERT OR REPLACE INTO main VALUES (?,?,?,?,?)",self.disklist)
-            self.disklist.clear()
-            self.counter = 0
-            print ("Disk database updated.")
+            self.worldcursor.executemany("INSERT OR REPLACE INTO blocks VALUES (?, ?, ?, ?, ?)", self.worldlist)
+            self.worldlist.clear()
+            self.count = 0
 
-    def readdb(self, entry, column, filt = None):
-        returncolumn = 'id, matbefore, matafter, name, date'
-        # Currently tested to accept tuples with strings, lists with strings. won't work with things that have only a single entry, so single strings and ints are out
-        # Example filters are "and where date is < foo and > foo"
-        if len(self.memlist)>0:
+    def readd(self, entry, column):
+        returncolumn = "id, name, date, before, after"
+        if len(self.memlist) > 0:
             self.memwrite()
-        if isinstance(entry, (int, str)): 
-            if filt != None:
-                string = 'select * from main as main where {0} = ? {1}'.format(column,filt)
-            else:
-                string = 'select * from main as main where {0} = ?'.format(column)
-            print(string)
+        if isinstance(entry, (int, str)):
+            string = "select * from blocks as blocks where {0} = ?".format(column)
             self.memcursor.execute(string, [entry])
-            undolist = self.memcursor.fetchall()
-            if len(undolist) == 1:
-                undolist = undolist[0]
-            return(undolist)
-            #Or you could put your old stuff in here
-        if isinstance(entry, (tuple, list)):
-            qmarks = ('?,'*len(entry))[:-1]
-            if filt != None:
-                string = 'select * from main as main where {0} in ({1}) {2}'.format(column,qmarks,filt)
-            else:
-                string = 'select * from main as main where {0} in ({1})'.format(column,qmarks)
-            print (string)
+            memall = self.memcursor.fetchall()
+            if len(memall) == 1:
+                memall = memall[0]
+            return(memall)
+        elif isinstance(entry, (tuple, list)):
+            string = 'select * from main as main where {0} in ({1})'.format(column, ('?, '*len(entry))[:-1])
             self.memcursor.execute(string, entry)
-            print(self.memcursor.fetchall())
-            undolist = self.memcursor.fetchall()
-            return(undolist)
+            memall = self.memcursor.fetchall()
+            return(memall)
         else:
             print traceback.format_exc()
-            print ("ERROR - Please make sure readdb input is correct!")
-            print ("Dumping Variables..")
-            print ("Entry:", entry)
-            print ("Column:", column)
-            print ("Return Column:", returncolumn)
-            print ("string:", string)
-            print ("Qmarks:", qmarks)
-            print ("Filter:", filt)
+            print ("ERROR - Please make sure your input is correct, dumping information...")
+            print ("Entry: %s | Column: %s | Return Column: %s | String: %s" (entry, column, returncolumn, string))

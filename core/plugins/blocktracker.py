@@ -1,4 +1,4 @@
-#    iCraft is Copyright 2010-2011 both
+#    iCraft is Copyright 2010 both
 #
 #    The Archives team:
 #                   <Adam Guy> adam@adam-guy.com AKA "Adam01"
@@ -53,7 +53,6 @@ class BlockTracker(ProtocolPlugin):
         "ungrief": "commandUnGrief",
         "force": "commandForce",
         "undozone": "commandUndoZone",
-
     }
 
     hooks = {
@@ -72,23 +71,22 @@ class BlockTracker(ProtocolPlugin):
     #    else:
     #        self.trackoff = False
 
-
     def blockChanged(self, x, y, z, block, selected_block, byuser):
         if self.tracktype == "normal":
             "Hook trigger for block changes."
             world = self.client.world
             blockoffset = world.blockstore.get_offset(x, y, z)
-            matbefore = ord(world.blockstore.raw_blocks[blockoffset])
-            matafter = (block)
+            before = ord(world.blockstore.raw_blocks[blockoffset])
+            after = (block)
             date = time()
             name = self.client.username
-            #print blockoffset, matbefore, matafter, name, date
-            self.client.world.BlockEngine.writetable(blockoffset, matbefore, matafter, name, date)
+            #print blockoffset, name, date, before, after
+            self.client.world.BlockEngine.writetable(blockoffset, before, after, name, date)
         elif self.tracktype == "ungrief":
             try:
-                temp = self.client.world.blockstore.get_offset(x,y,z) # (offset, before, after, player, date)
+                temp = self.client.world.blockstore.get_offset(x,y,z) # (offset, player, date, before, after)
                 #print temp
-                self.marker = self.client.world.BlockEngine.readdb(temp,"id") # format :(124768,     3,     0,  'goober', 1289008346.276)
+                self.marker = self.client.world.BlockEngine.readd(temp,"id") # format :(124768,     3,     0,  'goober', 1289008346.276)
                 #print self.marker
                 #self.marker = self.marker[0]
                 #print self.marker
@@ -190,7 +188,7 @@ class BlockTracker(ProtocolPlugin):
 
     def undoname(self, player, filter = None):
         newlist = set()
-        blocklist = self.client.world.BlockEngine.readdb(player, "name", filter)
+        blocklist = self.client.world.BlockEngine.readd(player, "name", filter)
         #print blocklist
         for item in blocklist:
             x, y, z = self.client.world.blockstore.get_coords(item[0])
@@ -199,7 +197,7 @@ class BlockTracker(ProtocolPlugin):
         self.restore(newlist)
 
     def undodate(self, start_date, end_date, player = None):
-        print "do something"
+        #print "do something"
 
     def restore(self, blocklist): # blocklist format: (x, y, z, chr(block))
         # Draw all the blocks on, I guess
