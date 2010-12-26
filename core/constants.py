@@ -36,7 +36,7 @@
 
 import os
 
-INFO_VIPLIST = set(["notch", "ez", "dock", "aera", "andrewgodwin", "ikjames", "kingjames", "jameskirslis", "adam01", "andrewph", "eugo", "knossus", "gdude2002", "arbot", "goober", "notmeh", "saanix", "sk8rjwd", "tehcid", "varriount", "destroyerx1", "dwarfy", "erronjason", "gothfox", "ntfwc", "pixeleater", "revenant", "willempiee", "akai", "antoligy", "bidoof_king", "bioniclegenius", "red_link", "cdrom", "fragmer", "imak", "kelraider", "mystx", "pyropyro", "setveen", "cortana", "thepolice", "blahblahbal"])
+INFO_VIPLIST = set(["notch", "ez", "dock", "aera", "andrewgodwin", "antoligy", "ikjames", "kingjames", "jameskirslis", "imak", "adam01", "andrewph", "destroyerx1", "dwarfy", "erronjason", "eugo", "gdude2002", "goober", "gothfox", "knossus", "notmeh", "ntfwc", "pixeleater", "revenant", "saanix", "sk8rjwd", "tehcid", "varriount", "willempiee"])
 
 FORMAT_LENGTHS = {
     "b": 1,

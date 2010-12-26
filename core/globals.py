@@ -368,7 +368,6 @@ def Credits(self, server=None):
     Temp.append ("Thanks to the following people for making iCraft possible...")
     Temp.append ("Mojang Specifications (Minecraft): Notch, dock, ez, ...")
     Temp.append ("Creators: aera aka AndrewGodwin (Myne and The Archives), iKJames aka KingJames, JamesKirslis (hlmc.net, iCraft)")
-    Temp.append ("Devs: Adam01, AndrewPH, eugo (Knossus), gdude2002 (arbot), goober, NotMeh, Saanix, sk8rjwd, tehcid, Varriount")
-    Temp.append ("Old Devs: destroyerx1, Dwarfy, erronjason, gothfox, ntfwc, PixelEater, revenant, willempiee")
-    Temp.append ("Others: Akai, Antoligy, Bidoof_King, Bioniclegenius (Red_Link), CDRom, fragmer, GLaDOS (Cortana), iMak, Kelraider, MystX, PyroPyro, setveen, ...")
+    Temp.append ("Devs: Adam01, AndrewPH, destroyerx1, Dwarfy, erronjason, eugo (Knossus), gdude2002 (arbot), goober, gothfox, NotMeh, ntfwc, PixelEater, revenant, Saanix, sk8rjwd, tehcid, Varriount, willempiee")
+    Temp.append ("Others: 099, 2k10, Akai, Antoligy, Aquaskys, Bidoof_King, Bioniclegenius (Red_Link), blahblahbal, BlueProtoman, CDRom, fragmer, GLaDOS (Cortana), iMak, Kelraider, MAup, MystX, PyroPyro, Rils, Roadcrosser, Roujo, setveen, TkTech, Uninspired, and many more...")
     return Temp

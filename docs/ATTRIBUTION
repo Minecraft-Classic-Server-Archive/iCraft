@@ -20,7 +20,7 @@ If one uses the source code of iCraft in modification, specific terms must compl
 a. The original content must stay in the "/credits" command, and only addition to the context and source of this command is allowed to preserve credits where they apply.
 b. The command "/about" must stay mentioned in the "/help" command, as well as "/credits" being mentioned in "/help" and "/about" too.
 c. All persons of the VIP in-gaming rank (yellow name) must stay intact. Although users may be added to this list, the users that were originally on it may not.
-d. You can not remove the notification of the 'vip spotted' messages for joining OR the message of 'is a vip' in the "/who playername" command
+d. You can not remove the notification of the 'spotted' messages for joining OR the message of being a 'developer' in the "/who playername" command
 
 3. Redistribution
 "Redistribution" applys to software forking, release of modified source code, and any other related actions. Terms from before apply here as well, along with the fact that it must be stated in "/about" that the iCraft software was used as a base for the released source code.

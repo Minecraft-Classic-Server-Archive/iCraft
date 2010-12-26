@@ -338,11 +338,11 @@ class CoreServerProtocol(Protocol):
                 # Then... stuff
                 for client in self.factory.usernames.values():
                     if self.username.lower() in INFO_VIPLIST and not self.isMod():
-                        client.sendNormalMessage(COLOUR_DARKRED+"A VIP of iCraft spotted;")
+                        client.sendNormalMessage(COLOUR_DARKRED+"iCraft Developer spotted;")
                     client.sendServerMessage("%s has come online." % self.username)
                 if self.factory.irc_relay:
                     if self.username.lower() in INFO_VIPLIST and not self.isMod():
-                        self.factory.irc_relay.sendServerMessage("04A VIP of iCraft spotted;")
+                        self.factory.irc_relay.sendServerMessage("04iCraft Developer spotted;")
                     self.factory.irc_relay.sendServerMessage("07%s has come online." % self.username)
                 reactor.callLater(0.1, self.sendLevel)
                 reactor.callLater(1, self.sendKeepAlive)
