@@ -165,17 +165,17 @@ class CoreFactory(Factory):
             self.config.read("config/main.conf")
         except:
             logging.log(logging.ERROR, "Something is messed up with your main.conf file. (Did you edit it in Notepad?)")
-            self.exit()
+            sys.exit(1)
         try:
             self.options_config.read("config/options.conf")
         except:
             logging.log(logging.ERROR, "Something is messed up with your options.conf file. (Did you edit it in Notepad?)")
-            self.exit()
+            sys.exit(1)
         try:
             self.ploptions_config.read("config/ploptions.conf")
         except:
             logging.log(logging.ERROR, "Something is messed up with your ploptions.conf file. (Did you edit it in Notepad?)")
-            self.exit()
+            sys.exit(1)
         self.use_irc = False
         if  (os.path.exists("config/irc.conf")):
             self.use_irc = True
@@ -184,7 +184,7 @@ class CoreFactory(Factory):
                 self.irc_config.read("config/irc.conf")
             except:
                 logging.log(logging.ERROR, "Something is messed up with your irc.conf file. (Did you edit it in Notepad?)")
-                self.exit()
+                sys.exit(1)
         self.saving = False
         try:
             self.max_clients = self.config.getint("main", "max_clients")
@@ -200,7 +200,7 @@ class CoreFactory(Factory):
                 logging.log(logging.ERROR, "You forgot to make yourself the server owner.")
         except:
             logging.log(logging.ERROR, "You don't have a main.conf file! You need to rename main.example.conf to main.conf")
-            self.exit()
+            sys.exit(1)
         try:
             self.duplicate_logins = self.options_config.getboolean("options", "duplicate_logins")
             self.info_url = self.options_config.get("options", "info_url")
@@ -214,7 +214,7 @@ class CoreFactory(Factory):
             self.gchat = self.options_config.getboolean("worlds", "gchat")
         except:
             logging.log(logging.ERROR, "You don't have a options.conf file! You need to rename options.example.conf to options.conf")
-            self.exit()
+            sys.exit(1)
         try:
             self.grief_blocks = self.ploptions_config.getint("antigrief", "blocks")
             self.grief_time = self.ploptions_config.getint("antigrief", "time")
@@ -233,13 +233,13 @@ class CoreFactory(Factory):
                 reactor.callLater(float(self.backup_freq * 60),self.AutoBackup)
         except:
             logging.log(logging.ERROR, "You don't have a ploptions.conf file! You need to rename ploptions.example.conf to ploptions.conf")
-            self.exit()
+            sys.exit(1)
         #if not os.path.exists("config/greeting.txt"):
         #    logging.log(logging.ERROR, "You don't have a greeting.txt file! You need to rename greeting.example.txt to greeting.txt (If this error persists, you may have used Notepad.)")
-        #    self.exit()
+        #    sys.exit(1)
         #if not os.path.exists("config/rules.txt"):
         #    logging.log(logging.ERROR, "You don't have a rules.txt file! You need to rename rules.example.txt to rules.txt (If this error persists, you may have used Notepad.)")
-        #    self.exit()
+        #    sys.exit(1)
         if self.use_irc:
             self.irc_nick = self.irc_config.get("irc", "nick")
             self.irc_pass = self.irc_config.get("irc", "password")
@@ -261,13 +261,13 @@ class CoreFactory(Factory):
             self.wordfilter.read("config/wordfilter.conf")
         except:
             logging.log(logging.ERROR, "Something is messed up with your wordfilter.conf file. (Did you edit it in Notepad?)")
-            self.exit()
+            sys.exit(1)
         self.filter = []
         try:
             number = int(self.wordfilter.get("filter","count"))
         except:
             logging.log(logging.ERROR, "You need to rename wordfilter.example.conf to wordfilter.conf")
-            self.exit();
+            sys.exit(1);
         for x in range(number):
             self.filter = self.filter + [[self.wordfilter.get("filter","s"+str(x)),self.wordfilter.get("filter","r"+str(x))]]
         # Salt, for the heartbeat server/verify-names
@@ -278,12 +278,12 @@ class CoreFactory(Factory):
             self.plugins_config.read("config/plugins.conf")
         except:
             logging.log(logging.ERROR, "Something is messed up with your irc.conf file. (Did you edit it in Notepad?)")
-            self.exit()
+            sys.exit(1)
         try:
             plugins = self.plugins_config.options("plugins")
         except:
             print ("NOTICE: You need to rename plugins.example.conf to plugins.conf")
-            self.exit();
+            sys.exit(1);
         logging.log(logging.INFO, "Loading plugins...")
         load_plugins(plugins)
         # Open the chat log, ready for appending
@@ -996,9 +996,3 @@ class CoreFactory(Factory):
         except:
             os = "Windows"
         return os
-
-    def exit(self):
-        try:
-            raise EOFError
-        except EOFError:
-            sys.exit(1);

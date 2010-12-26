@@ -170,7 +170,7 @@ def main():
            config.read(os.path.join(os.path.dirname(__file__), "config/archiver.conf"))
        except:
            logging.log(logging.ERROR, "You need to rename archiver.example.conf to archiver.conf")
-           factory.exit()
+           sys.exit(1)
     rip(sys.argv[1], config.get("client", "username"), config.get("client", "password"))
 
 # this only runs if the module was *not* imported

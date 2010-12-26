@@ -128,7 +128,4 @@ finally:
         world.stop()
         world.save_meta()
     print ("ATTENTION: Please don't forget to check for updates; http://hlmc.net/ | irc.esper.net #iCraft")
-    try:
-        raise EOFError
-    except EOFError:
-        sys.exit(1);
+    sys.exit(1);
