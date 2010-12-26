@@ -102,9 +102,9 @@ class PlayersPlugin(ProtocolPlugin):
                 else:
                     self.client.sendNormalMessage(self.client.factory.usernames[user].userColour()+("%s" % (title))+parts[1]+COLOUR_YELLOW+" "+username.world.id)
                 if username in INFO_VIPLIST:
-                    self.client.sendServerMessage("is a iCraft Developer")
+                    self.client.sendServerMessage("is an iCraft Developer")
                 elif username in INFO_VIPLIST and username.gone == 1:
-                    self.client.sendServerMessage("is a iCraft Developer; "+COLOUR_DARKPURPLE+"is currently Away")
+                    self.client.sendServerMessage("is an iCraft Developer; "+COLOUR_DARKPURPLE+"is currently Away")
                 elif username.gone == 1:
                     self.client.sendNormalMessage(COLOUR_DARKPURPLE+"is currently Away")
                 if user in bank:

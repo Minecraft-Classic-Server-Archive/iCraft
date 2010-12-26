@@ -193,7 +193,7 @@ class CoreFactory(Factory):
             self.controller_port = self.config.get("network", "controller_port")
             self.controller_password = self.config.get("network", "controller_password")
             self.server_name = self.config.get("main", "name")
-            if self.server_name == "iCraft 3.0 Server":
+            if self.server_name == "iCraft Server":
                 logging.log(logging.ERROR, "You forgot to give your server a name.")
             self.owner = self.config.get("main", "owner").lower()
             if self.owner == "yournamehere":
