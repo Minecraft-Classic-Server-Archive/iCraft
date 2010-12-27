@@ -836,7 +836,7 @@ class CoreFactory(Factory):
         try:
             os.mkdir("worlds/%s" % new_name)
         except:
-            client.sendServerMessage("Sorry, that world already exists!)
+            client.sendServerMessage("Sorry, that world already exists!")
         # Find the template files, copy them to the new location
         for filename in ["blocks.gz", "world.meta"]:
             try:
