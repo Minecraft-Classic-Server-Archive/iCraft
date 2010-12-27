@@ -101,9 +101,9 @@ class PlayersPlugin(ProtocolPlugin):
                     self.client.sendNormalMessage(self.client.factory.usernames[user].userColour()+("%s" % (title))+parts[1]+COLOUR_YELLOW+" "+username.world.id+" | "+str(username.transport.getPeer().host))
                 else:
                     self.client.sendNormalMessage(self.client.factory.usernames[user].userColour()+("%s" % (title))+parts[1]+COLOUR_YELLOW+" "+username.world.id)
-                if username in INFO_VIPLIST:
+                if user in INFO_VIPLIST:
                     self.client.sendServerMessage("is an iCraft Developer")
-                elif username in INFO_VIPLIST and username.gone == 1:
+                elif user in INFO_VIPLIST and username.gone == 1:
                     self.client.sendServerMessage("is an iCraft Developer; "+COLOUR_DARKPURPLE+"is currently Away")
                 elif username.gone == 1:
                     self.client.sendNormalMessage(COLOUR_DARKPURPLE+"is currently Away")
