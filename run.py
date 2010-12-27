@@ -45,7 +45,7 @@ from core.controller import ControllerFactory
 from ConfigParser import RawConfigParser as ConfigParser
 
 print ("Now starting up iCraft.. Make sure to check and update often.")
-print ("Do you need help with iCraft? Feel free to stop by either way; http://hlmc.net/ | irc.esper.net #icraft")
+print ("iCraft Discussion: helplarge.com/icraft - irc.esper.net #icraft")
 
 useConsoleLog = True
 # Disable file logging if using nohup.out
@@ -127,5 +127,4 @@ finally:
         logging.log(logging.INFO, "Saving: %s" % world.basename);
         world.stop()
         world.save_meta()
-    print ("ATTENTION: Please don't forget to check for updates; http://hlmc.net/ | irc.esper.net #iCraft")
     sys.exit(1);

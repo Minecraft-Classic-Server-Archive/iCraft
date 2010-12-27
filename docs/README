@@ -4,16 +4,14 @@ Thanks for choosing iCraft as your Creative Multiplayer software.
 ========== NOTE:
 =========================
 
-iCraft is NOT for Alpha, so the Alpha client will NOT work with
-iCraft. If you are looking for a Survival Multiplayer software
-then we recommend you to use myne2.
+iCraft is NOT for Beta, so the Beta client will NOT work.
 
 =========================
-========== SUPPORT:
+========== DISCUSSION:
 =========================
 
-Need support? Want to chat or hang out with us?
-Go to irc.esper.net #icraft (or hlmc.net)
+irc.esper.net #icraft
+helplarge.com/icraft
 
 =========================
 ========== EXTRAS:
@@ -26,7 +24,6 @@ Artwork (Logos/iCons) - /extras/artwork/
 Convert (dat to gz/meta) - /extras/converter/
 Topographer (2D topdown Mapping) - /extras/topographer/
 Status Script (Python Website) - /extras/website/
-bat Executive (start.bat Windows) - /extras/start.bat
 Archiver (Archives Worlds from Servers) - /extras/archiver.py
 
 =========================
@@ -49,8 +46,8 @@ Step 1: Install Python 2.6. Python 2.5/2.7 may work, Python 3.x WON'T
 Step 2 [Optional]: Go install the Python APSW software if you want to
 use blocktracking.
 
-Step 3 [Optional]: Go install Interact
-See more information in the "INTERACT" section.
+Step 3: Go install Interact
+See more information in "INTERACT"
 
 Step 4: Follow section a + c (b IF you want a irc bot)
 
@@ -69,10 +66,8 @@ should now be working. Good luck with your server.
 ========== UPGRADE:
 =========================
 
-A full upgrading guide will exist in due time.
-
-Currently the only upgrade instructions are for iCraft 2.6 -> (Public
-Beta ->) 3.0; See hlmc.net/wiki for the latest upgrade instructions
+There is no upgrade guide.
+Just use common sense at this time.
 
 =========================
 ========== CREDITS:
