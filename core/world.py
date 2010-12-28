@@ -192,7 +192,11 @@ class World(object):
     def load_meta(self):
         config = ConfigParser()
         config.read(self.meta_path)
-        self.x = config.getint("size", "x")
+        try:
+            self.x = config.getint("size", "x")
+        except:
+            self.client.sendServerMessage("Sorry, this world can't be loaded!")
+            self.factory.logging.log(logging.ERROR, "This world was attempted to be loaded, it's missing a world.meta file.")
         self.y = config.getint("size", "y")
         self.z = config.getint("size", "z")
         self.spawn = (
