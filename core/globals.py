@@ -50,7 +50,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
             if not server:
                 world = self.client.world
             else:
-                return "You must provide a world"
+                return "You must provide a world."
         if not server:
             if not overriderank:
                 if not (self.client.username.lower() in world.ops or self.client.isMod() or self.client.isWorldOwner()):
@@ -75,7 +75,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
             if not server:
                 world = self.client.world
             else:
-                return "You must provide a world"
+                return "You must provide a world."
         if not server:
             if not overriderank:
                 if self.client.isWorldOwner()==False:
@@ -96,7 +96,7 @@ def Rank(self, parts, byuser, overriderank,server=None):
             if not server:
                 world = self.client.world
             else:
-                return "You must provide a world"
+                return "You must provide a world."
         if not server:
             if self.client.isWorldOwner()==False and not overriderank:
                 return ("You are not high enough rank!")
@@ -184,7 +184,7 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             if not server:
                 world = self.client.world
             else:
-                return "You must provide a world"
+                return "You must provide a world."
         if not server:
             if not ((self.client.username in world.ops) or self.client.isMod()) and overriderank:
                 return ("You are not high enough rank!")
@@ -200,7 +200,7 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             user = factory.usernames[username]
             if user.world == world:
                 user.sendBuilderUpdate()
-        return ("Removed %s as Builder" % username)
+        return ("Removed %s as a Builder." % username)
     elif parts[1] == "op":
         if len(parts) > 3:
             try:
@@ -211,7 +211,7 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             if not server:
                 world = self.client.world
             else:
-                return "You must provide a world"
+                return "You must provide a world."
         if not server:
             if not self.client.isWorldOwner() and world != self.client.world:
                 return ("You are not an World Owner!")
@@ -238,7 +238,7 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             if not server:
                 world = self.client.world
             else:
-                return "You must provide a world"
+                return "You must provide a world."
         if not server:
             if not self.client.isWorldOwner() and world != self.client.world:
                 return ("You are not an World Owner!")
@@ -284,7 +284,7 @@ def DeRank(self, parts, byuser, overriderank, server=None):
             return ("No such global builder \"%s\"" % username.lower())
         if username in factory.usernames:
             factory.usernames[username].sendGlobalBuilderUpdate()
-        return ("%s is no longer a Member." % username.lower())
+        return ("%s is no longer a Global Builder." % username.lower())
     elif parts[1] == "mod":
         if not server:
             if not self.client.isDirector():

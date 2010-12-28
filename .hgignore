@@ -16,3 +16,4 @@ extras/*.jar
 extras/*.meta
 extras/*.gz
 worlds/*
+glob:Thumbs.db
