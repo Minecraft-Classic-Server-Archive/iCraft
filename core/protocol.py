@@ -696,82 +696,78 @@ class CoreServerProtocol(Protocol):
 
     def sendOpUpdate(self):
         "Sends the admincrete-breaker update and a message."
-        if self.isOp():
-            self.sendServerMessage("You are now an Op here.")
+        if self.isOp() and not self.isBuilder():
+            self.sendServerMessage("You've been promoted to Op!")
         else:
-            self.sendServerMessage("You are no longer an Op here.")
+            self.sendServerMessage("You've been demoted from Op!")
         self.runHook("rankchange")
         self.respawn()
 
     def sendWorldOwnerUpdate(self):
         "Sends the admincrete-breaker update and a message."
-        if self.isWorldOwner():
-            self.sendServerMessage("You are now an World Owner here.")
+        if self.isWorldOwner() and not self.isOp():
+            self.sendServerMessage("You've gained ownership of this world.")
         else:
-            self.sendServerMessage("You are no longer an World Owner here.")
+            self.sendServerMessage("You've lost ownership of this world.")
         self.runHook("rankchange")
         self.respawn()
 
     def sendDirectorUpdate(self):
         "Sends the admincrete-breaker update and a message."
-        if self.isDirector():
-            self.sendServerMessage("You are now a Director.")
+        if self.isDirector() and not self.isAdmin():
+            self.sendServerMessage("You've been promoted to Director!")
         else:
-            self.sendServerMessage("You are no longer a Director.")
+            self.sendServerMessage("You've been demoted from Director!")
         self.runHook("rankchange")
         self.respawn()
 
     def sendAdminUpdate(self):
         "Sends the admincrete-breaker update and a message."
-        if self.isAdmin():
-            self.sendServerMessage("You are now an Admin.")
+        if self.isAdmin() and not self.isMod():
+            self.sendServerMessage("You've been promoted to Admin!")
         else:
-            self.sendServerMessage("You are no longer an Admin.")
+            self.sendServerMessage("You've been demoted from Admin!")
         self.runHook("rankchange")
         self.respawn()
 
     def sendModUpdate(self):
         "Sends the mod message"
-        if self.isMod():
-            self.sendServerMessage("You are now a Mod.")
+        if self.isMod() and not self.isWorldOwner():
+            self.sendServerMessage("You've been promoted to Mod!")
         else:
-            self.sendServerMessage("You are no longer a Mod.")
+            self.sendServerMessage("You've been demoted from Mod!")
         self.runHook("rankchange")
         self.respawn()
 
     def sendMemberUpdate(self):
         "Sends the member message"
         if self.isMember():
-            self.sendServerMessage("You are now a Member.")
+            self.sendServerMessage("You've been promoted to Member!")
         else:
-            self.sendServerMessage("You are no longer a Member.")
+            self.sendServerMessage("You've been demoted from Member!")
         self.runHook("rankchange")
         self.respawn()
 
     def sendSpectatorUpdate(self):
-        "Sends a spec demotion message"  
-        if self.isSpectator():
-            return
-        else:
-            return
+        "Sends a spec demotion message"
         self.runHook("rankchange")
         self.respawn()
 
     def sendBuilderUpdate(self):
         "Sends a message."
-        if self.isBuilder():
-            self.sendServerMessage("You are now a Builder in this world.")
+        if self.isBuilder() and not self.isMember():
+            self.sendServerMessage("You've been promoted to Builder!")
         else:
-            self.sendServerMessage("You are no longer a Builder in this world.")
+            self.sendServerMessage("You've been demoted from Builder!")
         self.runHook("rankchange")
         self.respawn()
 
     def sendGlobalBuilderUpdate(self):
         "Sends a message."
-        if self.isBuilder():
-            self.sendServerMessage("You are now a Global Builder.")
+        if self.isBuilder() and not self.isMember():
+            self.sendServerMessage("You've been promoted to Global Builder!")
         else:
-            self.sendServerMessage("You are no longer a Global Builder.")
+            self.sendServerMessage("You've been demoted from Global Builder!")
         self.runHook("rankchange")
         self.respawn()
  
@@ -1150,6 +1146,6 @@ class CoreServerProtocol(Protocol):
             file.close()
             for client in self.factory.clients.values():
                 if client.username in messages:
-                    client.sendServerMessage("You have an message waiting in your Inbox.")
+                    client.sendServerMessage("You have a message waiting in your Inbox.")
                     client.sendServerMessage("Use /inbox to check and see.")
                     reactor.callLater(300, self.MessageAlert)
