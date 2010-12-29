@@ -42,7 +42,9 @@ class AdminBlocksPlugin(ProtocolPlugin):
     
     commands = {
         "solid": "commandSolid",
+        "adminblock": "commandSolid",
         "solids": "commandAdminblocks",
+        "adminblocks": "commandAdminblocks",
     }
     
     hooks = {
@@ -82,7 +84,7 @@ class AdminBlocksPlugin(ProtocolPlugin):
     @op_only
     @on_off_command
     def commandAdminblocks(self, onoff, byuser, overriderank):
-        "/solids on|off - Op\nTurns on/off unbreakable admin/op blocks."
+        "/solids on|off - Op\nAliases: adminblock\nTurns on/off unbreakable admin/op blocks."
         if onoff == "on":
             self.client.world.admin_blocks = True
             self.client.sendWorldMessage("Admin blocks are now enabled here.")
@@ -92,12 +94,12 @@ class AdminBlocksPlugin(ProtocolPlugin):
             self.client.sendWorldMessage("Admin blocks are now disabled here.")
             self.client.sendServerMessage("Admin blocks off in %s" % self.client.world.id)
         for client in self.client.world.clients:
-            self.client.sendAdminBlockUpdate()
+            client.sendAdminBlockUpdate()
     
     @build_list
     @op_only
     def commandSolid(self, parts, byuser, overriderank):
-        "/solid - Op\nToggles admincrete creation."
+        "/solid - Op\nAliases: adminblocks\nToggles admincrete creation."
         if self.building_solid:
             self.client.sendServerMessage("You are now placing normal rock.")
         else:
