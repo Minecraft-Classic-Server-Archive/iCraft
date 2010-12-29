@@ -61,7 +61,7 @@ class WorldUtilPlugin(ProtocolPlugin):
             self.client.world.owner = "N/A"
             self.client.sendServerMessage("The World Owner has been unset.")
         else:
-            self.client.world.owner = str(parts[1])
+            self.client.world.owner = str(parts[1].lower())
             self.client.sendServerMessage("The World Owner has been set.")
 
     @info_list
