@@ -109,7 +109,7 @@ class helpPlugin(ProtocolPlugin):
     def commandCmdlist(self, parts, byuser, overriderank):
         "/cmdlist category - Guest\nThe command list of your rank, categories."
         if len(parts) > 1:
-            if parts[1].lower() == "all" and not self.isMod():
+            if parts[1].lower() == "all" and not self.client.isMod():
                 self.ListCommands("all")
                 self.client.sendServerMessage("cmdlist all is deprecated, use the cmdlist categories instead.")
             elif parts[1].lower() == "build":
