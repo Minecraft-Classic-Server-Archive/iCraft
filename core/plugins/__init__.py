@@ -109,7 +109,9 @@ def load_plugins(plugins):
         __import__("core.plugins.interact")
     except ImportError:
         logging.log(logging.ERROR, "You do not have Interact, you need to go get it.")
+        logging.log(logging.ERROR, "https://bitbucket.org/iKJames/interact")
         sys.exit(1);
+    __import__("core.plcontrol")
     for module_name in plugins:
         try:
             __import__("core.plugins.%s" % module_name)
