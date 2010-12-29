@@ -107,8 +107,16 @@ factory.makedatfile("config/data/inbox.dat")
 factory.makedatfile("config/data/jail.dat")
 factory.makedatfile("config/data/titles.dat")
 controller = ControllerFactory(factory)
-reactor.listenTCP(factory.config.getint("network", "port"), factory)
-reactor.listenTCP(factory.config.getint("network", "controller_port"), controller)
+try:
+    reactor.listenTCP(factory.config.getint("network", "port"), factory)
+except:
+    logging.log(logging.ERROR, "Something is already running on Port %s" % (factory.config.getint("network", "port")))
+    sys.exit(1)
+try:
+    reactor.listenTCP(factory.config.getint("network", "controller_port"), controller)
+except:
+    logging.log(logging.ERROR, "Something is already running on Port %s" % (factory.config.getint("network", "port")))
+    sys.exit(1)
 money_logger = logging.getLogger('TransactionLogger')
 fh = logging.FileHandler('logs/server.log')
 formatter = logging.Formatter("%(asctime)s: %(message)s")
