@@ -115,7 +115,7 @@ except:
 try:
     reactor.listenTCP(factory.config.getint("network", "controller_port"), controller)
 except:
-    logging.log(logging.ERROR, "Something is already running on Port %s" % (factory.config.getint("network", "port")))
+    logging.log(logging.ERROR, "Something is already running on Port %s" % (factory.config.getint("network", "controller_port")))
     sys.exit(1)
 money_logger = logging.getLogger('TransactionLogger')
 fh = logging.FileHandler('logs/server.log')
