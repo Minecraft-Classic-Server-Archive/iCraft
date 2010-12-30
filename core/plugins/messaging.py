@@ -134,33 +134,12 @@ class MessagingPlugin(ProtocolPlugin):
 
     @player_list
     def commandSlap(self, parts, byuser, overriderank):
-        "/slap username [with object] - Guest\nSlap username [with object]."
+        "/slap username [with object] - Guest\nSlaps the user with a smelly trout."
         if len(parts) == 1:
-            self.client.sendServerMessage("Enter the name for the slappee")
-        else:
-            stage = 0
-            name = ''
-            object = ''
-        for i in range(1, len(parts)):
-            if parts[i] == "with":
-                stage = 1
-                continue
-            if stage == 0 : 
-                name += parts[i]
-                if (i+1 != len(parts) ) : 
-                    if ( parts[i+1] != "with" ) : name += " "
-            else:
-                object += parts[i]
-                if ( i != len(parts) - 1 ) : object += " "
-        else:
-            if stage == 1:
-                self.client.sendWorldMessage("* "+COLOUR_PURPLE+"%s slaps %s with %s!" % (self.client.username,name,object))
-                if self.client.factory.irc_relay:
-                    self.client.factory.irc_relay.sendServerMessage("%s slaps %s with %s!" % (self.client.username,name,object))
-            else:
-                self.client.sendWorldMessage("* "+COLOUR_PURPLE+"%s slaps %s with a giant smelly trout!" % (self.client.username,name))
-                if self.client.factory.irc_relay:
-                    self.client.factory.irc_relay.sendServerMessage("* %s slaps %s with a giant smelly trout!" % (self.client.username,name))
+            self.client.sendServerMessage("Enter the name for who you want to slap.")
+            self.client.sendWorldMessage("* "+COLOUR_PURPLE+"%s slaps %s with a giant smelly trout!" % (self.client.username, parts[2]))
+            if self.client.factory.irc_relay:
+                self.client.factory.irc_relay.sendServerMessage("* %s slaps %s with a giant smelly trout!" % (self.client.username, parts[2]))
 
     @mod_only
     @only_username_command
