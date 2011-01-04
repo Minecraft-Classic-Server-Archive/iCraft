@@ -109,6 +109,12 @@ class PortalPlugin(ProtocolPlugin):
                     else:
                         if (rx, ry, rz) != self.last_block_position:
                             self.client.sendServerMessage("You're WorldBanned from '%s'; so you're not allowed in." % world_id)
+                    if world.autoshutdown and len(world.clients)<1:
+                        if not self.client.factory.asd_delay == 0:
+                            world.ASD = ResettableTimer(self.client.factory.asd_delay*60,1,world.unload)
+                        else:
+                            world.ASD = ResettableTimer(30,1,world.unload)
+                world.ASD.start()
                 else:
                     if world == self.client.world:
                         self.client.teleportTo(tx, ty, tz, th)
@@ -189,7 +195,7 @@ class PortalPlugin(ProtocolPlugin):
             else:
                 self.client.sendServerMessage("You need to specify 'off' or 'all'")
         else:
-            self.client.sendServerMessage("You are now able to delete Portals. /pdelend to stop")
+            self.client.sendServerMessage("You are now able to delete Portals. /pdel off to stop")
             self.portal_remove = True
 
     @op_only

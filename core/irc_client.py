@@ -45,6 +45,9 @@ from core.decorators import *
 
 class ChatBot(irc.IRCClient):
     """An IRC-server chat integration bot."""
+    
+    ocommands = [ "help", "cmdlist", "banreason", "banned", "kick", "ban", "shutdown", "rank", "derank", "spec", "boot" ]
+    ncommands = [ "who", "worlds", "staff", "credits", "help", "rules", "cmdlist", "about" ]
 
     def connectionMade(self):
         self.ops = []
@@ -101,95 +104,103 @@ class ChatBot(irc.IRCClient):
         try:
             user = command[0]
             if user in self.ops:
-                if command[1].startswith("#"):
-                    if self.factory.staffchat:
-                        # It's an staff-only message.
-                        if len(command[1]) == 1:
-                            self.msg(user, "07Please include a message to send.")
-                        else:
-                            try:
-                                text = " ".join(command[1:])[1:]
-                            except ValueError:
-                                self.factory.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN, "Console", message)))
+                if len(command) > 1:
+                    if command[1].startswith("#"):
+                        if self.factory.staffchat:
+                            # It's an staff-only message.
+                            if len(command[1]) == 1:
+                                self.msg(user, "07Please include a message to send.")
                             else:
-                                self.factory.queue.put((self, TASK_STAFFMESSAGE, (0, COLOUR_PURPLE, command[0],text,True)))
-                                self.adlog = open("logs/server.log", "a")
-                                self.adlog = open("logs/world.log", "a")
-                                self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+" | #" + command[0] + ": "+text+"\n")
-                                self.adlog.flush()
-                elif command[1] == ("help"):
-                    self.msg(user, "07Admin Help")
-                    self.msg(user, "07Commands: Use 'cmdlist'")
-                    if self.factory.staffchat:
-                        self.msg(user, "07StaffChat: Use '#message'")
-                elif command[1] == ("cmdlist"):
-                    self.msg(user, "07Here are your Admin Commands:")
-                    self.msg(user, "07ban banned banreason boot derank kick rank shutdown spec")
-                    self.msg(user, "07Use 'command arguments' to do it.")
-                elif command[1] == ("banreason"):
-                    if len(command) == 3:
-                        username = command[2]
-                        if not self.factory.isBanned(username):
-                            self.msg(user,"07%s is not Banned." % username)
+                                try:
+                                    text = " ".join(command[1:])[1:]
+                                except ValueError:
+                                    self.factory.queue.put((self, TASK_MESSAGE, (0, COLOUR_DARKGREEN, "Console", message)))
+                                else:
+                                    self.factory.queue.put((self, TASK_STAFFMESSAGE, (0, COLOUR_PURPLE, command[0],text,True)))
+                                    self.adlog = open("logs/server.log", "a")
+                                    self.adlog = open("logs/world.log", "a")
+                                    self.adlog.write(datetime.datetime.utcnow().strftime("%Y/%m/%d %H:%M:%S")+" | #" + command[0] + ": "+text+"\n")
+                                    self.adlog.flush()
+                    elif command[1] in self.ocommands and len(command) > 1:
+                        if command[1] == ("help"):
+                            self.msg(user, "07Admin Help")
+                            self.msg(user, "07Commands: Use 'cmdlist'")
+                            if self.factory.staffchat:
+                                self.msg(user, "07StaffChat: Use '#message'")
+                        elif command[1] == ("cmdlist"):
+                            self.msg(user, "07Here are your Admin Commands:")
+                            self.msg(user, "07ban banned banreason boot derank kick rank shutdown spec")
+                            self.msg(user, "07Use 'command arguments' to do it.")
+                        elif command[1] == ("banreason"):
+                            if len(command) == 3:
+                                username = command[2]
+                                if not self.factory.isBanned(username):
+                                    self.msg(user,"07%s is not Banned." % username)
+                                else:
+                                    self.msg(user,"07Reason: %s" % self.factory.banReason(username))
+                            else:
+                                self.msg(user,"07You must provide a name.")
+                        elif command[1] == ("banned"):
+                            self.msg(user,  ", ".join(self.factory.banned))
+                        elif command[1] == ("kick"):
+                            user = command[2]
+                            for client in self.factory.clients.values():
+                                if client.username.lower() == user.lower():
+                                    client.sendError("You were kicked!")
+                                    self.msg(user, "07"+str(command[2])+" has been kicked from the server.")
+                                    return
+                            self.msg(user, "07"+str(command[2])+" is not online.")
+                        elif command[1] == ("ban"):
+                            if command > 3:
+                                if self.factory.isBanned(command[2]):
+                                    self.msg(user,"07%s is already Banned." % command[2])
+                                else:
+                                    self.factory.addBan(command[2], " ".join(command[3:]))
+                                    if command[2] in self.factory.usernames:
+                                        self.factory.usernames[command[2]].sendError("You got banned!")
+                                    self.msg(user,"07%s has been Banned for %s." % (command[2]," ".join(command[3:])))
+                            else:
+                                self.msg(user,"07Please give a username and reason.")
+                        elif command[1] == ("shutdown"):
+                            world = str(command[2]).lower()
+                            if world in self.factory.worlds:
+                                self.factory.unloadWorld(world)
+                                self.msg(user,"07World '"+world+"' shutdown.")
+                            else:
+                                self.msg(user,"07World '"+world+"' is not loaded.")
+                        elif command[1] == ("rank"):
+                            if not command > 2:
+                                self.msg(user, "07You must provide a username.")
+                            else:
+                                self.msg(user,Rank(self, command[1:] + [user], False, True, self.factory))
+                        elif command[1] == ("derank"):
+                            if not command > 2:
+                                self.msg(user, "07You must provide a username.")
+                            else:
+                                self.msg(user,DeRank(self, command[1:] + [user], False, True, self.factory))
+                        elif command[1] == ("spec"):
+                            if not command > 2:
+                                self.msg(user, "07You must provide a username.")
+                            else:
+                                self.msg(user,Spec(self, command[1], False, True, self.factory))
+                        elif command[1] == ("boot"):
+                            world = str(command[2]).lower()
+                            self.factory.loadWorld("worlds/"+world, world)
+                            self.msg(user,"07World '"+world+"' booted.")
                         else:
-                            self.msg(user,"07Reason: %s" % self.factory.banReason(username))
+                            self.msg(user, "07Sorry, "+command[1]+" is not a command!")
                     else:
-                        self.msg(user,"07You must provide a name.")
-                elif command[1] == ("banned"):
-                    self.msg(user,  ", ".join(self.factory.banned))
-                elif command[1] == ("kick"):
-                    user = command[2]
-                    for client in self.factory.clients.values():
-                        if client.username.lower() == user.lower():
-                            client.sendError("You were kicked!")
-                            self.msg(user, "07"+str(command[2])+" has been kicked from the server.")
-                            return
-                    self.msg(user, "07"+str(command[2])+" is not online.")
-                elif command[1] == ("ban"):
-                    if command > 3:
-                        if self.factory.isBanned(command[2]):
-                            self.msg(user,"07%s is already Banned." % command[2])
-                        else:
-                            self.factory.addBan(command[2], " ".join(command[3:]))
-                            if command[2] in self.factory.usernames:
-                                self.factory.usernames[command[2]].sendError("You got Banned!")
-                            self.msg(user,"07%s has been Banned for %s." % (command[2]," ".join(command[3:])))
-                    else:
-                        self.msg(user,"07Please give a username and reason.")
-                elif command[1] == ("shutdown"):
-                    world = str(command[2]).lower()
-                    if world in self.factory.worlds:
-                        self.factory.unloadWorld(world)
-                        self.msg(user,"07World '"+world+"' shutdown.")
-                    else:
-                        self.msg(user,"07World '"+world+"' is not loaded.")
-                elif command[1] == ("rank"):
-                    if not command > 2:
-                        self.msg(user, "07You must provide a username.")
-                    else:
-                        self.msg(user,Rank(self, command[1:] + [user], False, True, self.factory))
-                elif command[1] == ("derank"):
-                    if not command > 2:
-                        self.msg(user, "07You must provide a username.")
-                    else:
-                        self.msg(user,DeRank(self, command[1:] + [user], False, True, self.factory))
-                elif command[1] == ("spec"):
-                    if not command > 2:
-                        self.msg(user, "07You must provide a username.")
-                    else:
-                        self.msg(user,Spec(self, command[1], False, True, self.factory))
-                elif command[1] == ("boot"):
-                    world = str(command[2]).lower()
-                    self.factory.loadWorld("worlds/"+world, world)
-                    self.msg(user,"07World '"+world+"' booted.")
+                        self.msg( user, "07%s is not a command!" % command[1] )
                 else:
-                    self.msg(user, "07Sorry, "+command[1]+" is not a command!")
+                    self.msg( user,"07You must provide a valid command to use the IRC bot." )
             else:
                 if command[1].startswith("#"):
                     if self.factory.staffchat:
                         self.msg(user, "07You must be an op to use StaffChat")
-                else:
+                elif command[1] in self.ocommands:
                     self.msg(user, "07You must be an op to use %s." %command[1])
+                else:
+                    self.msg( user, "07%s is not a command!" % command[1] )
             if not command[1].startswith("#"):
                 logging.log(logging.INFO, "%s just used: %s" % (user, " ".join(command[1:])))
         except:
@@ -202,76 +213,84 @@ class ChatBot(irc.IRCClient):
             user = user.split('!', 1)[0]
             msg = "".join([char for char in msg if ord(char) < 128 and char != "" or "0"])
             if channel == self.nickname:
-                if not self.nickname == user and not user == "NickServ" and not user == "ChanServ" and not user == "MemoServ":
+                if not ( self.nickname == user or "Serv" in user ):
                     msg_command = msg.split()
                     self.AdminCommand([user] + msg_command)
             elif channel.lower() == self.factory.irc_channel.lower():
                 if msg.lstrip(self.nickname).startswith("$"+self.nickname):
                     msg_command = msg.split()
                     if len(msg_command) > 1:
-                        if msg_command[1] == ("who"):
-                            self.msg(self.factory.irc_channel, "07Who's Online?")
-                            none=True
-                            for key in self.factory.worlds:
-                                users =  ", ".join(str(c.username) for c in self.factory.worlds[key].clients)
-                                if users:
-                                    whois = ("07%s: %s" % (key, users))
-                                    self.msg(self.factory.irc_channel, whois)
-                                    users=None
-                                    none=False
-                            if none:
-                                self.msg(self.factory.irc_channel, "07No users are online.")
-                        elif msg_command[1] == ("worlds"):
-                            self.msg(self.factory.irc_channel, "07Worlds Booted")
-                            worlds = ", ".join([id for id, world in self.factory.worlds.items()])
-                            self.msg(self.factory.irc_channel, "07Online Worlds: "+worlds)
-                        elif msg_command[1] == ("staff"):
-                            self.msg(self.factory.irc_channel,"07Please see your PM for the Staff List.")
-                            self.msg(user, "The Server Staff - Owner: "+self.factory.owner)
-                            list = Staff(self, self.factory)
-                            for each in list:
-                                self.msg(user," ".join(each))
-                        elif msg_command[1] == ("credits"):
-                            self.msg(self.factory.irc_channel,"07Please see your PM for the Credits.")
-                            self.msg(user, "The Credits")
-                            list = Credits(self, self.factory)
-                            for each in list:
-                                self.msg(user,"".join(each))
-                        elif msg_command[1] == ("help"):
-                            self.msg(self.factory.irc_channel, "07Help Center")
-                            self.msg(self.factory.irc_channel, "07Commands: Use '$"+self.nickname+" cmdlist'")
-                            self.msg(self.factory.irc_channel, "07WorldChat: Use '!world message'")
-                            self.msg(self.factory.irc_channel, "07IRCChat: Use '$message'")
-                            self.msg(self.factory.irc_channel, "07About: Use '$"+self.nickname+" about'")
-                            self.msg(self.factory.irc_channel, "07Credits: Use '$"+self.nickname+" credits'")
-                        elif msg_command[1] == ("rules"):
-                            self.msg(self.factory.irc_channel,"07Please see your PM for the Rules.")
-                            self.msg(user, "The Rules")
-                            try:
-                                r = open('config/rules.txt', 'r')
-                            except:
-                                r = open('config/rules.example.txt', 'r')
-                            for line in r:
-                                line = line.replace("\n", "")
-                                self.msg(user, line)
-                        elif msg_command[1] == ("cmdlist"):
-                            self.msg(self.factory.irc_channel, "07Command List")
-                            self.msg(self.factory.irc_channel, "07about cmdlist credits help rules staff who worlds")
-                            self.msg(self.factory.irc_channel, "07Use '$"+self.nickname+" command arguments' to do it.")
-                            self.msg(self.factory.irc_channel, "07NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
-                        elif msg_command[1] == ("about"):
-                            self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft; http://hlmc.net/ | Credits: Use '$%s credits'" % (self.nickname))
-                            self.msg(self.factory.irc_channel, "07Name: "+self.factory.server_name+"; owned by "+self.factory.owner)
-                            try:
-                                self.msg(self.factory.irc_channel, "07URL: "+self.factory.heartbeat.url)
-                            except:
-                                self.msg(self.factory.irc_channel, "07URL: N/A (minecraft.net is offline)")
-                            self.msg(self.factory.irc_channel, "07Site: "+self.factory.info_url)
+                        if msg_command[1] in self.ncommands and len(msg_command) > 1:
+                            if msg_command[1] == ("who"):
+                                self.msg(self.factory.irc_channel, "07Who's Online?")
+                                none=True
+                                for key in self.factory.worlds:
+                                    users =  ", ".join(str(c.username) for c in self.factory.worlds[key].clients)
+                                    if users:
+                                        whois = ("07%s: %s" % (key, users))
+                                        self.msg(self.factory.irc_channel, whois)
+                                        users=None
+                                        none=False
+                                if none:
+                                    self.msg(self.factory.irc_channel, "07No users are online.")
+                            elif msg_command[1] == ("worlds"):
+                                self.msg(self.factory.irc_channel, "07Worlds Booted")
+                                worlds = ", ".join([id for id, world in self.factory.worlds.items()])
+                                self.msg(self.factory.irc_channel, "07Online Worlds: "+worlds)
+                            elif msg_command[1] == ("staff"):
+                                self.msg(self.factory.irc_channel,"07Please see your PM for the Staff List.")
+                                self.msg(user, "The Server Staff - Owner: "+self.factory.owner)
+                                list = Staff(self, self.factory)
+                                for each in list:
+                                    self.msg(user," ".join(each))
+                            elif msg_command[1] == ("credits"):
+                                self.msg(self.factory.irc_channel,"07Please see your PM for the Credits.")
+                                self.msg(user, "The Credits")
+                                list = Credits(self, self.factory)
+                                for each in list:
+                                    self.msg(user,"".join(each))
+                            elif msg_command[1] == ("help"):
+                                self.msg(self.factory.irc_channel, "07Help Center")
+                                self.msg(self.factory.irc_channel, "07Commands: Use '$"+self.nickname+" cmdlist'")
+                                self.msg(self.factory.irc_channel, "07WorldChat: Use '!world message'")
+                                self.msg(self.factory.irc_channel, "07IRCChat: Use '$message'")
+                                self.msg(self.factory.irc_channel, "07About: Use '$"+self.nickname+" about'")
+                                self.msg(self.factory.irc_channel, "07Credits: Use '$"+self.nickname+" credits'")
+                            elif msg_command[1] == ("rules"):
+                                self.msg(self.factory.irc_channel,"07Please see your PM for the Rules.")
+                                self.msg(user, "The Rules")
+                                try:
+                                    r = open('config/rules.txt', 'r')
+                                except:
+                                    r = open('config/rules.example.txt', 'r')
+                                for line in r:
+                                    line = line.replace("\n", "")
+                                    self.msg(user, line)
+                            elif msg_command[1] == ("cmdlist"):
+                                self.msg(self.factory.irc_channel, "07Command List")
+                                self.msg(self.factory.irc_channel, "07about cmdlist credits help rules staff who worlds")
+                                self.msg(self.factory.irc_channel, "07Use '$"+self.nickname+" command arguments' to do it.")
+                                self.msg(self.factory.irc_channel, "07NOTE: Admin Commands are by PMing "+self.nickname+" - only for ops.")
+                            elif msg_command[1] == ("about"):
+                                self.msg(self.factory.irc_channel, "07About the Server, powered by iCraft; http://hlmc.net/ | Credits: Use '$%s credits'" % (self.nickname))
+                                self.msg(self.factory.irc_channel, "07Name: "+self.factory.server_name+"; owned by "+self.factory.owner)
+                                try:
+                                    self.msg(self.factory.irc_channel, "07URL: "+self.factory.heartbeat.url)
+                                except:
+                                    self.msg(self.factory.irc_channel, "07URL: N/A (minecraft.net is offline)")
+                                self.msg(self.factory.irc_channel, "07Site: "+self.factory.info_url)
+                            else:
+                                self.msg(self.factory.irc_channel, "07Sorry, "+msg_command[1]+" is not a command!")
+                            logging.log(logging.INFO, "%s just used: %s" % (user, " ".join(msg_command[1:])))
+                        elif msg_command[1] in self.ocommands and len(msg_command) > 1:
+                            if user in self.ops:
+                                self.msg(self.factory.irc_channel, "07Please do not use %s in the channel; use a query instead!" % msg_command[1])
+                            else:
+                                self.msg(self.factory.irc_channel, "07You must be an op to use %s." % msg_command[1]) 
                         else:
-                            self.msg(self.factory.irc_channel, "07Sorry, "+msg_command[1]+" is not a command!")
-                        logging.log(logging.INFO, "%s just used: %s" % (user, " ".join(msg_command[1:])))
+                            self.msg(self.factory.irc_channel,"07You must provide a valid command to use the IRC bot - try the help command.")
                     else:
-                        self.msg(self.factory.irc_channel,"07You must provide a command to use the IRC bot.")
+                        self.msg(self.factory.irc_channel,"07You must provide a valid command to use the IRC bot - try the help command.")
                 elif msg.startswith("$"):
                     logging.log(logging.INFO, "<$%s> %s" % (user, msg))
                 elif msg.startswith("!"):

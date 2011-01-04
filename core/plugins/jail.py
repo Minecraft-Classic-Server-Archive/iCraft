@@ -253,6 +253,7 @@ class JailPlugin(ProtocolPlugin):
             name = parts[1].lower()
         except:
             self.client.sendServerMessage("You need to specify a username.")
+            return
         if name in jail[J_USERS]:
             jail[J_USERS].pop(name)
             self.dumpJail(jail)

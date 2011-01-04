@@ -170,6 +170,11 @@ class MultiWorldPlugin(ProtocolPlugin):
             else:
                 self.client.sendServerMessage("You're WorldBanned from '%s'; so you're not allowed in." % world_id)
                 return
+            if world.autoshutdown and len(world.clients)<1:
+                if not self.client.factory.asd_delay == 0:
+                    world.ASD = ResettableTimer(self.client.factory.asd_delay*60,1,world.unload)
+                else:
+                    world.ASD = ResettableTimer(30,1,world.unload)
         self.client.changeToWorld(world_id)
     
     @world_list

@@ -44,8 +44,7 @@ from core.server import CoreFactory
 from core.controller import ControllerFactory
 from ConfigParser import RawConfigParser as ConfigParser
 
-print ("Now starting up iCraft.. Make sure to check and update often.")
-print ("iCraft Discussion: helplarge.com/icraft - irc.esper.net #icraft")
+print ("Now starting up iCraft.. Make sure to check and update often. [ helplarge.com/icraft | irc.esper.net #icraft ]")
 
 useConsoleLog = True
 # Disable file logging if using nohup.out

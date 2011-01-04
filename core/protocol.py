@@ -935,7 +935,7 @@ class CoreServerProtocol(Protocol):
 
     def sendLevelChunk(self):
         if not hasattr(self, 'chunk'):
-            self.log("Cannot send chunk, there isn't one! %r %r" % (self, self.__dict__), level=logging.ERROR)
+            self.log("Cannot send chunk, there isn't one!", level=logging.ERROR)
             return
         if self.chunk:
             self.sendPacked(TYPE_CHUNK, len(self.chunk), self.chunk, chr(int(100*(self.zipped_level.tell()/float(self.zipped_size)))))

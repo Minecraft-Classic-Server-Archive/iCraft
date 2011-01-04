@@ -41,12 +41,6 @@ from array import array
 from deferred import Deferred
 from blockstore import BlockStore
 from constants import *
-try:
-    from database import connection
-    apsw = 1
-except:
-    print ("You should install APSW if you want blocktracking.")
-    apsw = 0
 
 class World(object):
     """
@@ -62,7 +56,6 @@ class World(object):
         self.basename = basename
         self.blocks_path = os.path.join(basename, "blocks.gz")
         self.meta_path = os.path.join(basename, "world.meta")
-        self.database_path = os.path.join(basename, "storage.db")
         # Other settings
         self.owner = "N/A"
         self.ops = set()
@@ -83,8 +76,6 @@ class World(object):
         self.autoshutdown = True
         self.saving = False
         self.users = {}
-        if apsw == 1:
-            self.BlockEngine = dbconnection(self)
         self.global_chat = True
         self.zoned = False
         self.userzones = {}
@@ -108,8 +99,6 @@ class World(object):
         "Starts up this World; we spawn a BlockStore, and run it."
         self.blockstore = BlockStore(self.blocks_path, self.x, self.y, self.z)
         self.blockstore.start()
-        if apsw == 1:
-            self.BlockEngine.tableopen()
         # If physics is on, turn it on
         if self._physics:
             self.blockstore.in_queue.put([TASK_PHYSICSON])
@@ -123,9 +112,6 @@ class World(object):
 
     def unload(self):
         self.factory.unloadWorld(self.id, True)
-        if apsw == 1:
-            self.BlockEngine.dbclose()
-            self.BlockEngine = None
 
     def read_queue(self):
         "Reads messages from the BlockStore and acts on them."

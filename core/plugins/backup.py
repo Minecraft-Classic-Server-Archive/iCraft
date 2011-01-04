@@ -119,7 +119,7 @@ class BackupPlugin(ProtocolPlugin):
                     except:
                         pass
                 else:
-                    reactor.callLater(1, self.commandRestore(self, parts, byuser, overriderank))
+                    reactor.callLater(1, self.commandRestore(parts, byuser, overriderank))
                 default_name = self.client.factory.default_name
                 self.client.factory.unloadWorld("worlds/%s" % world_id, world_id)
                 self.client.sendServerMessage("%s has been restored to %s and booted." % (world_id, backup_number))
